@@ -1,0 +1,2095 @@
+================================================================================
+LABOR MARKET TREND ANALYSIS (2010-2023)
+Detecting Sudden Changes in Workforce Dynamics
+================================================================================
+
+Analyzing consecutive year pairs (includes new entrants & exits)
+Using SOC_EMSI_2019_3_NAME (Broad Occupation Categories)
+Period: 2000-2023
+NEW: Tracking detailed user-level career paths
+NEW: Performance optimizations (10-20x faster)
+================================================================================
+
+Created 24 yearly windows
+Loading job data...
+Total job records: 1,264,843
+
+Processing yearly windows...
+2000: 70,924 users
+2001: 76,782 users
+2002: 82,140 users
+2003: 88,094 users
+2004: 95,537 users
+2005: 104,517 users
+2006: 114,032 users
+2007: 124,237 users
+2008: 134,321 users
+2009: 141,990 users
+2010: 152,599 users
+2011: 163,715 users
+2012: 174,287 users
+2013: 183,070 users
+2014: 190,994 users
+2015: 198,044 users
+2016: 203,818 users
+2017: 208,821 users
+2018: 214,340 users
+2019: 218,116 users
+2020: 219,038 users
+2021: 218,548 users
+2022: 218,209 users
+2023: 218,006 users
+
+================================================================================
+BUILDING YEAR-TO-YEAR TRANSITIONS
+================================================================================
+2000→2001: 69,563 users stayed
+2001→2002: 75,163 users stayed
+2002→2003: 80,576 users stayed
+2003→2004: 86,497 users stayed
+2004→2005: 93,777 users stayed
+2005→2006: 102,602 users stayed
+2006→2007: 112,000 users stayed
+2007→2008: 121,894 users stayed
+2008→2009: 130,975 users stayed
+2009→2010: 138,468 users stayed
+2010→2011: 148,925 users stayed
+2011→2012: 159,476 users stayed
+2012→2013: 169,042 users stayed
+2013→2014: 177,844 users stayed
+2014→2015: 186,012 users stayed
+2015→2016: 193,288 users stayed
+2016→2017: 199,198 users stayed
+2017→2018: 205,653 users stayed
+2018→2019: 211,635 users stayed
+2019→2020: 215,438 users stayed
+2020→2021: 216,644 users stayed
+2021→2022: 217,399 users stayed
+2022→2023: 218,006 users stayed
+
+================================================================================
+COMPREHENSIVE WORKFORCE FLOW ANALYSIS (OPTIMIZED)
+================================================================================
+  Building user presence map (optimization)...
+  ✓ Mapped 248,825 users across 24 windows
+  Building user info cache...
+  ✓ Cached info for 3,814,179 user-window pairs
+
+2000→2001: Computing (optimized)...
+  Dropouts: 1,361 (1.92%)
+    └─ Career breaks: 1,140
+    └─ Permanent exits: 221
+  Comebacks: 0 (0.00%)
+  New entrants: 7,219 (9.40%)
+  Stayed: 69,563
+  ✓ Processed 78,143 users (optimized)
+
+2001→2002: Computing (optimized)...
+  Dropouts: 1,619 (2.11%)
+    └─ Career breaks: 1,409
+    └─ Permanent exits: 210
+  Comebacks: 309 (0.38%)
+  New entrants: 6,668 (8.12%)
+  Stayed: 75,163
+  ✓ Processed 83,759 users (optimized)
+
+2002→2003: Computing (optimized)...
+  Dropouts: 1,564 (1.90%)
+    └─ Career breaks: 1,336
+    └─ Permanent exits: 228
+  Comebacks: 595 (0.68%)
+  New entrants: 6,923 (7.86%)
+  Stayed: 80,576
+  ✓ Processed 89,658 users (optimized)
+
+2003→2004: Computing (optimized)...
+  Dropouts: 1,597 (1.81%)
+    └─ Career breaks: 1,356
+    └─ Permanent exits: 241
+  Comebacks: 847 (0.89%)
+  New entrants: 8,193 (8.58%)
+  Stayed: 86,497
+  ✓ Processed 97,134 users (optimized)
+
+2004→2005: Computing (optimized)...
+  Dropouts: 1,760 (1.84%)
+    └─ Career breaks: 1,464
+    └─ Permanent exits: 296
+  Comebacks: 1,053 (1.01%)
+  New entrants: 9,687 (9.27%)
+  Stayed: 93,777
+  ✓ Processed 106,277 users (optimized)
+
+2005→2006: Computing (optimized)...
+  Dropouts: 1,915 (1.83%)
+    └─ Career breaks: 1,538
+    └─ Permanent exits: 377
+  Comebacks: 1,196 (1.05%)
+  New entrants: 10,234 (8.97%)
+  Stayed: 102,602
+  ✓ Processed 115,947 users (optimized)
+
+2006→2007: Computing (optimized)...
+  Dropouts: 2,032 (1.78%)
+    └─ Career breaks: 1,613
+    └─ Permanent exits: 419
+  Comebacks: 1,324 (1.07%)
+  New entrants: 10,913 (8.78%)
+  Stayed: 112,000
+  ✓ Processed 126,269 users (optimized)
+
+2007→2008: Computing (optimized)...
+  Dropouts: 2,343 (1.89%)
+    └─ Career breaks: 1,780
+    └─ Permanent exits: 563
+  Comebacks: 1,439 (1.07%)
+  New entrants: 10,988 (8.18%)
+  Stayed: 121,894
+  ✓ Processed 136,664 users (optimized)
+
+2008→2009: Computing (optimized)...
+  Dropouts: 3,346 (2.49%)
+    └─ Career breaks: 2,509
+    └─ Permanent exits: 837
+  Comebacks: 1,432 (1.01%)
+  New entrants: 9,583 (6.75%)
+  Stayed: 130,975
+  ✓ Processed 145,336 users (optimized)
+
+2009→2010: Computing (optimized)...
+  Dropouts: 3,522 (2.48%)
+    └─ Career breaks: 2,532
+    └─ Permanent exits: 990
+  Comebacks: 2,217 (1.45%)
+  New entrants: 11,914 (7.81%)
+  Stayed: 138,468
+  ✓ Processed 156,121 users (optimized)
+
+2010→2011: Computing (optimized)...
+  Dropouts: 3,674 (2.41%)
+    └─ Career breaks: 2,441
+    └─ Permanent exits: 1,233
+  Comebacks: 2,554 (1.56%)
+  New entrants: 12,236 (7.47%)
+  Stayed: 148,925
+  ✓ Processed 167,389 users (optimized)
+
+2011→2012: Computing (optimized)...
+  Dropouts: 4,239 (2.59%)
+    └─ Career breaks: 2,353
+    └─ Permanent exits: 1,886
+  Comebacks: 2,577 (1.48%)
+  New entrants: 12,234 (7.02%)
+  Stayed: 159,476
+  ✓ Processed 178,526 users (optimized)
+
+2012→2013: Computing (optimized)...
+  Dropouts: 5,245 (3.01%)
+    └─ Career breaks: 2,426
+    └─ Permanent exits: 2,819
+  Comebacks: 2,586 (1.41%)
+  New entrants: 11,442 (6.25%)
+  Stayed: 169,042
+  ✓ Processed 188,315 users (optimized)
+
+2013→2014: Computing (optimized)...
+  Dropouts: 5,226 (2.85%)
+    └─ Career breaks: 2,285
+    └─ Permanent exits: 2,941
+  Comebacks: 2,668 (1.40%)
+  New entrants: 10,482 (5.49%)
+  Stayed: 177,844
+  ✓ Processed 196,220 users (optimized)
+
+2014→2015: Computing (optimized)...
+  Dropouts: 4,982 (2.61%)
+    └─ Career breaks: 2,106
+    └─ Permanent exits: 2,876
+  Comebacks: 2,622 (1.32%)
+  New entrants: 9,410 (4.75%)
+  Stayed: 186,012
+  ✓ Processed 203,026 users (optimized)
+
+2015→2016: Computing (optimized)...
+  Dropouts: 4,756 (2.40%)
+    └─ Career breaks: 2,049
+    └─ Permanent exits: 2,707
+  Comebacks: 2,456 (1.20%)
+  New entrants: 8,074 (3.96%)
+  Stayed: 193,288
+  ✓ Processed 208,574 users (optimized)
+
+2016→2017: Computing (optimized)...
+  Dropouts: 4,620 (2.27%)
+    └─ Career breaks: 1,818
+    └─ Permanent exits: 2,802
+  Comebacks: 2,357 (1.13%)
+  New entrants: 7,266 (3.48%)
+  Stayed: 199,198
+  ✓ Processed 213,441 users (optimized)
+
+2017→2018: Computing (optimized)...
+  Dropouts: 3,168 (1.52%)
+    └─ Career breaks: 1,296
+    └─ Permanent exits: 1,872
+  Comebacks: 2,311 (1.08%)
+  New entrants: 6,376 (2.97%)
+  Stayed: 205,653
+  ✓ Processed 217,508 users (optimized)
+
+2018→2019: Computing (optimized)...
+  Dropouts: 2,705 (1.26%)
+    └─ Career breaks: 891
+    └─ Permanent exits: 1,814
+  Comebacks: 1,892 (0.87%)
+  New entrants: 4,589 (2.10%)
+  Stayed: 211,635
+  ✓ Processed 220,821 users (optimized)
+
+2019→2020: Computing (optimized)...
+  Dropouts: 2,678 (1.23%)
+    └─ Career breaks: 716
+    └─ Permanent exits: 1,962
+  Comebacks: 1,344 (0.61%)
+  New entrants: 2,256 (1.03%)
+  Stayed: 215,438
+  ✓ Processed 221,716 users (optimized)
+
+2020→2021: Computing (optimized)...
+  Dropouts: 2,394 (1.09%)
+    └─ Career breaks: 221
+    └─ Permanent exits: 2,173
+  Comebacks: 1,067 (0.49%)
+  New entrants: 837 (0.38%)
+  Stayed: 216,644
+  ✓ Processed 220,942 users (optimized)
+
+2021→2022: Computing (optimized)...
+  Dropouts: 1,149 (0.53%)
+    └─ Career breaks: 0
+    └─ Permanent exits: 1,149
+  Comebacks: 433 (0.20%)
+  New entrants: 377 (0.17%)
+  Stayed: 217,399
+  ✓ Processed 219,358 users (optimized)
+
+2022→2023: Computing (optimized)...
+  Dropouts: 203 (0.09%)
+    └─ Career breaks: 0
+    └─ Permanent exits: 203
+  Comebacks: 0 (0.00%)
+  New entrants: 0 (0.00%)
+  Stayed: 218,006
+  ✓ Processed 218,209 users (optimized)
+
+Analyzing occupation distributions...
+
+================================================================================
+OCCUPATION-LEVEL FLOW ANALYSIS
+================================================================================
+
+================================================================================
+OCCUPATION OUTFLOW ANALYSIS (OPTIMIZED)
+================================================================================
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 4403 != 4431
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 1064 != 1069
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 4101 != 4120
+  ⚠️  Warning: Total mismatch for Computer Occupations: 6303 != 6328
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 461 != 464
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 1107 != 1113
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 414 != 419
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 141 != 144
+  ⚠️  Warning: Total mismatch for Engineers: 2367 != 2385
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 645 != 649
+  ⚠️  Warning: Total mismatch for Financial Specialists: 1894 != 1903
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 174 != 175
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 763 != 766
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 1929 != 1936
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 1604 != 1613
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 389 != 390
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 788 != 790
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 346 != 348
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 147 != 148
+  ⚠️  Warning: Total mismatch for Life Scientists: 250 != 251
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 295 != 297
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 281 != 282
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 361 != 364
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 255 != 257
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 1197 != 1204
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 204 != 206
+  ⚠️  Warning: Total mismatch for Military-only occupations: 200 != 202
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 5144 != 5165
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 314 != 315
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 257 != 258
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 438 != 439
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 5726 != 5744
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 331 != 333
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 455 != 456
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 288 != 289
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 906 != 910
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 1325 != 1330
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 995 != 999
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 577 != 583
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 1121 != 1125
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 980 != 984
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 2016 != 2025
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 211 != 212
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 288 != 289
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 224 != 226
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 487 != 488
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 2293 != 2302
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 769 != 771
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 561 != 562
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 227 != 228
+  ⚠️  Warning: Total mismatch for Top Executives: 9657 != 9676
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 3371 != 3389
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 241 != 242
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 4582 != 4632
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 196 != 200
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 186 != 189
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 1112 != 1123
+  ⚠️  Warning: Total mismatch for Assemblers and Fabricators: 76 != 77
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 4409 != 4439
+  ⚠️  Warning: Total mismatch for Computer Occupations: 6551 != 6619
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 483 != 484
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 1203 != 1212
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 442 != 444
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 151 != 153
+  ⚠️  Warning: Total mismatch for Engineers: 2450 != 2471
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 676 != 683
+  ⚠️  Warning: Total mismatch for Extraction Workers: 26 != 27
+  ⚠️  Warning: Total mismatch for Financial Clerks: 829 != 839
+  ⚠️  Warning: Total mismatch for Financial Specialists: 2052 != 2067
+  ⚠️  Warning: Total mismatch for Firefighting and Prevention Workers: 92 != 93
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 235 != 236
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 830 != 834
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 2084 != 2096
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 174 != 179
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 1728 != 1745
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 418 != 424
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 845 != 850
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 361 != 364
+  ⚠️  Warning: Total mismatch for Life Scientists: 261 != 265
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 347 != 353
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 307 != 308
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 381 != 384
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 156 != 158
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 268 != 269
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 1296 != 1309
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 205 != 206
+  ⚠️  Warning: Total mismatch for Military-only occupations: 215 != 216
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 375 != 378
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 93 != 94
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 5433 != 5469
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 345 != 347
+  ⚠️  Warning: Total mismatch for Other Healthcare Practitioners and Technical Occupations: 25 != 27
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 288 != 289
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 467 != 469
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 6196 != 6232
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 347 != 351
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 245 != 249
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 465 != 472
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 322 != 324
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 1250 != 1259
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 991 != 994
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 171 != 173
+  ⚠️  Warning: Total mismatch for Physical Scientists: 216 != 219
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 1444 != 1450
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 1080 != 1088
+  ⚠️  Warning: Total mismatch for Religious Workers: 276 != 277
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 648 != 652
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 1234 != 1238
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 1063 != 1066
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 2142 != 2158
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 314 != 315
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 248 != 251
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 2510 != 2525
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 824 != 827
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 591 != 595
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 657 != 658
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 243 != 244
+  ⚠️  Warning: Total mismatch for Top Executives: 10351 != 10381
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 3579 != 3633
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 254 != 255
+  ⚠️  Warning: Total mismatch for Water Transportation Workers: 44 != 45
+  ⚠️  Warning: Total mismatch for Woodworkers: 14 != 15
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 4811 != 4872
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 196 != 197
+  ⚠️  Warning: Total mismatch for Animal Care and Service Workers: 41 != 42
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 196 != 198
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 1208 != 1220
+  ⚠️  Warning: Total mismatch for Building Cleaning and Pest Control Workers: 120 != 121
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 4729 != 4782
+  ⚠️  Warning: Total mismatch for Computer Occupations: 6946 != 7057
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 1311 != 1325
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 446 != 454
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 149 != 154
+  ⚠️  Warning: Total mismatch for Engineers: 2550 != 2574
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 729 != 738
+  ⚠️  Warning: Total mismatch for Entertainment Attendants and Related Workers: 41 != 42
+  ⚠️  Warning: Total mismatch for Financial Clerks: 901 != 915
+  ⚠️  Warning: Total mismatch for Financial Specialists: 2285 != 2299
+  ⚠️  Warning: Total mismatch for Firefighting and Prevention Workers: 102 != 103
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 269 != 271
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 919 != 926
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 2246 != 2266
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 1917 != 1938
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 443 != 444
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 892 != 897
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 415 != 420
+  ⚠️  Warning: Total mismatch for Life Scientists: 266 != 268
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 384 != 394
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 326 != 328
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 399 != 404
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 165 != 168
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 308 != 309
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 1379 != 1393
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 224 != 228
+  ⚠️  Warning: Total mismatch for Military-only occupations: 213 != 216
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 404 != 406
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 106 != 107
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 5729 != 5774
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 376 != 381
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 40 != 42
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 332 != 333
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 497 != 500
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 6704 != 6754
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 385 != 387
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 275 != 279
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 479 != 486
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 334 != 338
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 1385 != 1400
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 1094 != 1098
+  ⚠️  Warning: Total mismatch for Physical Scientists: 214 != 216
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 1563 != 1574
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 1148 != 1157
+  ⚠️  Warning: Total mismatch for Printing Workers: 52 != 53
+  ⚠️  Warning: Total mismatch for Religious Workers: 314 != 317
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 697 != 709
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 1321 != 1341
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 1124 != 1135
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 2326 != 2351
+  ⚠️  Warning: Total mismatch for Supervisors of Building and Grounds Cleaning and Maintenance Workers: 49 != 50
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 333 != 337
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 282 != 283
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 548 != 549
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 2673 != 2690
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 861 != 871
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 635 != 636
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 717 != 726
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 261 != 265
+  ⚠️  Warning: Total mismatch for Textile, Apparel, and Furnishings Workers: 28 != 29
+  ⚠️  Warning: Total mismatch for Top Executives: 11049 != 11091
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 3819 != 3898
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 281 != 282
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 5255 != 5323
+  ⚠️  Warning: Total mismatch for Agricultural Workers: 50 != 51
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 203 != 207
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 217 != 220
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 1289 != 1305
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 5269 != 5328
+  ⚠️  Warning: Total mismatch for Communications Equipment Operators: 41 != 42
+  ⚠️  Warning: Total mismatch for Computer Occupations: 7423 != 7537
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 556 != 561
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 102 != 103
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 1478 != 1490
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 459 != 469
+  ⚠️  Warning: Total mismatch for Engineers: 2706 != 2761
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 790 != 803
+  ⚠️  Warning: Total mismatch for Entertainment Attendants and Related Workers: 43 != 44
+  ⚠️  Warning: Total mismatch for Financial Clerks: 996 != 1014
+  ⚠️  Warning: Total mismatch for Financial Specialists: 2483 != 2513
+  ⚠️  Warning: Total mismatch for Food Processing Workers: 33 != 35
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 305 != 309
+  ⚠️  Warning: Total mismatch for Funeral Service Workers: 13 != 14
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 1026 != 1041
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 2457 != 2469
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 253 != 255
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 2176 != 2203
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 445 != 447
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 947 != 953
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 461 != 466
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 178 != 179
+  ⚠️  Warning: Total mismatch for Life Scientists: 285 != 288
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 448 != 457
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 390 != 394
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 437 != 446
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 190 != 193
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 345 != 349
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 1484 != 1500
+  ⚠️  Warning: Total mismatch for Military-only occupations: 217 != 219
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 479 != 481
+  ⚠️  Warning: Total mismatch for Occupational Therapy and Physical Therapist Assistants and Aides: 40 != 41
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 6175 != 6238
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 453 != 461
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 382 != 384
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 532 != 538
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 7248 != 7313
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 398 != 405
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 335 != 336
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 516 != 523
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 357 != 361
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 1507 != 1514
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 1180 != 1194
+  ⚠️  Warning: Total mismatch for Other Transportation Workers: 30 != 31
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 224 != 225
+  ⚠️  Warning: Total mismatch for Physical Scientists: 224 != 229
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 1678 != 1694
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 1217 != 1236
+  ⚠️  Warning: Total mismatch for Religious Workers: 327 != 328
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 803 != 813
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 1459 != 1485
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 1228 != 1238
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 2535 != 2568
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 256 != 258
+  ⚠️  Warning: Total mismatch for Supervisors of Building and Grounds Cleaning and Maintenance Workers: 56 != 57
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 353 != 356
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 325 != 328
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 570 != 572
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 2900 != 2926
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 913 != 923
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 658 != 663
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 771 != 777
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 283 != 285
+  ⚠️  Warning: Total mismatch for Top Executives: 11793 != 11851
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 4132 != 4213
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 307 != 312
+  ⚠️  Warning: Total mismatch for Water Transportation Workers: 51 != 52
+  ⚠️  Warning: Total mismatch for Woodworkers: 12 != 13
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 5695 != 5777
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 210 != 213
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 233 != 235
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 1429 != 1446
+  ⚠️  Warning: Total mismatch for Assemblers and Fabricators: 90 != 92
+  ⚠️  Warning: Total mismatch for Building Cleaning and Pest Control Workers: 149 != 150
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 5829 != 5883
+  ⚠️  Warning: Total mismatch for Computer Occupations: 8112 != 8214
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 626 != 630
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 1668 != 1696
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 515 != 520
+  ⚠️  Warning: Total mismatch for Engineers: 2878 != 2914
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 849 != 854
+  ⚠️  Warning: Total mismatch for Financial Clerks: 1091 != 1111
+  ⚠️  Warning: Total mismatch for Financial Specialists: 2732 != 2757
+  ⚠️  Warning: Total mismatch for Firefighting and Prevention Workers: 105 != 107
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 365 != 373
+  ⚠️  Warning: Total mismatch for Funeral Service Workers: 14 != 15
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 1153 != 1171
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 2658 != 2677
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 301 != 302
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 2422 != 2457
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 497 != 500
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 1028 != 1037
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 494 != 498
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 172 != 175
+  ⚠️  Warning: Total mismatch for Life Scientists: 322 != 323
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 518 != 530
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 452 != 458
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 486 != 489
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 207 != 211
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 382 != 383
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 1660 != 1681
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 252 != 255
+  ⚠️  Warning: Total mismatch for Military-only occupations: 233 != 240
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 124 != 125
+  ⚠️  Warning: Total mismatch for Occupational Therapy and Physical Therapist Assistants and Aides: 43 != 44
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 6637 != 6700
+  ⚠️  Warning: Total mismatch for Other Construction and Related Workers: 57 != 59
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 539 != 551
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 52 != 54
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 410 != 421
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 561 != 564
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 8008 != 8078
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 423 != 432
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 375 != 381
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 582 != 588
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 405 != 411
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 1724 != 1741
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 1304 != 1318
+  ⚠️  Warning: Total mismatch for Physical Scientists: 251 != 253
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 1797 != 1806
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 1320 != 1335
+  ⚠️  Warning: Total mismatch for Religious Workers: 356 != 359
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 939 != 961
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 1600 != 1618
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 1327 != 1355
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 2823 != 2879
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 275 != 278
+  ⚠️  Warning: Total mismatch for Supervisors of Building and Grounds Cleaning and Maintenance Workers: 63 != 65
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 390 != 393
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 373 != 381
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 603 != 611
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 3140 != 3179
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 992 != 1007
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 679 != 682
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 827 != 841
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 296 != 301
+  ⚠️  Warning: Total mismatch for Top Executives: 12644 != 12711
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 4489 != 4590
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 337 != 342
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 6135 != 6203
+  ⚠️  Warning: Total mismatch for Agricultural Workers: 57 != 58
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 212 != 214
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 248 != 251
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 1589 != 1608
+  ⚠️  Warning: Total mismatch for Assemblers and Fabricators: 104 != 105
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 6495 != 6575
+  ⚠️  Warning: Total mismatch for Communications Equipment Operators: 52 != 53
+  ⚠️  Warning: Total mismatch for Computer Occupations: 8703 != 8812
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 650 != 661
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 160 != 161
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 1847 != 1881
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 569 != 573
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 187 != 188
+  ⚠️  Warning: Total mismatch for Engineers: 3089 != 3125
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 931 != 944
+  ⚠️  Warning: Total mismatch for Entertainment Attendants and Related Workers: 78 != 80
+  ⚠️  Warning: Total mismatch for Extraction Workers: 40 != 41
+  ⚠️  Warning: Total mismatch for Financial Clerks: 1185 != 1202
+  ⚠️  Warning: Total mismatch for Financial Specialists: 3036 != 3073
+  ⚠️  Warning: Total mismatch for Firefighting and Prevention Workers: 118 != 120
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 493 != 503
+  ⚠️  Warning: Total mismatch for Grounds Maintenance Workers: 93 != 94
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 1295 != 1310
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 2954 != 2984
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 358 != 362
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 2673 != 2719
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 540 != 545
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 1083 != 1095
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 541 != 548
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 179 != 183
+  ⚠️  Warning: Total mismatch for Life Scientists: 362 != 366
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 589 != 601
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 515 != 523
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 505 != 513
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 235 != 238
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 447 != 454
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 1747 != 1774
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 267 != 268
+  ⚠️  Warning: Total mismatch for Military-only occupations: 254 != 259
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 553 != 554
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 137 != 138
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 7180 != 7238
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 629 != 645
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 68 != 71
+  ⚠️  Warning: Total mismatch for Other Healthcare Practitioners and Technical Occupations: 46 != 47
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 488 != 496
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 617 != 625
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 8748 != 8836
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 476 != 481
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 457 != 468
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 633 != 641
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 441 != 446
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 1874 != 1886
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 1380 != 1395
+  ⚠️  Warning: Total mismatch for Other Transportation Workers: 37 != 38
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 266 != 269
+  ⚠️  Warning: Total mismatch for Physical Scientists: 286 != 288
+  ⚠️  Warning: Total mismatch for Plant and System Operators: 80 != 81
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 1973 != 1983
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 1426 != 1442
+  ⚠️  Warning: Total mismatch for Religious Workers: 367 != 371
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 1137 != 1150
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 1729 != 1749
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 1433 != 1447
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 3153 != 3205
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 306 != 309
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 427 != 431
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 426 != 432
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 650 != 656
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 3385 != 3426
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 1074 != 1085
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 691 != 700
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 900 != 915
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 332 != 335
+  ⚠️  Warning: Total mismatch for Top Executives: 13495 != 13573
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 4946 != 5058
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 375 != 379
+  ⚠️  Warning: Total mismatch for Water Transportation Workers: 51 != 54
+  ⚠️  Warning: Total mismatch for Woodworkers: 20 != 21
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 6606 != 6692
+  ⚠️  Warning: Total mismatch for Agricultural Workers: 58 != 59
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 223 != 228
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 262 != 263
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 1745 != 1760
+  ⚠️  Warning: Total mismatch for Assemblers and Fabricators: 107 != 112
+  ⚠️  Warning: Total mismatch for Baggage Porters, Bellhops, and Concierges: 41 != 42
+  ⚠️  Warning: Total mismatch for Building Cleaning and Pest Control Workers: 184 != 186
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 7168 != 7240
+  ⚠️  Warning: Total mismatch for Computer Occupations: 9435 != 9556
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 672 != 678
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 192 != 194
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 2112 != 2149
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 610 != 624
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 193 != 194
+  ⚠️  Warning: Total mismatch for Engineers: 3301 != 3338
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 1047 != 1060
+  ⚠️  Warning: Total mismatch for Entertainment Attendants and Related Workers: 90 != 93
+  ⚠️  Warning: Total mismatch for Extraction Workers: 38 != 40
+  ⚠️  Warning: Total mismatch for Financial Clerks: 1344 != 1362
+  ⚠️  Warning: Total mismatch for Financial Specialists: 3239 != 3275
+  ⚠️  Warning: Total mismatch for Firefighting and Prevention Workers: 121 != 123
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 610 != 620
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 1436 != 1450
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 3230 != 3247
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 419 != 430
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 3079 != 3118
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 550 != 559
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 1159 != 1172
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 583 != 596
+  ⚠️  Warning: Total mismatch for Life Scientists: 387 != 392
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 639 != 658
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 587 != 596
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 544 != 551
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 253 != 257
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 509 != 512
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 1927 != 1959
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 274 != 278
+  ⚠️  Warning: Total mismatch for Military-only occupations: 255 != 260
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 591 != 594
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 146 != 148
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 7681 != 7743
+  ⚠️  Warning: Total mismatch for Other Construction and Related Workers: 81 != 82
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 722 != 739
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 102 != 103
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 539 != 550
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 665 != 675
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 9429 != 9513
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 532 != 551
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 530 != 534
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 678 != 686
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 528 != 539
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 2026 != 2044
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 1484 != 1498
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 288 != 290
+  ⚠️  Warning: Total mismatch for Physical Scientists: 306 != 309
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 2141 != 2169
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 1580 != 1591
+  ⚠️  Warning: Total mismatch for Rail Transportation Workers: 23 != 24
+  ⚠️  Warning: Total mismatch for Religious Workers: 385 != 389
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 1365 != 1395
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 1910 != 1936
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 1516 != 1533
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 3486 != 3540
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 327 != 330
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 466 != 473
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 473 != 477
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 696 != 706
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 3699 != 3732
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 1183 != 1193
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 701 != 709
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 1018 != 1032
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 357 != 359
+  ⚠️  Warning: Total mismatch for Top Executives: 14333 != 14408
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 5509 != 5642
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 421 != 424
+  ⚠️  Warning: Total mismatch for Water Transportation Workers: 55 != 57
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 7007 != 7084
+  ⚠️  Warning: Total mismatch for Agricultural Workers: 70 != 71
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 237 != 241
+  ⚠️  Warning: Total mismatch for Animal Care and Service Workers: 73 != 74
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 265 != 272
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 1882 != 1900
+  ⚠️  Warning: Total mismatch for Building Cleaning and Pest Control Workers: 211 != 212
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 7690 != 7757
+  ⚠️  Warning: Total mismatch for Computer Occupations: 10139 != 10233
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 723 != 731
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 200 != 205
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 2353 != 2383
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 630 != 637
+  ⚠️  Warning: Total mismatch for Engineers: 3554 != 3588
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 1197 != 1213
+  ⚠️  Warning: Total mismatch for Entertainment Attendants and Related Workers: 102 != 103
+  ⚠️  Warning: Total mismatch for Extraction Workers: 46 != 47
+  ⚠️  Warning: Total mismatch for Financial Clerks: 1530 != 1547
+  ⚠️  Warning: Total mismatch for Financial Specialists: 3407 != 3449
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 727 != 738
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 1592 != 1608
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 3530 != 3557
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 497 != 506
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 3408 != 3468
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 590 != 595
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 1242 != 1255
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 622 != 628
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 212 != 216
+  ⚠️  Warning: Total mismatch for Life Scientists: 389 != 392
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 776 != 790
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 666 != 673
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 625 != 632
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 284 != 286
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 568 != 573
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 2091 != 2121
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 293 != 295
+  ⚠️  Warning: Total mismatch for Military-only occupations: 269 != 273
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 656 != 665
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 156 != 158
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 8109 != 8184
+  ⚠️  Warning: Total mismatch for Other Construction and Related Workers: 85 != 87
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 842 != 858
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 122 != 126
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 605 != 616
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 743 != 749
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 10108 != 10196
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 632 != 642
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 650 != 657
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 728 != 740
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 585 != 594
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 2139 != 2156
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 1638 != 1652
+  ⚠️  Warning: Total mismatch for Other Transportation Workers: 38 != 39
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 322 != 325
+  ⚠️  Warning: Total mismatch for Physical Scientists: 323 != 327
+  ⚠️  Warning: Total mismatch for Plant and System Operators: 91 != 93
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 2380 != 2397
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 1735 != 1754
+  ⚠️  Warning: Total mismatch for Religious Workers: 434 != 440
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 1643 != 1674
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 2021 != 2046
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 1662 != 1686
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 3732 != 3800
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 341 != 346
+  ⚠️  Warning: Total mismatch for Supervisors of Building and Grounds Cleaning and Maintenance Workers: 81 != 83
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 488 != 493
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 530 != 537
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 737 != 743
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 3949 != 3986
+  ⚠️  Warning: Total mismatch for Supervisors of Personal Care and Service Workers: 57 != 58
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 1223 != 1230
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 738 != 744
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 1051 != 1060
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 375 != 379
+  ⚠️  Warning: Total mismatch for Textile, Apparel, and Furnishings Workers: 39 != 40
+  ⚠️  Warning: Total mismatch for Top Executives: 15095 != 15169
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 6164 != 6281
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 464 != 471
+  ⚠️  Warning: Total mismatch for Water Transportation Workers: 57 != 63
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 7194 != 7315
+  ⚠️  Warning: Total mismatch for Agricultural Workers: 89 != 90
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 240 != 247
+  ⚠️  Warning: Total mismatch for Animal Care and Service Workers: 81 != 84
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 264 != 267
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 1907 != 1940
+  ⚠️  Warning: Total mismatch for Assemblers and Fabricators: 129 != 134
+  ⚠️  Warning: Total mismatch for Baggage Porters, Bellhops, and Concierges: 49 != 51
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 8041 != 8155
+  ⚠️  Warning: Total mismatch for Computer Occupations: 10539 != 10706
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 732 != 736
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 243 != 249
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 2581 != 2631
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 643 != 658
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 221 != 224
+  ⚠️  Warning: Total mismatch for Engineers: 3617 != 3676
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 1317 != 1339
+  ⚠️  Warning: Total mismatch for Entertainment Attendants and Related Workers: 120 != 123
+  ⚠️  Warning: Total mismatch for Extraction Workers: 56 != 57
+  ⚠️  Warning: Total mismatch for Financial Clerks: 1557 != 1594
+  ⚠️  Warning: Total mismatch for Financial Specialists: 3531 != 3601
+  ⚠️  Warning: Total mismatch for Firefighting and Prevention Workers: 138 != 140
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 882 != 897
+  ⚠️  Warning: Total mismatch for Grounds Maintenance Workers: 113 != 117
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 1709 != 1731
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 3856 != 3891
+  ⚠️  Warning: Total mismatch for Helpers, Construction Trades: 13 != 14
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 575 != 586
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 3661 != 3739
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 620 != 629
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 1307 != 1319
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 647 != 667
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 228 != 233
+  ⚠️  Warning: Total mismatch for Life Scientists: 426 != 439
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 888 != 920
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 702 != 718
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 655 != 668
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 316 != 318
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 621 != 627
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 2237 != 2284
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 297 != 306
+  ⚠️  Warning: Total mismatch for Military-only occupations: 261 != 267
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 697 != 704
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 175 != 179
+  ⚠️  Warning: Total mismatch for Occupational Therapy and Physical Therapist Assistants and Aides: 68 != 69
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 8295 != 8384
+  ⚠️  Warning: Total mismatch for Other Construction and Related Workers: 96 != 97
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 998 != 1020
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 136 != 143
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 660 != 668
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 793 != 806
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 10680 != 10808
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 655 != 672
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 750 != 759
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 761 != 773
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 679 != 689
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 2279 != 2308
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 1809 != 1829
+  ⚠️  Warning: Total mismatch for Other Transportation Workers: 49 != 50
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 362 != 366
+  ⚠️  Warning: Total mismatch for Physical Scientists: 348 != 350
+  ⚠️  Warning: Total mismatch for Plant and System Operators: 91 != 92
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 2572 != 2599
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 1892 != 1923
+  ⚠️  Warning: Total mismatch for Printing Workers: 64 != 67
+  ⚠️  Warning: Total mismatch for Religious Workers: 453 != 458
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 1850 != 1904
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 2112 != 2148
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 1709 != 1738
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 3917 != 4003
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 359 != 362
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 500 != 509
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 571 != 581
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 791 != 799
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 4033 != 4082
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 1264 != 1278
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 759 != 771
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 1119 != 1143
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 395 != 400
+  ⚠️  Warning: Total mismatch for Textile, Apparel, and Furnishings Workers: 36 != 37
+  ⚠️  Warning: Total mismatch for Top Executives: 15935 != 16053
+  ⚠️  Warning: Total mismatch for Tour and Travel Guides: 55 != 57
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 6725 != 6934
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 484 != 493
+  ⚠️  Warning: Total mismatch for Water Transportation Workers: 61 != 63
+  ⚠️  Warning: Total mismatch for Woodworkers: 22 != 24
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 7751 != 7858
+  ⚠️  Warning: Total mismatch for Agricultural Workers: 103 != 104
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 245 != 251
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 248 != 256
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 2053 != 2083
+  ⚠️  Warning: Total mismatch for Assemblers and Fabricators: 143 != 144
+  ⚠️  Warning: Total mismatch for Building Cleaning and Pest Control Workers: 264 != 271
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 8638 != 8795
+  ⚠️  Warning: Total mismatch for Communications Equipment Operators: 67 != 69
+  ⚠️  Warning: Total mismatch for Computer Occupations: 11159 != 11341
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 765 != 783
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 280 != 292
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 2989 != 3034
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 670 != 694
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 227 != 235
+  ⚠️  Warning: Total mismatch for Engineers: 3770 != 3842
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 1443 != 1458
+  ⚠️  Warning: Total mismatch for Entertainment Attendants and Related Workers: 126 != 131
+  ⚠️  Warning: Total mismatch for Extraction Workers: 66 != 67
+  ⚠️  Warning: Total mismatch for Financial Clerks: 1650 != 1695
+  ⚠️  Warning: Total mismatch for Financial Specialists: 3738 != 3806
+  ⚠️  Warning: Total mismatch for Firefighting and Prevention Workers: 145 != 146
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 1093 != 1115
+  ⚠️  Warning: Total mismatch for Funeral Service Workers: 23 != 24
+  ⚠️  Warning: Total mismatch for Grounds Maintenance Workers: 124 != 129
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 1904 != 1935
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 4241 != 4283
+  ⚠️  Warning: Total mismatch for Helpers, Construction Trades: 12 != 13
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 706 != 721
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 3984 != 4085
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 662 != 668
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 1419 != 1434
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 699 != 714
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 242 != 246
+  ⚠️  Warning: Total mismatch for Life Scientists: 467 != 474
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 1008 != 1049
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 781 != 796
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 691 != 702
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 333 != 336
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 706 != 712
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 2415 != 2464
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 335 != 340
+  ⚠️  Warning: Total mismatch for Military-only occupations: 263 != 272
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 782 != 792
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 201 != 203
+  ⚠️  Warning: Total mismatch for Occupational Therapy and Physical Therapist Assistants and Aides: 75 != 78
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 8647 != 8766
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 1153 != 1177
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 173 != 179
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 777 != 790
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 862 != 875
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 11274 != 11422
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 666 != 703
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 866 != 882
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 843 != 867
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 742 != 757
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 2475 != 2509
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 1930 != 1967
+  ⚠️  Warning: Total mismatch for Other Transportation Workers: 61 != 66
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 419 != 423
+  ⚠️  Warning: Total mismatch for Physical Scientists: 370 != 373
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 2759 != 2797
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 1940 != 1970
+  ⚠️  Warning: Total mismatch for Printing Workers: 73 != 75
+  ⚠️  Warning: Total mismatch for Religious Workers: 487 != 488
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 2147 != 2209
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 2245 != 2280
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 1781 != 1823
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 4090 != 4182
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 380 != 385
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 517 != 526
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 652 != 671
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 840 != 844
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 4329 != 4394
+  ⚠️  Warning: Total mismatch for Supervisors of Personal Care and Service Workers: 78 != 79
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 1321 != 1343
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 778 != 789
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 1210 != 1226
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 408 != 414
+  ⚠️  Warning: Total mismatch for Top Executives: 16765 != 16878
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 7533 != 7774
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 510 != 517
+  ⚠️  Warning: Total mismatch for Water Transportation Workers: 62 != 63
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 8319 != 8415
+  ⚠️  Warning: Total mismatch for Agricultural Workers: 111 != 115
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 253 != 259
+  ⚠️  Warning: Total mismatch for Animal Care and Service Workers: 108 != 110
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 262 != 266
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 2179 != 2214
+  ⚠️  Warning: Total mismatch for Assemblers and Fabricators: 167 != 172
+  ⚠️  Warning: Total mismatch for Building Cleaning and Pest Control Workers: 320 != 324
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 9426 != 9582
+  ⚠️  Warning: Total mismatch for Computer Occupations: 11923 != 12074
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 804 != 821
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 351 != 359
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 3272 != 3332
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 732 != 749
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 225 != 234
+  ⚠️  Warning: Total mismatch for Engineers: 4032 != 4093
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 1524 != 1538
+  ⚠️  Warning: Total mismatch for Entertainment Attendants and Related Workers: 143 != 148
+  ⚠️  Warning: Total mismatch for Financial Clerks: 1765 != 1797
+  ⚠️  Warning: Total mismatch for Financial Specialists: 3974 != 4043
+  ⚠️  Warning: Total mismatch for Food Processing Workers: 60 != 61
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 1248 != 1269
+  ⚠️  Warning: Total mismatch for Forest, Conservation, and Logging Workers: 2 != 3
+  ⚠️  Warning: Total mismatch for Funeral Service Workers: 32 != 33
+  ⚠️  Warning: Total mismatch for Grounds Maintenance Workers: 145 != 147
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 2042 != 2085
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 4667 != 4705
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 809 != 827
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 4366 != 4494
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 669 != 682
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 1486 != 1502
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 758 != 774
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 256 != 259
+  ⚠️  Warning: Total mismatch for Life Scientists: 473 != 482
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 1091 != 1117
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 897 != 920
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 741 != 753
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 374 != 376
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 751 != 757
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 2638 != 2699
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 365 != 370
+  ⚠️  Warning: Total mismatch for Military-only occupations: 252 != 261
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 894 != 904
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 212 != 215
+  ⚠️  Warning: Total mismatch for Occupational Therapy and Physical Therapist Assistants and Aides: 89 != 90
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 9060 != 9151
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 1234 != 1260
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 224 != 234
+  ⚠️  Warning: Total mismatch for Other Healthcare Practitioners and Technical Occupations: 77 != 78
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 904 != 924
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 899 != 918
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 11913 != 12053
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 707 != 726
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 974 != 992
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 925 != 943
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 834 != 853
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 2712 != 2745
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 2013 != 2052
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 457 != 466
+  ⚠️  Warning: Total mismatch for Physical Scientists: 384 != 395
+  ⚠️  Warning: Total mismatch for Plant and System Operators: 112 != 114
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 2890 != 2921
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 2083 != 2114
+  ⚠️  Warning: Total mismatch for Printing Workers: 67 != 70
+  ⚠️  Warning: Total mismatch for Rail Transportation Workers: 29 != 30
+  ⚠️  Warning: Total mismatch for Religious Workers: 507 != 515
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 2520 != 2582
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 2392 != 2427
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 1853 != 1882
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 4308 != 4429
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 407 != 409
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 529 != 534
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 731 != 745
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 901 != 912
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 4550 != 4616
+  ⚠️  Warning: Total mismatch for Supervisors of Personal Care and Service Workers: 77 != 80
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 1449 != 1464
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 791 != 806
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 1245 != 1269
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 440 != 448
+  ⚠️  Warning: Total mismatch for Textile, Apparel, and Furnishings Workers: 45 != 46
+  ⚠️  Warning: Total mismatch for Top Executives: 17528 != 17655
+  ⚠️  Warning: Total mismatch for Tour and Travel Guides: 71 != 73
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 8311 != 8565
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 538 != 546
+  ⚠️  Warning: Total mismatch for Water Transportation Workers: 80 != 83
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 8848 != 8947
+  ⚠️  Warning: Total mismatch for Agricultural Workers: 118 != 119
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 262 != 267
+  ⚠️  Warning: Total mismatch for Animal Care and Service Workers: 134 != 136
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 263 != 271
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 2327 != 2359
+  ⚠️  Warning: Total mismatch for Assemblers and Fabricators: 164 != 172
+  ⚠️  Warning: Total mismatch for Building Cleaning and Pest Control Workers: 342 != 350
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 10183 != 10315
+  ⚠️  Warning: Total mismatch for Computer Occupations: 12526 != 12670
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 828 != 840
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 380 != 389
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 3605 != 3666
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 814 != 829
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 224 != 229
+  ⚠️  Warning: Total mismatch for Engineers: 4326 != 4375
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 1648 != 1675
+  ⚠️  Warning: Total mismatch for Entertainment Attendants and Related Workers: 146 != 151
+  ⚠️  Warning: Total mismatch for Extraction Workers: 87 != 90
+  ⚠️  Warning: Total mismatch for Financial Clerks: 1837 != 1878
+  ⚠️  Warning: Total mismatch for Financial Specialists: 4272 != 4331
+  ⚠️  Warning: Total mismatch for Firefighting and Prevention Workers: 157 != 159
+  ⚠️  Warning: Total mismatch for Food Processing Workers: 66 != 68
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 1390 != 1421
+  ⚠️  Warning: Total mismatch for Grounds Maintenance Workers: 153 != 157
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 2213 != 2243
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 5083 != 5123
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 901 != 920
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 4654 != 4763
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 700 != 708
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 1585 != 1596
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 807 != 816
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 250 != 254
+  ⚠️  Warning: Total mismatch for Life Scientists: 510 != 519
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 1136 != 1177
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 992 != 1013
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 791 != 803
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 398 != 405
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 817 != 825
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 2879 != 2920
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 407 != 411
+  ⚠️  Warning: Total mismatch for Military-only occupations: 257 != 265
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 990 != 1004
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 234 != 235
+  ⚠️  Warning: Total mismatch for Occupational Therapy and Physical Therapist Assistants and Aides: 103 != 107
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 9486 != 9566
+  ⚠️  Warning: Total mismatch for Other Construction and Related Workers: 133 != 134
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 1349 != 1381
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 258 != 267
+  ⚠️  Warning: Total mismatch for Other Healthcare Practitioners and Technical Occupations: 84 != 85
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 964 != 985
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 955 != 978
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 12664 != 12817
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 744 != 769
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 1079 != 1114
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 1032 != 1048
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 846 != 871
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 2869 != 2904
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 2099 != 2134
+  ⚠️  Warning: Total mismatch for Other Transportation Workers: 66 != 67
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 504 != 511
+  ⚠️  Warning: Total mismatch for Physical Scientists: 401 != 412
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 3045 != 3073
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 2234 != 2268
+  ⚠️  Warning: Total mismatch for Printing Workers: 70 != 76
+  ⚠️  Warning: Total mismatch for Religious Workers: 514 != 520
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 2811 != 2906
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 2539 != 2580
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 1944 != 1971
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 4526 != 4635
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 449 != 451
+  ⚠️  Warning: Total mismatch for Supervisors of Building and Grounds Cleaning and Maintenance Workers: 107 != 110
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 551 != 563
+  ⚠️  Warning: Total mismatch for Supervisors of Farming, Fishing, and Forestry Workers: 34 != 35
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 823 != 829
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 930 != 942
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 4731 != 4779
+  ⚠️  Warning: Total mismatch for Supervisors of Personal Care and Service Workers: 79 != 80
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 1533 != 1555
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 791 != 802
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 1343 != 1367
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 452 != 458
+  ⚠️  Warning: Total mismatch for Textile, Apparel, and Furnishings Workers: 46 != 48
+  ⚠️  Warning: Total mismatch for Top Executives: 18285 != 18410
+  ⚠️  Warning: Total mismatch for Tour and Travel Guides: 84 != 85
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 9033 != 9310
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 550 != 558
+  ⚠️  Warning: Total mismatch for Water Transportation Workers: 79 != 83
+  ⚠️  Warning: Total mismatch for Woodworkers: 28 != 29
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 9334 != 9445
+  ⚠️  Warning: Total mismatch for Agricultural Workers: 132 != 134
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 283 != 286
+  ⚠️  Warning: Total mismatch for Animal Care and Service Workers: 135 != 137
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 265 != 270
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 2469 != 2515
+  ⚠️  Warning: Total mismatch for Assemblers and Fabricators: 154 != 156
+  ⚠️  Warning: Total mismatch for Baggage Porters, Bellhops, and Concierges: 65 != 67
+  ⚠️  Warning: Total mismatch for Building Cleaning and Pest Control Workers: 380 != 385
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 10912 != 11053
+  ⚠️  Warning: Total mismatch for Computer Occupations: 13122 != 13290
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 869 != 884
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 405 != 411
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 3829 != 3886
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 840 != 849
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 230 != 235
+  ⚠️  Warning: Total mismatch for Engineers: 4571 != 4625
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 1745 != 1770
+  ⚠️  Warning: Total mismatch for Extraction Workers: 99 != 102
+  ⚠️  Warning: Total mismatch for Financial Clerks: 1878 != 1910
+  ⚠️  Warning: Total mismatch for Financial Specialists: 4505 != 4563
+  ⚠️  Warning: Total mismatch for Firefighting and Prevention Workers: 149 != 150
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 1502 != 1522
+  ⚠️  Warning: Total mismatch for Grounds Maintenance Workers: 165 != 169
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 2335 != 2376
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 5491 != 5535
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 938 != 958
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 4920 != 5026
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 702 != 713
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 1654 != 1668
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 815 != 834
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 253 != 258
+  ⚠️  Warning: Total mismatch for Life Scientists: 549 != 555
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 1194 != 1236
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 1026 != 1055
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 810 != 829
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 450 != 457
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 865 != 872
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 2998 != 3033
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 419 != 430
+  ⚠️  Warning: Total mismatch for Military-only occupations: 257 != 262
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 1078 != 1086
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 247 != 250
+  ⚠️  Warning: Total mismatch for Occupational Therapy and Physical Therapist Assistants and Aides: 118 != 120
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 9935 != 10032
+  ⚠️  Warning: Total mismatch for Other Construction and Related Workers: 135 != 140
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 1435 != 1467
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 282 != 293
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 1025 != 1055
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 993 != 1012
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 13098 != 13263
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 747 != 774
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 1150 != 1181
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 1099 != 1116
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 892 != 908
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 3052 != 3079
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 2154 != 2184
+  ⚠️  Warning: Total mismatch for Other Transportation Workers: 73 != 78
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 543 != 548
+  ⚠️  Warning: Total mismatch for Physical Scientists: 423 != 431
+  ⚠️  Warning: Total mismatch for Plant and System Operators: 105 != 107
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 3164 != 3196
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 2360 != 2389
+  ⚠️  Warning: Total mismatch for Printing Workers: 79 != 80
+  ⚠️  Warning: Total mismatch for Rail Transportation Workers: 35 != 36
+  ⚠️  Warning: Total mismatch for Religious Workers: 541 != 547
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 3052 != 3134
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 2682 != 2717
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 2017 != 2055
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 4717 != 4824
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 475 != 477
+  ⚠️  Warning: Total mismatch for Supervisors of Building and Grounds Cleaning and Maintenance Workers: 109 != 111
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 555 != 566
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 885 != 892
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 928 != 939
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 4859 != 4928
+  ⚠️  Warning: Total mismatch for Supervisors of Personal Care and Service Workers: 77 != 78
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 1616 != 1636
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 769 != 781
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 1390 != 1411
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 482 != 487
+  ⚠️  Warning: Total mismatch for Textile, Apparel, and Furnishings Workers: 48 != 50
+  ⚠️  Warning: Total mismatch for Top Executives: 18968 != 19102
+  ⚠️  Warning: Total mismatch for Tour and Travel Guides: 86 != 87
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 9699 != 9992
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 589 != 595
+  ⚠️  Warning: Total mismatch for Water Transportation Workers: 78 != 80
+  ⚠️  Warning: Total mismatch for Woodworkers: 24 != 25
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 9789 != 9894
+  ⚠️  Warning: Total mismatch for Agricultural Workers: 113 != 117
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 292 != 294
+  ⚠️  Warning: Total mismatch for Animal Care and Service Workers: 135 != 139
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 288 != 292
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 2578 != 2600
+  ⚠️  Warning: Total mismatch for Assemblers and Fabricators: 163 != 168
+  ⚠️  Warning: Total mismatch for Baggage Porters, Bellhops, and Concierges: 67 != 68
+  ⚠️  Warning: Total mismatch for Building Cleaning and Pest Control Workers: 351 != 360
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 11570 != 11715
+  ⚠️  Warning: Total mismatch for Computer Occupations: 13752 != 13938
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 912 != 926
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 403 != 412
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 4069 != 4133
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 859 != 871
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 242 != 246
+  ⚠️  Warning: Total mismatch for Engineers: 4807 != 4862
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 1827 != 1853
+  ⚠️  Warning: Total mismatch for Entertainment Attendants and Related Workers: 155 != 159
+  ⚠️  Warning: Total mismatch for Extraction Workers: 104 != 105
+  ⚠️  Warning: Total mismatch for Financial Clerks: 1887 != 1918
+  ⚠️  Warning: Total mismatch for Financial Specialists: 4734 != 4784
+  ⚠️  Warning: Total mismatch for Firefighting and Prevention Workers: 153 != 155
+  ⚠️  Warning: Total mismatch for Food Processing Workers: 67 != 68
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 1491 != 1524
+  ⚠️  Warning: Total mismatch for Grounds Maintenance Workers: 167 != 171
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 2445 != 2480
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 5873 != 5914
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 976 != 993
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 5046 != 5145
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 714 != 724
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 1741 != 1756
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 831 != 847
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 272 != 277
+  ⚠️  Warning: Total mismatch for Life Scientists: 583 != 591
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 1242 != 1285
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 1137 != 1166
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 813 != 828
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 519 != 523
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 889 != 899
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 3140 != 3195
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 445 != 447
+  ⚠️  Warning: Total mismatch for Military-only occupations: 248 != 260
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 1172 != 1182
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 282 != 284
+  ⚠️  Warning: Total mismatch for Occupational Therapy and Physical Therapist Assistants and Aides: 117 != 121
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 10379 != 10474
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 1529 != 1565
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 310 != 320
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 1094 != 1119
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 1031 != 1048
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 13583 != 13720
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 762 != 778
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 1218 != 1242
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 1122 != 1138
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 897 != 922
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 3296 != 3324
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 2212 != 2255
+  ⚠️  Warning: Total mismatch for Other Transportation Workers: 94 != 96
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 570 != 577
+  ⚠️  Warning: Total mismatch for Physical Scientists: 428 != 434
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 3321 != 3361
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 2468 != 2491
+  ⚠️  Warning: Total mismatch for Printing Workers: 76 != 77
+  ⚠️  Warning: Total mismatch for Rail Transportation Workers: 36 != 37
+  ⚠️  Warning: Total mismatch for Religious Workers: 557 != 561
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 3164 != 3239
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 2893 != 2922
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 2095 != 2130
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 4845 != 4937
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 482 != 487
+  ⚠️  Warning: Total mismatch for Supervisors of Building and Grounds Cleaning and Maintenance Workers: 112 != 115
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 591 != 597
+  ⚠️  Warning: Total mismatch for Supervisors of Farming, Fishing, and Forestry Workers: 30 != 32
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 905 != 924
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 920 != 927
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 5024 != 5097
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 1708 != 1729
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 742 != 749
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 1384 != 1404
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 515 != 520
+  ⚠️  Warning: Total mismatch for Textile, Apparel, and Furnishings Workers: 50 != 51
+  ⚠️  Warning: Total mismatch for Top Executives: 19761 != 19868
+  ⚠️  Warning: Total mismatch for Tour and Travel Guides: 76 != 79
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 9965 != 10281
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 598 != 605
+  ⚠️  Warning: Total mismatch for Water Transportation Workers: 70 != 73
+  ⚠️  Warning: Total mismatch for Woodworkers: 23 != 24
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 10282 != 10402
+  ⚠️  Warning: Total mismatch for Agricultural Workers: 115 != 119
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 302 != 306
+  ⚠️  Warning: Total mismatch for Animal Care and Service Workers: 142 != 144
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 282 != 285
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 2710 != 2746
+  ⚠️  Warning: Total mismatch for Assemblers and Fabricators: 182 != 184
+  ⚠️  Warning: Total mismatch for Baggage Porters, Bellhops, and Concierges: 69 != 70
+  ⚠️  Warning: Total mismatch for Building Cleaning and Pest Control Workers: 369 != 373
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 12277 != 12388
+  ⚠️  Warning: Total mismatch for Communications Equipment Operators: 92 != 94
+  ⚠️  Warning: Total mismatch for Computer Occupations: 14310 != 14490
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 937 != 948
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 369 != 377
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 4322 != 4375
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 884 != 900
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 247 != 254
+  ⚠️  Warning: Total mismatch for Engineers: 4977 != 5033
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 1886 != 1914
+  ⚠️  Warning: Total mismatch for Entertainment Attendants and Related Workers: 151 != 153
+  ⚠️  Warning: Total mismatch for Extraction Workers: 93 != 94
+  ⚠️  Warning: Total mismatch for Financial Clerks: 1923 != 1958
+  ⚠️  Warning: Total mismatch for Financial Specialists: 4997 != 5033
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 1566 != 1598
+  ⚠️  Warning: Total mismatch for Grounds Maintenance Workers: 171 != 172
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 2560 != 2593
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 6272 != 6311
+  ⚠️  Warning: Total mismatch for Helpers, Construction Trades: 12 != 13
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 987 != 1000
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 5185 != 5288
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 721 != 733
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 1821 != 1833
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 873 != 881
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 280 != 282
+  ⚠️  Warning: Total mismatch for Life Scientists: 640 != 646
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 1270 != 1313
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 1126 != 1149
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 840 != 849
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 581 != 590
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 888 != 902
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 3324 != 3363
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 450 != 456
+  ⚠️  Warning: Total mismatch for Military-only occupations: 248 != 252
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 1260 != 1271
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 293 != 295
+  ⚠️  Warning: Total mismatch for Occupational Therapy and Physical Therapist Assistants and Aides: 147 != 151
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 10717 != 10806
+  ⚠️  Warning: Total mismatch for Other Construction and Related Workers: 154 != 157
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 1569 != 1611
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 329 != 340
+  ⚠️  Warning: Total mismatch for Other Healthcare Practitioners and Technical Occupations: 130 != 133
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 1106 != 1130
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 1046 != 1061
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 13944 != 14063
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 779 != 799
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 1307 != 1327
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 1154 != 1176
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 892 != 916
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 3545 != 3573
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 2312 != 2341
+  ⚠️  Warning: Total mismatch for Other Transportation Workers: 91 != 93
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 598 != 603
+  ⚠️  Warning: Total mismatch for Physical Scientists: 437 != 443
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 3409 != 3438
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 2566 != 2582
+  ⚠️  Warning: Total mismatch for Printing Workers: 82 != 83
+  ⚠️  Warning: Total mismatch for Religious Workers: 579 != 582
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 3166 != 3240
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 3022 != 3060
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 2210 != 2234
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 4793 != 4869
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 507 != 513
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 605 != 612
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 916 != 925
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 918 != 925
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 5159 != 5230
+  ⚠️  Warning: Total mismatch for Supervisors of Personal Care and Service Workers: 82 != 83
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 1684 != 1704
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 709 != 725
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 1385 != 1408
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 501 != 507
+  ⚠️  Warning: Total mismatch for Top Executives: 20473 != 20592
+  ⚠️  Warning: Total mismatch for Tour and Travel Guides: 79 != 82
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 10299 != 10589
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 637 != 644
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 10628 != 10737
+  ⚠️  Warning: Total mismatch for Agricultural Workers: 124 != 128
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 312 != 318
+  ⚠️  Warning: Total mismatch for Animal Care and Service Workers: 143 != 144
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 291 != 295
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 2798 != 2841
+  ⚠️  Warning: Total mismatch for Assemblers and Fabricators: 176 != 177
+  ⚠️  Warning: Total mismatch for Baggage Porters, Bellhops, and Concierges: 69 != 72
+  ⚠️  Warning: Total mismatch for Building Cleaning and Pest Control Workers: 372 != 375
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 12872 != 13010
+  ⚠️  Warning: Total mismatch for Communications Equipment Operators: 85 != 86
+  ⚠️  Warning: Total mismatch for Computer Occupations: 14817 != 14972
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 937 != 948
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 417 != 427
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 4501 != 4546
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 947 != 965
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 241 != 244
+  ⚠️  Warning: Total mismatch for Engineers: 5107 != 5160
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 1949 != 1973
+  ⚠️  Warning: Total mismatch for Entertainment Attendants and Related Workers: 156 != 162
+  ⚠️  Warning: Total mismatch for Extraction Workers: 94 != 96
+  ⚠️  Warning: Total mismatch for Financial Clerks: 1946 != 1964
+  ⚠️  Warning: Total mismatch for Financial Specialists: 5177 != 5231
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 1582 != 1607
+  ⚠️  Warning: Total mismatch for Grounds Maintenance Workers: 179 != 180
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 2663 != 2695
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 6652 != 6683
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 1015 != 1033
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 5341 != 5408
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 717 != 728
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 1838 != 1854
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 897 != 909
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 267 != 271
+  ⚠️  Warning: Total mismatch for Life Scientists: 666 != 675
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 1268 != 1305
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 1153 != 1183
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 849 != 862
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 616 != 621
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 914 != 919
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 3424 != 3448
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 429 != 435
+  ⚠️  Warning: Total mismatch for Military-only occupations: 245 != 253
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 1298 != 1312
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 321 != 326
+  ⚠️  Warning: Total mismatch for Occupational Therapy and Physical Therapist Assistants and Aides: 157 != 159
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 11096 != 11184
+  ⚠️  Warning: Total mismatch for Other Construction and Related Workers: 167 != 168
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 1634 != 1666
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 353 != 361
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 1169 != 1191
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 1090 != 1105
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 14252 != 14396
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 793 != 815
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 1319 != 1341
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 1159 != 1179
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 891 != 903
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 3781 != 3817
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 2348 != 2373
+  ⚠️  Warning: Total mismatch for Other Transportation Workers: 96 != 98
+  ⚠️  Warning: Total mismatch for Physical Scientists: 472 != 476
+  ⚠️  Warning: Total mismatch for Plant and System Operators: 129 != 131
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 3505 != 3527
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 2591 != 2615
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 3193 != 3268
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 3110 != 3141
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 2324 != 2345
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 4881 != 4973
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 502 != 506
+  ⚠️  Warning: Total mismatch for Supervisors of Building and Grounds Cleaning and Maintenance Workers: 119 != 121
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 619 != 629
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 897 != 906
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 908 != 921
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 5209 != 5266
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 1683 != 1696
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 711 != 717
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 1348 != 1369
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 502 != 507
+  ⚠️  Warning: Total mismatch for Top Executives: 21152 != 21242
+  ⚠️  Warning: Total mismatch for Tour and Travel Guides: 104 != 105
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 10428 != 10741
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 627 != 631
+  ⚠️  Warning: Total mismatch for Water Transportation Workers: 77 != 79
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 10819 != 10909
+  ⚠️  Warning: Total mismatch for Agricultural Workers: 127 != 128
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 325 != 328
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 307 != 309
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 2905 != 2926
+  ⚠️  Warning: Total mismatch for Baggage Porters, Bellhops, and Concierges: 79 != 80
+  ⚠️  Warning: Total mismatch for Building Cleaning and Pest Control Workers: 388 != 393
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 13488 != 13611
+  ⚠️  Warning: Total mismatch for Communications Equipment Operators: 87 != 89
+  ⚠️  Warning: Total mismatch for Computer Occupations: 15123 != 15307
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 959 != 972
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 415 != 424
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 4636 != 4699
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 961 != 971
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 241 != 247
+  ⚠️  Warning: Total mismatch for Engineers: 5227 != 5270
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 1961 != 1982
+  ⚠️  Warning: Total mismatch for Entertainment Attendants and Related Workers: 160 != 163
+  ⚠️  Warning: Total mismatch for Financial Clerks: 2017 != 2034
+  ⚠️  Warning: Total mismatch for Financial Specialists: 5358 != 5416
+  ⚠️  Warning: Total mismatch for Firefighting and Prevention Workers: 166 != 167
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 1659 != 1688
+  ⚠️  Warning: Total mismatch for Grounds Maintenance Workers: 185 != 189
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 2715 != 2754
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 6831 != 6877
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 1050 != 1065
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 5430 != 5508
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 720 != 728
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 1891 != 1906
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 887 != 900
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 286 != 289
+  ⚠️  Warning: Total mismatch for Life Scientists: 696 != 702
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 1302 != 1338
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 1202 != 1219
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 863 != 873
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 654 != 660
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 959 != 969
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 3411 != 3456
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 459 != 463
+  ⚠️  Warning: Total mismatch for Military-only occupations: 252 != 258
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 1366 != 1377
+  ⚠️  Warning: Total mismatch for Occupational Therapy and Physical Therapist Assistants and Aides: 171 != 173
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 11398 != 11495
+  ⚠️  Warning: Total mismatch for Other Construction and Related Workers: 187 != 188
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 1689 != 1730
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 345 != 352
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 1198 != 1214
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 1108 != 1113
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 14553 != 14690
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 803 != 810
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 1284 != 1304
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 1208 != 1226
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 898 != 912
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 3934 != 3954
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 2353 != 2390
+  ⚠️  Warning: Total mismatch for Other Transportation Workers: 93 != 94
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 638 != 641
+  ⚠️  Warning: Total mismatch for Physical Scientists: 475 != 482
+  ⚠️  Warning: Total mismatch for Plant and System Operators: 129 != 130
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 3602 != 3628
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 2679 != 2698
+  ⚠️  Warning: Total mismatch for Printing Workers: 78 != 80
+  ⚠️  Warning: Total mismatch for Religious Workers: 589 != 591
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 3153 != 3228
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 3174 != 3202
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 2314 != 2339
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 4911 != 4983
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 527 != 528
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 615 != 627
+  ⚠️  Warning: Total mismatch for Supervisors of Farming, Fishing, and Forestry Workers: 37 != 38
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 888 != 901
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 917 != 923
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 5288 != 5341
+  ⚠️  Warning: Total mismatch for Supervisors of Personal Care and Service Workers: 78 != 79
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 1697 != 1722
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 718 != 729
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 1285 != 1301
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 514 != 518
+  ⚠️  Warning: Total mismatch for Textile, Apparel, and Furnishings Workers: 63 != 65
+  ⚠️  Warning: Total mismatch for Top Executives: 21881 != 22004
+  ⚠️  Warning: Total mismatch for Tour and Travel Guides: 88 != 89
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 10703 != 10977
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 656 != 662
+  ⚠️  Warning: Total mismatch for Water Transportation Workers: 86 != 87
+  ⚠️  Warning: Total mismatch for Woodworkers: 32 != 33
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 11113 != 11205
+  ⚠️  Warning: Total mismatch for Agricultural Workers: 116 != 119
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 342 != 347
+  ⚠️  Warning: Total mismatch for Animal Care and Service Workers: 152 != 154
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 307 != 308
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 2964 != 2984
+  ⚠️  Warning: Total mismatch for Assemblers and Fabricators: 197 != 199
+  ⚠️  Warning: Total mismatch for Building Cleaning and Pest Control Workers: 402 != 406
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 14064 != 14178
+  ⚠️  Warning: Total mismatch for Communications Equipment Operators: 96 != 97
+  ⚠️  Warning: Total mismatch for Computer Occupations: 15523 != 15668
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 999 != 1007
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 407 != 416
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 4824 != 4864
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 961 != 970
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 239 != 241
+  ⚠️  Warning: Total mismatch for Engineers: 5379 != 5428
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 2020 != 2040
+  ⚠️  Warning: Total mismatch for Entertainment Attendants and Related Workers: 170 != 171
+  ⚠️  Warning: Total mismatch for Financial Clerks: 2052 != 2066
+  ⚠️  Warning: Total mismatch for Financial Specialists: 5425 != 5462
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 1681 != 1707
+  ⚠️  Warning: Total mismatch for Grounds Maintenance Workers: 181 != 182
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 2781 != 2815
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 7133 != 7164
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 1103 != 1117
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 5537 != 5598
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 730 != 733
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 1926 != 1940
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 927 != 933
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 281 != 282
+  ⚠️  Warning: Total mismatch for Life Scientists: 718 != 719
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 1321 != 1346
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 1240 != 1258
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 888 != 896
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 694 != 700
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 999 != 1004
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 3485 != 3510
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 488 != 491
+  ⚠️  Warning: Total mismatch for Military-only occupations: 231 != 235
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 1399 != 1410
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 340 != 345
+  ⚠️  Warning: Total mismatch for Occupational Therapy and Physical Therapist Assistants and Aides: 179 != 180
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 11703 != 11783
+  ⚠️  Warning: Total mismatch for Other Construction and Related Workers: 193 != 194
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 1776 != 1800
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 387 != 393
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 1224 != 1243
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 1129 != 1146
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 14835 != 14954
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 775 != 792
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 1302 != 1321
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 1243 != 1254
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 905 != 917
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 4134 != 4151
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 2341 != 2357
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 641 != 644
+  ⚠️  Warning: Total mismatch for Physical Scientists: 471 != 474
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 3680 != 3703
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 2715 != 2741
+  ⚠️  Warning: Total mismatch for Rail Transportation Workers: 40 != 42
+  ⚠️  Warning: Total mismatch for Religious Workers: 594 != 595
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 3179 != 3243
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 3235 != 3257
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 2363 != 2386
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 4960 != 5022
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 578 != 581
+  ⚠️  Warning: Total mismatch for Supervisors of Building and Grounds Cleaning and Maintenance Workers: 122 != 124
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 612 != 619
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 892 != 896
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 937 != 943
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 5402 != 5439
+  ⚠️  Warning: Total mismatch for Supervisors of Personal Care and Service Workers: 83 != 85
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 1716 != 1728
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 720 != 724
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 1262 != 1276
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 523 != 526
+  ⚠️  Warning: Total mismatch for Top Executives: 22583 != 22666
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 11070 != 11310
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 675 != 681
+  ⚠️  Warning: Total mismatch for Water Transportation Workers: 98 != 99
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 11372 != 11446
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 355 != 358
+  ⚠️  Warning: Total mismatch for Animal Care and Service Workers: 154 != 155
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 315 != 317
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 3000 != 3013
+  ⚠️  Warning: Total mismatch for Assemblers and Fabricators: 195 != 196
+  ⚠️  Warning: Total mismatch for Baggage Porters, Bellhops, and Concierges: 74 != 76
+  ⚠️  Warning: Total mismatch for Building Cleaning and Pest Control Workers: 417 != 419
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 14525 != 14600
+  ⚠️  Warning: Total mismatch for Computer Occupations: 16037 != 16129
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 1018 != 1020
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 421 != 426
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 4868 != 4898
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 971 != 980
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 248 != 250
+  ⚠️  Warning: Total mismatch for Engineers: 5569 != 5603
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 2035 != 2051
+  ⚠️  Warning: Total mismatch for Entertainment Attendants and Related Workers: 173 != 174
+  ⚠️  Warning: Total mismatch for Extraction Workers: 100 != 101
+  ⚠️  Warning: Total mismatch for Financial Clerks: 2031 != 2044
+  ⚠️  Warning: Total mismatch for Financial Specialists: 5555 != 5592
+  ⚠️  Warning: Total mismatch for Firefighting and Prevention Workers: 163 != 164
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 1628 != 1639
+  ⚠️  Warning: Total mismatch for Grounds Maintenance Workers: 172 != 176
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 2853 != 2875
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 7401 != 7425
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 1097 != 1106
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 5644 != 5684
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 741 != 750
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 1987 != 1999
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 924 != 931
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 298 != 300
+  ⚠️  Warning: Total mismatch for Life Scientists: 719 != 726
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 1304 != 1322
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 1262 != 1274
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 893 != 897
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 738 != 746
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 993 != 999
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 3552 != 3576
+  ⚠️  Warning: Total mismatch for Metal Workers and Plastic Workers: 502 != 503
+  ⚠️  Warning: Total mismatch for Military-only occupations: 239 != 242
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 1452 != 1458
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 338 != 342
+  ⚠️  Warning: Total mismatch for Occupational Therapy and Physical Therapist Assistants and Aides: 193 != 197
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 11969 != 12034
+  ⚠️  Warning: Total mismatch for Other Construction and Related Workers: 193 != 195
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 1791 != 1803
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 389 != 392
+  ⚠️  Warning: Total mismatch for Other Healthcare Practitioners and Technical Occupations: 174 != 175
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 1252 != 1271
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 1143 != 1150
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 15183 != 15257
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 798 != 806
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 1272 != 1291
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 1209 != 1216
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 915 != 922
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 4296 != 4306
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 2347 != 2358
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 640 != 645
+  ⚠️  Warning: Total mismatch for Physical Scientists: 482 != 488
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 3716 != 3738
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 2743 != 2749
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 3156 != 3195
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 3384 != 3399
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 2350 != 2358
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 4998 != 5036
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 592 != 594
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 608 != 612
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 878 != 880
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 907 != 914
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 5396 != 5427
+  ⚠️  Warning: Total mismatch for Supervisors of Personal Care and Service Workers: 84 != 86
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 1745 != 1754
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 698 != 700
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 1215 != 1224
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 524 != 527
+  ⚠️  Warning: Total mismatch for Top Executives: 23120 != 23189
+  ⚠️  Warning: Total mismatch for Tour and Travel Guides: 87 != 88
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 10993 != 11155
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 695 != 699
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 11426 != 11483
+  ⚠️  Warning: Total mismatch for Agricultural Workers: 101 != 102
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 355 != 356
+  ⚠️  Warning: Total mismatch for Architects, Surveyors, and Cartographers: 315 != 317
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 2994 != 3007
+  ⚠️  Warning: Total mismatch for Baggage Porters, Bellhops, and Concierges: 74 != 75
+  ⚠️  Warning: Total mismatch for Building Cleaning and Pest Control Workers: 407 != 410
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 14706 != 14769
+  ⚠️  Warning: Total mismatch for Computer Occupations: 16235 != 16302
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 1030 != 1032
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 401 != 403
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 4935 != 4955
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 950 != 955
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 245 != 247
+  ⚠️  Warning: Total mismatch for Engineers: 5623 != 5660
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 2025 != 2033
+  ⚠️  Warning: Total mismatch for Extraction Workers: 92 != 95
+  ⚠️  Warning: Total mismatch for Financial Clerks: 2035 != 2047
+  ⚠️  Warning: Total mismatch for Financial Specialists: 5648 != 5673
+  ⚠️  Warning: Total mismatch for Firefighting and Prevention Workers: 168 != 169
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 1497 != 1514
+  ⚠️  Warning: Total mismatch for Funeral Service Workers: 39 != 40
+  ⚠️  Warning: Total mismatch for Grounds Maintenance Workers: 178 != 179
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 2955 != 2960
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 7568 != 7587
+  ⚠️  Warning: Total mismatch for Home Health and Personal Care Aides; and Nursing Assistants, Orderlies, and Psychiatric Aides: 1108 != 1113
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 5664 != 5693
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 741 != 746
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 2017 != 2028
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 916 != 921
+  ⚠️  Warning: Total mismatch for Librarians, Curators, and Archivists: 307 != 308
+  ⚠️  Warning: Total mismatch for Life Scientists: 726 != 729
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 1271 != 1292
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 1300 != 1312
+  ⚠️  Warning: Total mismatch for Material Recording, Scheduling, Dispatching, and Distributing Workers: 916 != 920
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 756 != 762
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 980 != 982
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 3572 != 3596
+  ⚠️  Warning: Total mismatch for Military-only occupations: 227 != 228
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 1496 != 1499
+  ⚠️  Warning: Total mismatch for Occupational Health and Safety Specialists and Technicians: 348 != 350
+  ⚠️  Warning: Total mismatch for Occupational Therapy and Physical Therapist Assistants and Aides: 184 != 185
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 12075 != 12128
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 1736 != 1746
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 372 != 376
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 1260 != 1267
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 1154 != 1156
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 15256 != 15315
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 773 != 780
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 1164 != 1173
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 1229 != 1237
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 915 != 918
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 4480 != 4492
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 2323 != 2328
+  ⚠️  Warning: Total mismatch for Other Transportation Workers: 100 != 101
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 638 != 639
+  ⚠️  Warning: Total mismatch for Physical Scientists: 485 != 490
+  ⚠️  Warning: Total mismatch for Plant and System Operators: 130 != 132
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 3754 != 3763
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 2722 != 2726
+  ⚠️  Warning: Total mismatch for Printing Workers: 82 != 83
+  ⚠️  Warning: Total mismatch for Religious Workers: 593 != 596
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 3101 != 3131
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 3496 != 3516
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 2417 != 2429
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 4881 != 4912
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 615 != 616
+  ⚠️  Warning: Total mismatch for Supervisors of Construction and Extraction Workers: 594 != 595
+  ⚠️  Warning: Total mismatch for Supervisors of Food Preparation and Serving Workers: 829 != 835
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 890 != 896
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 5398 != 5414
+  ⚠️  Warning: Total mismatch for Supervisors of Personal Care and Service Workers: 79 != 80
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 1740 != 1746
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 687 != 696
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 1148 != 1159
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 523 != 526
+  ⚠️  Warning: Total mismatch for Top Executives: 23587 != 23635
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 10565 != 10718
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 687 != 692
+  ⚠️  Warning: Total mismatch for Advertising, Marketing, Promotions, Public Relations, and Sales Managers: 11526 != 11557
+  ⚠️  Warning: Total mismatch for Air Transportation Workers: 373 != 374
+  ⚠️  Warning: Total mismatch for Art and Design Workers: 2990 != 2993
+  ⚠️  Warning: Total mismatch for Building Cleaning and Pest Control Workers: 402 != 403
+  ⚠️  Warning: Total mismatch for Business Operations Specialists: 14898 != 14937
+  ⚠️  Warning: Total mismatch for Computer Occupations: 16329 != 16363
+  ⚠️  Warning: Total mismatch for Construction Trades Workers: 991 != 993
+  ⚠️  Warning: Total mismatch for Cooks and Food Preparation Workers: 391 != 392
+  ⚠️  Warning: Total mismatch for Counselors, Social Workers, and Other Community and Social Service Specialists: 4918 != 4931
+  ⚠️  Warning: Total mismatch for Drafters, Engineering Technicians, and Mapping Technicians: 960 != 962
+  ⚠️  Warning: Total mismatch for Electrical and Electronic Equipment Mechanics, Installers, and Repairers: 237 != 238
+  ⚠️  Warning: Total mismatch for Engineers: 5629 != 5643
+  ⚠️  Warning: Total mismatch for Entertainers and Performers, Sports and Related Workers: 2045 != 2046
+  ⚠️  Warning: Total mismatch for Entertainment Attendants and Related Workers: 148 != 150
+  ⚠️  Warning: Total mismatch for Financial Clerks: 2023 != 2028
+  ⚠️  Warning: Total mismatch for Financial Specialists: 5716 != 5724
+  ⚠️  Warning: Total mismatch for Food and Beverage Serving Workers: 1389 != 1395
+  ⚠️  Warning: Total mismatch for Health Technologists and Technicians: 2940 != 2944
+  ⚠️  Warning: Total mismatch for Healthcare Diagnosing or Treating Practitioners: 7653 != 7660
+  ⚠️  Warning: Total mismatch for Information and Record Clerks: 5518 != 5537
+  ⚠️  Warning: Total mismatch for Law Enforcement Workers: 741 != 744
+  ⚠️  Warning: Total mismatch for Lawyers, Judges, and Related Workers: 2015 != 2017
+  ⚠️  Warning: Total mismatch for Legal Support Workers: 925 != 926
+  ⚠️  Warning: Total mismatch for Life Scientists: 737 != 738
+  ⚠️  Warning: Total mismatch for Life, Physical, and Social Science Technicians: 1242 != 1246
+  ⚠️  Warning: Total mismatch for Material Moving Workers: 1230 != 1235
+  ⚠️  Warning: Total mismatch for Mathematical Science Occupations: 801 != 802
+  ⚠️  Warning: Total mismatch for Media and Communication Equipment Workers: 976 != 977
+  ⚠️  Warning: Total mismatch for Media and Communication Workers: 3533 != 3546
+  ⚠️  Warning: Total mismatch for Motor Vehicle Operators: 1473 != 1475
+  ⚠️  Warning: Total mismatch for Operations Specialties Managers: 12226 != 12239
+  ⚠️  Warning: Total mismatch for Other Educational Instruction and Library Occupations: 1668 != 1670
+  ⚠️  Warning: Total mismatch for Other Food Preparation and Serving Related Workers: 362 != 363
+  ⚠️  Warning: Total mismatch for Other Healthcare Support Occupations: 1248 != 1250
+  ⚠️  Warning: Total mismatch for Other Installation, Maintenance, and Repair Occupations: 1145 != 1146
+  ⚠️  Warning: Total mismatch for Other Management Occupations: 15348 != 15369
+  ⚠️  Warning: Total mismatch for Other Office and Administrative Support Workers: 765 != 767
+  ⚠️  Warning: Total mismatch for Other Personal Care and Service Workers: 1146 != 1150
+  ⚠️  Warning: Total mismatch for Other Production Occupations: 1223 != 1229
+  ⚠️  Warning: Total mismatch for Other Protective Service Workers: 921 != 926
+  ⚠️  Warning: Total mismatch for Other Sales and Related Workers: 4493 != 4501
+  ⚠️  Warning: Total mismatch for Other Teachers and Instructors: 2268 != 2271
+  ⚠️  Warning: Total mismatch for Personal Appearance Workers: 640 != 642
+  ⚠️  Warning: Total mismatch for Postsecondary Teachers: 3727 != 3731
+  ⚠️  Warning: Total mismatch for Preschool, Elementary, Middle, Secondary, and Special Education Teachers: 2679 != 2683
+  ⚠️  Warning: Total mismatch for Retail Sales Workers: 2977 != 2985
+  ⚠️  Warning: Total mismatch for Sales Representatives, Services: 3546 != 3557
+  ⚠️  Warning: Total mismatch for Sales Representatives, Wholesale and Manufacturing: 2428 != 2433
+  ⚠️  Warning: Total mismatch for Secretaries and Administrative Assistants: 4786 != 4798
+  ⚠️  Warning: Total mismatch for Social Scientists and Related Workers: 626 != 627
+  ⚠️  Warning: Total mismatch for Supervisors of Installation, Maintenance, and Repair Workers: 884 != 886
+  ⚠️  Warning: Total mismatch for Supervisors of Office and Administrative Support Workers: 5332 != 5342
+  ⚠️  Warning: Total mismatch for Supervisors of Production Workers: 1670 != 1671
+  ⚠️  Warning: Total mismatch for Supervisors of Protective Service Workers: 680 != 681
+  ⚠️  Warning: Total mismatch for Supervisors of Sales Workers: 1122 != 1124
+  ⚠️  Warning: Total mismatch for Supervisors of Transportation and Material Moving Workers: 495 != 497
+  ⚠️  Warning: Total mismatch for Top Executives: 23779 != 23808
+  ⚠️  Warning: Total mismatch for Unclassified Occupation: 10255 != 10297
+  ⚠️  Warning: Total mismatch for Vehicle and Mobile Equipment Mechanics, Installers, and Repairers: 680 != 682
+  ✓ Analyzed 2,209 occupation-period combinations
+
+OCCUPATION INFLOW ANALYSIS (OPTIMIZED)
+================================================================================
+  ✓ Analyzed 2,209 occupation-period combinations
+
+FINDING CRITICAL OCCUPATION TRANSITIONS (OPTIMIZED)
+================================================================================
+  Found 1,291 significant transitions
+
+  Top 15 transitions by volume:
+    2017→2018: Other Management Occupations → Top Executives
+      336 people (2.3% of source occupation)
+
+    2016→2017: Other Management Occupations → Top Executives
+      320 people (2.2% of source occupation)
+
+    2018→2019: Other Management Occupations → Top Executives
+      295 people (2.0% of source occupation)
+
+    2018→2019: Advertising, Marketing, Promotions, Publ → Top Executives
+      284 people (2.5% of source occupation)
+
+    2017→2018: Advertising, Marketing, Promotions, Publ → Top Executives
+      282 people (2.6% of source occupation)
+
+    2016→2017: Advertising, Marketing, Promotions, Publ → Top Executives
+      281 people (2.6% of source occupation)
+
+    2014→2015: Other Management Occupations → Top Executives
+      272 people (2.0% of source occupation)
+
+    2017→2018: Computer Occupations → Business Operations Specialists
+      266 people (1.7% of source occupation)
+
+    2015→2016: Other Management Occupations → Top Executives
+      264 people (1.9% of source occupation)
+
+    2017→2018: Business Operations Specialists → Computer Occupations
+      260 people (1.9% of source occupation)
+
+    2018→2019: Unclassified Occupation → Business Operations Specialists
+      258 people (2.3% of source occupation)
+
+    2019→2020: Other Management Occupations → Top Executives
+      258 people (1.7% of source occupation)
+
+    2013→2014: Other Management Occupations → Top Executives
+      257 people (1.9% of source occupation)
+
+    2019→2020: Advertising, Marketing, Promotions, Publ → Top Executives
+      250 people (2.2% of source occupation)
+
+    2015→2016: Advertising, Marketing, Promotions, Publ → Top Executives
+      249 people (2.4% of source occupation)
+
+
+================================================================================
+GENERATING VISUALIZATIONS
+================================================================================
+
+Generating workforce flow dashboard...
+✓ Saved: results/comprehensive_workforce_flow.png
+Generating occupation evolution plot...
+✓ Saved: results/top_occupations_evolution.png
+
+Generating occupation turnover heatmap...
+✓ Saved: results/occupation_turnover_heatmap.png
+
+Generating occupation exit analysis for 2021...
+✓ Saved: results/occupation_exit_analysis_2021.png
+
+Generating transition flow summary for 2021...
+✓ Saved: results/occupation_transitions_2021.png
+
+================================================================================
+EXPORTING RESULTS
+================================================================================
+
+✓ CSV files exported
+  - user_detailed_paths.csv: 3,809,353 user records with career paths
+  - occupation_outflows.csv: 2,209 occupation outflow records
+  - occupation_inflows.csv: 2,209 occupation inflow records
+  - occupation_transitions.csv: 1,291 occupation-to-occupation transitions
+✓ Summary report generated
+✓ Path analysis guide generated
+
+================================================================================
+📊 PIPELINE PERFORMANCE REPORT
+================================================================================
+
+⏱️  TIMING BREAKDOWN:
+--------------------------------------------------------------------------------
+Stage                                    Time (s)        % of Total     
+--------------------------------------------------------------------------------
+Setup                                          0.00            0.0%
+Data Loading                                  11.60            2.4%
+Window Processing                             44.34            9.0%
+Transition Analysis                           44.18            9.0%
+Workforce Flow Analysis (Optimized)          312.44           63.8%
+Occupation Distributions                       0.27            0.1%
+Occupation Flow Analysis (Optimized)          15.59            3.2%
+Visualizations                                 9.91            2.0%
+Export Results                                51.71           10.6%
+--------------------------------------------------------------------------------
+TOTAL                                        490.05          100.0%
+
+💾 MEMORY USAGE:
+--------------------------------------------------------------------------------
+Stage                                    Delta (MB)     
+--------------------------------------------------------------------------------
+Setup                                           0.0
+Data Loading                                  744.1
+Window Processing                             715.1
+Transition Analysis                           596.3
+Workforce Flow Analysis (Optimized)           652.7
+Occupation Distributions                        0.0
+Occupation Flow Analysis (Optimized)           -2.9
+Visualizations                                 -4.1
+Export Results                                  0.0
+--------------------------------------------------------------------------------
+TOTAL                                        2701.2
+================================================================================
+
+✓ Benchmark report saved to: results/benchmark_report.json
+
+================================================================================
+ANALYSIS COMPLETE
+================================================================================
+
+Files created in 'results/' directory:
+
+📊 SUMMARY DATA:
+  - transition_rates.csv
+  - yearly_workforce_flow.csv
+  - all_transitions.csv
+  - occupation_distributions.csv
+  - summary_report.txt
+
+🔍 DETAILED TRACKING:
+  - user_detailed_paths.csv ⭐ Detailed career paths
+  - path_analysis_guide.txt ⭐ Analysis examples
+
+🎯 OCCUPATION FLOW ANALYSIS:
+  - occupation_outflows.csv ⭐ Where people go when leaving each occupation
+  - occupation_inflows.csv ⭐ Where people come from when entering each occupation
+  - occupation_transitions.csv ⭐ Occupation-to-occupation transition volumes
+
+📈 VISUALIZATIONS:
+  - comprehensive_workforce_flow.png
+  - top_occupations_evolution.png
+  - occupation_turnover_heatmap.png ⭐
+  - occupation_exit_analysis_2021.png ⭐
+  - occupation_transitions_2021.png ⭐
+
+⚡ PERFORMANCE:
+  - benchmark_report.json ⭐ Performance metrics
+
+Note: COVID (2020) marked for reference, all years analyzed for sudden changes
