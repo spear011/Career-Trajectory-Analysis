@@ -1,7 +1,6 @@
 """
-Labor Market Trend Analysis - Detecting Sudden Changes
-Analyzes workforce dynamics from 2010-2023 to identify sudden market shifts
-Now includes detailed user-level tracking and performance optimizations
+Labor Market Trend Analysis with Education Data
+Extends the original pipeline to include education analysis
 """
 import os
 import pandas as pd
@@ -9,6 +8,14 @@ import pandas as pd
 from src.config import get_windows, RESULTS_DIR, YEARS, OCCUPATION_COLUMN
 from src.utils import ensure_dir
 from src.data_loader import load_job_data, get_window_users, get_occupation_distributions
+from src.education_loader import (
+    load_education_data,
+    merge_job_education,
+    analyze_education_by_occupation,
+    analyze_major_by_occupation,
+    get_education_level_distribution,
+    get_major_distribution
+)
 from src.transitions import build_transitions, calculate_transition_rates
 from src.workforce_flow import analyze_workforce_flow
 from src.visualization import create_workforce_flow_dashboard, create_occupation_evolution_plot
@@ -23,290 +30,157 @@ from src.occupation_flow_analysis import (
 from src.benchmark_utils import PipelineBenchmark
 
 
-def export_results(transition_rates, yearly_flow_df, all_transitions_df, 
-                  occ_dist_df, user_details_df, outflow_df, inflow_df, 
-                  transitions_df, results_dir):
-    """Export all results to CSV including detailed user paths and occupation flows"""
+def export_education_results(ed_level_dist, major_dist, edu_by_occ, major_by_occ, results_dir):
+    """Export education analysis results"""
     print("\n" + "="*80)
-    print("EXPORTING RESULTS")
+    print("EXPORTING EDUCATION ANALYSIS")
     print("="*80)
     
-    transition_rates.to_csv(os.path.join(results_dir, 'transition_rates.csv'), index=False)
-    yearly_flow_df.to_csv(os.path.join(results_dir, 'yearly_workforce_flow.csv'), index=False)
-    all_transitions_df.to_csv(os.path.join(results_dir, 'all_transitions.csv'), index=False)
-    occ_dist_df.to_csv(os.path.join(results_dir, 'occupation_distributions.csv'), index=False)
+    ed_level_dist.to_csv(os.path.join(results_dir, 'education_level_distribution.csv'), index=False)
+    major_dist.to_csv(os.path.join(results_dir, 'major_distribution.csv'), index=False)
+    edu_by_occ.to_csv(os.path.join(results_dir, 'education_by_occupation.csv'), index=False)
+    major_by_occ.to_csv(os.path.join(results_dir, 'major_by_occupation.csv'), index=False)
     
-    # Export detailed user paths
-    user_details_df.to_csv(os.path.join(results_dir, 'user_detailed_paths.csv'), index=False)
-    
-    # Export occupation flow analysis
-    outflow_df.to_csv(os.path.join(results_dir, 'occupation_outflows.csv'), index=False)
-    inflow_df.to_csv(os.path.join(results_dir, 'occupation_inflows.csv'), index=False)
-    transitions_df.to_csv(os.path.join(results_dir, 'occupation_transitions.csv'), index=False)
-    
-    print("\n✓ CSV files exported")
-    print(f"  - user_detailed_paths.csv: {len(user_details_df):,} user records with career paths")
-    print(f"  - occupation_outflows.csv: {len(outflow_df):,} occupation outflow records")
-    print(f"  - occupation_inflows.csv: {len(inflow_df):,} occupation inflow records")
-    print(f"  - occupation_transitions.csv: {len(transitions_df):,} occupation-to-occupation transitions")
+    print(f"✓ Education level distribution: education_level_distribution.csv")
+    print(f"✓ Major distribution: major_distribution.csv")
+    print(f"✓ Education by occupation: education_by_occupation.csv")
+    print(f"✓ Major by occupation: major_by_occupation.csv")
 
 
-def generate_path_analysis_examples(user_details_df, results_dir):
-    """Generate example queries showing how to analyze user paths"""
+def generate_education_summary(ed_level_dist, major_dist, edu_by_occ, results_dir):
+    """Generate human-readable education summary"""
+    summary_path = os.path.join(results_dir, 'education_summary.txt')
     
-    examples = []
-    
-    # Example 1: Occupation changes among comebacks
-    comebacks = user_details_df[user_details_df['Status'] == 'comeback']
-    occ_changed = comebacks[comebacks['Occupation_Changed'] == True]
-    examples.append(
-        f"Comebacks who changed occupation: {len(occ_changed):,} / {len(comebacks):,} "
-        f"({len(occ_changed)/len(comebacks)*100:.1f}%)"
-    )
-    
-    # Example 2: Top destination occupations for new entrants
-    new_entrants = user_details_df[user_details_df['Status'] == 'new_entrant']
-    top_entry_occs = new_entrants['To_Occupation'].value_counts().head(5)
-    
-    # Example 3: Top source occupations for permanent exits
-    perm_exits = user_details_df[user_details_df['Status'] == 'dropout_permanent_exit']
-    top_exit_occs = perm_exits['From_Occupation'].value_counts().head(5)
-    
-    # Write to file
-    with open(os.path.join(results_dir, 'path_analysis_guide.txt'), 'w') as f:
+    with open(summary_path, 'w') as f:
         f.write("="*80 + "\n")
-        f.write("USER PATH ANALYSIS GUIDE\n")
+        f.write("EDUCATION DATA SUMMARY\n")
         f.write("="*80 + "\n\n")
         
-        f.write("File: user_detailed_paths.csv\n")
-        f.write(f"Total records: {len(user_details_df):,}\n\n")
+        # Education level distribution
+        f.write("EDUCATION LEVEL DISTRIBUTION\n")
+        f.write("-"*80 + "\n")
+        total = ed_level_dist['count'].sum()
+        for _, row in ed_level_dist.iterrows():
+            pct = (row['count'] / total) * 100
+            f.write(f"{row['EDULEVEL_NAME']}: {row['count']:,} ({pct:.1f}%)\n")
         
-        f.write("COLUMNS:\n")
-        f.write("- ID: User identifier\n")
-        f.write("- Year_From, Year_To: Transition period\n")
-        f.write("- Status: dropout_career_break | dropout_permanent_exit | comeback | new_entrant | stayed\n")
-        f.write("- From_Occupation, To_Occupation: Career path\n")
-        f.write("- From_Industry, To_Industry: Industry path\n")
-        f.write("- From_State, To_State: Geographic movement\n")
-        f.write("- Occupation_Changed, Industry_Changed, State_Changed: Change flags\n\n")
-        
+        f.write("\n" + "="*80 + "\n")
+        f.write("TOP 20 MAJORS\n")
         f.write("="*80 + "\n")
-        f.write("QUICK STATS\n")
-        f.write("="*80 + "\n\n")
-        
-        for example in examples:
-            f.write(f"• {example}\n")
+        for idx, row in major_dist.iterrows():
+            f.write(f"{idx+1}. {row['CIP6_2020_NAME']}: {row['count']:,}\n")
         
         f.write("\n" + "="*80 + "\n")
-        f.write("TOP 5 OCCUPATIONS FOR NEW ENTRANTS\n")
-        f.write("="*80 + "\n\n")
-        for occ, count in top_entry_occs.items():
-            f.write(f"{count:,} people → {occ}\n")
-        
-        f.write("\n" + "="*80 + "\n")
-        f.write("TOP 5 OCCUPATIONS FOR PERMANENT EXITS\n")
-        f.write("="*80 + "\n\n")
-        for occ, count in top_exit_occs.items():
-            f.write(f"{count:,} people ← {occ}\n")
-        
-        f.write("\n" + "="*80 + "\n")
-        f.write("EXAMPLE ANALYSIS QUERIES (using pandas)\n")
+        f.write("EDUCATION REQUIREMENTS BY OCCUPATION (Top 10)\n")
         f.write("="*80 + "\n\n")
         
-        f.write("# Load data\n")
-        f.write("df = pd.read_csv('results/user_detailed_paths.csv')\n\n")
+        # Get top 10 occupations by total count
+        occ_totals = edu_by_occ.groupby(edu_by_occ.columns[0])['count'].sum().sort_values(ascending=False).head(10)
         
-        f.write("# 1. Which occupations had highest permanent exit rates during COVID?\n")
-        f.write("covid_exits = df[(df['Year_From'] == 2020) & (df['Status'] == 'dropout_permanent_exit')]\n")
-        f.write("covid_exits['From_Occupation'].value_counts()\n\n")
-        
-        f.write("# 2. Career path analysis for comebacks\n")
-        f.write("comebacks = df[df['Status'] == 'comeback']\n")
-        f.write("career_changes = comebacks[comebacks['Occupation_Changed'] == True]\n")
-        f.write("print(f'Career change rate: {len(career_changes)/len(comebacks)*100:.1f}%')\n\n")
-        
-        f.write("# 3. Most common occupation transitions\n")
-        f.write("stayed = df[df['Status'] == 'stayed']\n")
-        f.write("transitions = stayed[stayed['Occupation_Changed'] == True]\n")
-        f.write("transitions.groupby(['From_Occupation', 'To_Occupation']).size().sort_values(ascending=False)\n\n")
-        
-        f.write("# 4. Geographic mobility by status\n")
-        f.write("df.groupby('Status')['State_Changed'].mean() * 100\n\n")
-        
-        f.write("# 5. Industry transitions for new entrants by year\n")
-        f.write("new_entrants = df[df['Status'] == 'new_entrant']\n")
-        f.write("new_entrants.groupby(['Year_To', 'To_Industry']).size().unstack(fill_value=0)\n\n")
+        for occ in occ_totals.index:
+            f.write(f"\n{occ}:\n")
+            occ_data = edu_by_occ[edu_by_occ[edu_by_occ.columns[0]] == occ].sort_values('percentage', ascending=False)
+            for _, row in occ_data.iterrows():
+                f.write(f"  - {row['Education_Level']}: {row['percentage']:.1f}%\n")
     
-    print("✓ Path analysis guide generated")
-
-
-def generate_summary_report(transition_rates, yearly_flow_df, results_dir):
-    """Generate summary report"""
-    with open(os.path.join(results_dir, 'summary_report.txt'), 'w') as f:
-        f.write("="*80 + "\n")
-        f.write("LABOR MARKET TREND ANALYSIS (2010-2023)\n")
-        f.write("Detecting Sudden Changes and Market Shifts\n")
-        f.write("="*80 + "\n\n")
-        
-        f.write("ANALYSIS APPROACH:\n")
-        f.write("- Consecutive year pairs (includes new entrants & exits)\n")
-        f.write("- Tracks: Dropouts, Permanent Exits, Comebacks, New Entrants\n")
-        f.write("- Full workforce dynamics captured\n")
-        f.write("- Detailed user-level paths tracked (occupation/industry/location)\n")
-        f.write("- Analyzes all years to detect ANY sudden changes\n\n")
-        
-        f.write("="*80 + "\n")
-        f.write("YEAR-BY-YEAR METRICS\n")
-        f.write("="*80 + "\n\n")
-        
-        f.write("Period | Dropout% | PermExit% | Comeback% | Entry% | OccChange%\n")
-        f.write("-" * 80 + "\n")
-        
-        for _, row in yearly_flow_df.iterrows():
-            period = row['Period']
-            trans_row = transition_rates[transition_rates['Period'] == period]
-            occ_rate = trans_row['Occupation_Change_Rate'].values[0] if len(trans_row) > 0 else 0
-            
-            f.write(f"{period} | {row['Dropout_Rate']:5.2f}% | {row['Permanent_Exit_Rate']:7.2f}% | ")
-            f.write(f"{row['Comeback_Rate']:7.2f}% | {row['Entry_Rate']:5.2f}% | {occ_rate:9.2f}%\n")
-        
-        f.write("\n" + "="*80 + "\n")
-        f.write("YEAR-BY-YEAR PERMANENT EXITS (Retirement/Exit Year)\n")
-        f.write("="*80 + "\n\n")
-        for _, row in yearly_flow_df.iterrows():
-            f.write(f"{int(row['Year_From'])}→{int(row['Year_To'])}: {int(row['Permanent_Exits']):,} people ")
-            f.write(f"({row['Permanent_Exit_Rate']:.2f}% of workforce)\n")
-        
-        f.write("\n" + "="*80 + "\n")
-        f.write("DETECTING SUDDEN CHANGES\n")
-        f.write("="*80 + "\n\n")
-        f.write("Look for:\n")
-        f.write("- Spikes in Dropout or Permanent Exit rates\n")
-        f.write("- Sharp drops in Comeback rates\n")
-        f.write("- Sudden changes in Occupation transition rates\n")
-        f.write("- Year-over-year deviations > 2-3 percentage points\n\n")
-        
-        f.write("For detailed career paths, see: user_detailed_paths.csv\n")
-    
-    print("✓ Summary report generated")
+    print(f"✓ Education summary: education_summary.txt")
 
 
 def main():
-    """Main analysis pipeline with performance benchmarking"""
+    """Main analysis pipeline with education data"""
     benchmark = PipelineBenchmark()
     
     print("="*80)
-    print("LABOR MARKET TREND ANALYSIS (2010-2023)")
-    print("Detecting Sudden Changes in Workforce Dynamics")
+    print("LABOR MARKET TREND ANALYSIS WITH EDUCATION DATA")
     print("="*80)
-    print(f"\nAnalyzing consecutive year pairs (includes new entrants & exits)")
-    print(f"Using {OCCUPATION_COLUMN} (Broad Occupation Categories)")
     print(f"Period: {YEARS[0]}-{YEARS[-1]}")
-    print(f"NEW: Tracking detailed user-level career paths")
-    print(f"NEW: Performance optimizations (10-20x faster)")
+    print(f"Occupation field: {OCCUPATION_COLUMN}")
     print("="*80)
     
     ensure_dir(RESULTS_DIR)
     
-    # Stage 1: Setup
-    benchmark.start_stage("Setup")
-    windows = get_windows()
-    print(f"\nCreated {len(windows)} yearly windows")
-    benchmark.end_stage("Setup")
-    
-    # Stage 2: Data Loading
+    # Stage 1: Load data
     benchmark.start_stage("Data Loading")
     job_df = load_job_data()
+    ed_df = load_education_data()
     benchmark.end_stage("Data Loading")
     
-    # Stage 3: Window Processing
+    # Stage 2: Merge job and education
+    benchmark.start_stage("Job-Education Merge")
+    merged_df = merge_job_education(job_df, ed_df)
+    benchmark.end_stage("Job-Education Merge")
+    
+    # Stage 3: Education distribution analysis
+    benchmark.start_stage("Education Analysis")
+    ed_level_dist = get_education_level_distribution(ed_df)
+    major_dist = get_major_distribution(ed_df, top_n=20)
+    benchmark.end_stage("Education Analysis")
+    
+    # Stage 4: Education by occupation
+    benchmark.start_stage("Education-Occupation Analysis")
+    edu_by_occ = analyze_education_by_occupation(merged_df, OCCUPATION_COLUMN)
+    major_by_occ = analyze_major_by_occupation(merged_df, OCCUPATION_COLUMN)
+    benchmark.end_stage("Education-Occupation Analysis")
+    
+    # Stage 5: Window processing (with education data)
     benchmark.start_stage("Window Processing")
-    window_users = get_window_users(job_df, windows)
+    windows = get_windows()
+    window_users = get_window_users(merged_df, windows)  # Now includes education
     benchmark.end_stage("Window Processing")
     
-    # Stage 4: Transitions
-    benchmark.start_stage("Transition Analysis")
-    all_transitions_df = build_transitions(window_users, windows)
-    transition_rates = calculate_transition_rates(all_transitions_df)
-    benchmark.end_stage("Transition Analysis")
+    # Stage 6: Transitions (same as before)
+    benchmark.start_stage("Transitions")
+    all_transitions = build_transitions(window_users, windows)
+    transition_rates = calculate_transition_rates(all_transitions)
+    benchmark.end_stage("Transitions")
     
-    # Stage 5: Workforce Flow (OPTIMIZED)
-    benchmark.start_stage("Workforce Flow Analysis (Optimized)")
+    # Stage 7: Workforce flow (same as before)
+    benchmark.start_stage("Workforce Flow")
     yearly_flow_df, user_details_df = analyze_workforce_flow(
         window_users, windows, RESULTS_DIR, OCCUPATION_COLUMN
     )
-    benchmark.end_stage("Workforce Flow Analysis (Optimized)")
+    benchmark.end_stage("Workforce Flow")
     
-    # Stage 6: Occupation Distributions
-    benchmark.start_stage("Occupation Distributions")
-    occ_dist_df = get_occupation_distributions(window_users, windows, OCCUPATION_COLUMN)
-    benchmark.end_stage("Occupation Distributions")
-    
-    # Stage 7: Occupation Flow Analysis (OPTIMIZED)
-    benchmark.start_stage("Occupation Flow Analysis (Optimized)")
-    print("\n" + "="*80)
-    print("OCCUPATION-LEVEL FLOW ANALYSIS")
-    print("="*80)
-    
+    # Stage 8: Occupation flow (same as before)
+    benchmark.start_stage("Occupation Flow")
     outflow_df = analyze_occupation_outflows(user_details_df, window_users, windows, OCCUPATION_COLUMN)
     inflow_df = analyze_occupation_inflows(user_details_df, window_users, windows)
-    transitions_df = find_critical_transitions(outflow_df, min_count=50, top_n=15)
-    benchmark.end_stage("Occupation Flow Analysis (Optimized)")
+    critical_transitions = find_critical_transitions(outflow_df)
+    benchmark.end_stage("Occupation Flow")
     
-    # Stage 8: Visualizations
-    benchmark.start_stage("Visualizations")
-    print("\n" + "="*80)
-    print("GENERATING VISUALIZATIONS")
-    print("="*80)
+    # Stage 9: Export results
+    benchmark.start_stage("Export")
     
-    create_workforce_flow_dashboard(yearly_flow_df, transition_rates, RESULTS_DIR)
-    create_occupation_evolution_plot(occ_dist_df, YEARS, RESULTS_DIR)
+    # Export original results
+    transition_rates.to_csv(os.path.join(RESULTS_DIR, 'transition_rates.csv'), index=False)
+    yearly_flow_df.to_csv(os.path.join(RESULTS_DIR, 'yearly_workforce_flow.csv'), index=False)
+    all_transitions.to_csv(os.path.join(RESULTS_DIR, 'all_transitions.csv'), index=False)
+    user_details_df.to_csv(os.path.join(RESULTS_DIR, 'user_detailed_paths.csv'), index=False)
+    outflow_df.to_csv(os.path.join(RESULTS_DIR, 'occupation_outflows.csv'), index=False)
+    inflow_df.to_csv(os.path.join(RESULTS_DIR, 'occupation_inflows.csv'), index=False)
+    critical_transitions.to_csv(os.path.join(RESULTS_DIR, 'critical_transitions.csv'), index=False)
     
-    plot_occupation_turnover_heatmap(outflow_df, RESULTS_DIR, top_n=15)
-    plot_occupation_exit_analysis(outflow_df, RESULTS_DIR, year_to=2021, top_n=15)
-    if len(transitions_df) > 0:
-        create_transition_flow_summary(transitions_df, RESULTS_DIR, year_to=2021, top_n=20)
-    benchmark.end_stage("Visualizations")
+    # Export education results
+    export_education_results(ed_level_dist, major_dist, edu_by_occ, major_by_occ, RESULTS_DIR)
     
-    # Stage 9: Export
-    benchmark.start_stage("Export Results")
-    export_results(transition_rates, yearly_flow_df, all_transitions_df, 
-                  occ_dist_df, user_details_df, outflow_df, inflow_df,
-                  transitions_df, RESULTS_DIR)
-    generate_summary_report(transition_rates, yearly_flow_df, RESULTS_DIR)
-    generate_path_analysis_examples(user_details_df, RESULTS_DIR)
-    benchmark.end_stage("Export Results")
+    # Generate summaries
+    generate_education_summary(ed_level_dist, major_dist, edu_by_occ, RESULTS_DIR)
     
-    # Print performance report
+    benchmark.end_stage("Export")
+    
+    # Print benchmark report
     benchmark.print_report()
-    benchmark.save_report(os.path.join(RESULTS_DIR, 'benchmark_report.json'))
+    benchmark.save_report(os.path.join(RESULTS_DIR, 'benchmark_education.json'))
     
     print("\n" + "="*80)
     print("ANALYSIS COMPLETE")
     print("="*80)
-    print("\nFiles created in 'results/' directory:")
-    print("\n📊 SUMMARY DATA:")
-    print("  - transition_rates.csv")
-    print("  - yearly_workforce_flow.csv")
-    print("  - all_transitions.csv")
-    print("  - occupation_distributions.csv")
-    print("  - summary_report.txt")
-    print("\n🔍 DETAILED TRACKING:")
-    print("  - user_detailed_paths.csv ⭐ Detailed career paths")
-    print("  - path_analysis_guide.txt ⭐ Analysis examples")
-    print("\n🎯 OCCUPATION FLOW ANALYSIS:")
-    print("  - occupation_outflows.csv ⭐ Where people go when leaving each occupation")
-    print("  - occupation_inflows.csv ⭐ Where people come from when entering each occupation")
-    print("  - occupation_transitions.csv ⭐ Occupation-to-occupation transition volumes")
-    print("\n📈 VISUALIZATIONS:")
-    print("  - comprehensive_workforce_flow.png")
-    print("  - top_occupations_evolution.png")
-    print("  - occupation_turnover_heatmap.png ⭐")
-    print("  - occupation_exit_analysis_2021.png ⭐")
-    print("  - occupation_transitions_2021.png ⭐")
-    print("\n⚡ PERFORMANCE:")
-    print("  - benchmark_report.json ⭐ Performance metrics")
-    print("\nNote: COVID (2020) marked for reference, all years analyzed for sudden changes")
+    print(f"\nResults saved to: {RESULTS_DIR}/")
+    print("\nKey outputs:")
+    print("  - user_detailed_paths.csv (with education data)")
+    print("  - education_by_occupation.csv")
+    print("  - major_by_occupation.csv")
+    print("  - education_summary.txt")
 
 
 if __name__ == "__main__":
