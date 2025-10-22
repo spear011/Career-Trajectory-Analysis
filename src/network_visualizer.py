@@ -129,11 +129,31 @@ def prepare_sankey_data(all_transitions_df, period_filter=None, top_n=10, min_fl
         year_from, year_to = period_filter
         df = df[(df['Year_From'] >= year_from) & (df['Year_To'] <= year_to)]
     
+    # Check if we have any data
+    if len(df) == 0:
+        return {
+            'source': [],
+            'target': [],
+            'value': [],
+            'labels': [],
+            'flow_counts': pd.DataFrame()
+        }
+    
     # Get top occupations
     from_counts = df['From_Occupation'].value_counts()
     to_counts = df['To_Occupation'].value_counts()
     total_counts = (from_counts + to_counts).fillna(0)
-    top_occupations = list(total_counts.nlargest(top_n).index)
+    
+    if len(total_counts) == 0:
+        return {
+            'source': [],
+            'target': [],
+            'value': [],
+            'labels': [],
+            'flow_counts': pd.DataFrame()
+        }
+    
+    top_occupations = list(total_counts.nlargest(min(top_n, len(total_counts))).index)
     
     # Filter to top occupations
     df = df[
@@ -141,12 +161,36 @@ def prepare_sankey_data(all_transitions_df, period_filter=None, top_n=10, min_fl
         df['To_Occupation'].isin(top_occupations)
     ]
     
+    if len(df) == 0:
+        return {
+            'source': [],
+            'target': [],
+            'value': [],
+            'labels': [],
+            'flow_counts': pd.DataFrame()
+        }
+    
     # Aggregate transitions
     flow_counts = df.groupby(['From_Occupation', 'To_Occupation']).size().reset_index(name='count')
     flow_counts = flow_counts[flow_counts['count'] >= min_flow]
     
+    if len(flow_counts) == 0:
+        # Try with lower threshold
+        flow_counts = df.groupby(['From_Occupation', 'To_Occupation']).size().reset_index(name='count')
+        flow_counts = flow_counts[flow_counts['count'] >= max(1, min_flow // 2)]
+    
     # Create node labels (unique occupations)
     all_occupations = sorted(set(flow_counts['From_Occupation']) | set(flow_counts['To_Occupation']))
+    
+    if len(all_occupations) == 0:
+        return {
+            'source': [],
+            'target': [],
+            'value': [],
+            'labels': [],
+            'flow_counts': pd.DataFrame()
+        }
+    
     node_dict = {occ: idx for idx, occ in enumerate(all_occupations)}
     
     # Prepare Sankey data
