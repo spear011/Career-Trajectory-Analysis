@@ -15,8 +15,8 @@ NETWORK_OUTPUT_DIR = 'results/network_output'
 # ============================================
 COVID_START_DATE = datetime(2020, 3, 11)
 
-# Yearly windows from 1990 to 2023 (analyze full range for all sudden changes)
-YEARS = list(range(1990, 2024))
+# Yearly windows from 2017 to 2023 (analyze full range for all sudden changes)
+YEARS = list(range(2017, 2024))
 
 def get_windows():
     """Generate yearly windows"""
@@ -49,7 +49,7 @@ NETWORK_TEMPORAL_GRANULARITY = 'annual'  # 'annual' or 'quarterly'
 # Analysis parameters (Original pipeline)
 # ============================================
 # Occupation classification level
-OCCUPATION_COLUMN = 'SOC_EMSI_2019_3_NAME'  # Level 3 - broad categories
+OCCUPATION_COLUMN = 'ONET_2019_NAME'  # Level 3 - broad categories
 
 # Visualization parameters
 TOP_N_OCCUPATIONS = 12

@@ -182,6 +182,5 @@ def main():
     print("  - major_by_occupation.csv")
     print("  - education_summary.txt")
 
-
 if __name__ == "__main__":
     main()
