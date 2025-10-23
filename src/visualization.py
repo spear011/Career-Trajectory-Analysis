@@ -126,7 +126,6 @@ def plot_metric_by_period(ax, df, metric_col, title, ylabel):
         ax.text(x, y + values.max() * 0.02, f'{y:.1f}%', 
                ha='center', va='bottom', fontsize=9, fontweight='bold')
     
-    ax.set_xlabel('Year', fontsize=11, fontweight='bold')
     ax.set_ylabel(ylabel, fontsize=11, fontweight='bold')
     ax.set_title(title, fontsize=12, fontweight='bold', pad=15)
     ax.legend(loc='best', fontsize=9)
@@ -181,7 +180,6 @@ def plot_period_comparison(ax, yearly_flow_df, transition_rates):
                    f'{height:.1f}%', ha='center', va='bottom', 
                    fontsize=8, fontweight='bold')
     
-    ax.set_xlabel('Study Period', fontsize=12, fontweight='bold')
     ax.set_ylabel('Rate (%)', fontsize=12, fontweight='bold')
     ax.set_title('Average Rates by Study Period', fontsize=13, fontweight='bold', pad=15)
     ax.set_xticks(x)
