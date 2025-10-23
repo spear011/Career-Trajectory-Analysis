@@ -2,6 +2,8 @@
 Visualization functions for labor market trend analysis
 Enhanced with study period analysis (Pre-Pandemic, COVID Shock, Post-Pandemic)
 """
+import matplotlib
+matplotlib.use('Agg')  # Use non-interactive backend
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
@@ -41,20 +43,13 @@ def assign_period(year):
 def create_period_based_visualization(yearly_flow_df, transition_rates, results_dir):
     """
     Create comprehensive visualization based on study periods
-    
-    Args:
-        yearly_flow_df: Yearly flow dataframe
-        transition_rates: Transition rates dataframe
-        results_dir: Directory to save results
     """
     print("\nGenerating period-based analysis visualization...")
     setup_plot_style()
     
-    # Add period column
     yearly_flow_df['Period'] = yearly_flow_df['Year_To'].apply(assign_period)
     transition_rates['Period'] = transition_rates['Year_To'].apply(assign_period)
     
-    # Filter valid periods
     yearly_flow_df = yearly_flow_df[yearly_flow_df['Period'].notna()].copy()
     transition_rates = transition_rates[transition_rates['Period'].notna()].copy()
     
@@ -81,7 +76,7 @@ def create_period_based_visualization(yearly_flow_df, transition_rates, results_
     plot_metric_by_period(ax4, transition_rates, 'Occupation_Change_Rate',
                          'Occupation Change Rate Over Time', 'Change Rate (%)')
     
-    # 5. Period Comparison - Summary Statistics
+    # 5. Period Comparison
     ax5 = fig.add_subplot(gs[2, :])
     plot_period_comparison(ax5, yearly_flow_df, transition_rates)
     
@@ -92,25 +87,13 @@ def create_period_based_visualization(yearly_flow_df, transition_rates, results_
 
 
 def plot_metric_by_period(ax, df, metric_col, title, ylabel):
-    """
-    Plot a metric over time with period highlighting
-    
-    Args:
-        ax: Matplotlib axis
-        df: Dataframe with Period and Year_To columns
-        metric_col: Column to plot
-        title: Plot title
-        ylabel: Y-axis label
-    """
+    """Plot a metric over time with period highlighting"""
     years = df['Year_To'].values
     values = df[metric_col].values
-    periods = df['Period'].values
     
-    # Plot line
     ax.plot(years, values, marker='o', linewidth=2.5, markersize=8, 
             color='#34495e', alpha=0.7, zorder=3)
     
-    # Highlight periods with background colors
     for period_name, (start_year, end_year) in STUDY_PERIODS.items():
         mask = (years >= start_year) & (years <= end_year)
         if mask.any():
@@ -121,7 +104,6 @@ def plot_metric_by_period(ax, df, metric_col, title, ylabel):
                            alpha=0.15, color=PERIOD_COLORS[period_name],
                            label=period_name, zorder=1)
     
-    # Add value labels
     for x, y in zip(years, values):
         ax.text(x, y + values.max() * 0.02, f'{y:.1f}%', 
                ha='center', va='bottom', fontsize=9, fontweight='bold')
@@ -135,15 +117,7 @@ def plot_metric_by_period(ax, df, metric_col, title, ylabel):
 
 
 def plot_period_comparison(ax, yearly_flow_df, transition_rates):
-    """
-    Create bar chart comparing average metrics across periods
-    
-    Args:
-        ax: Matplotlib axis
-        yearly_flow_df: Yearly flow dataframe
-        transition_rates: Transition rates dataframe
-    """
-    # Calculate period averages
+    """Create bar chart comparing average metrics across periods"""
     period_stats = []
     
     for period_name in ['Pre-Pandemic', 'COVID Shock', 'Post-Pandemic']:
@@ -161,7 +135,6 @@ def plot_period_comparison(ax, yearly_flow_df, transition_rates):
     
     stats_df = pd.DataFrame(period_stats)
     
-    # Plot grouped bar chart
     x = np.arange(len(stats_df))
     width = 0.2
     
@@ -173,7 +146,6 @@ def plot_period_comparison(ax, yearly_flow_df, transition_rates):
         bars = ax.bar(x + offset, stats_df[metric], width, 
                      label=metric, color=color, alpha=0.8, edgecolor='black')
         
-        # Add value labels
         for bar in bars:
             height = bar.get_height()
             ax.text(bar.get_x() + bar.get_width()/2., height,
@@ -189,13 +161,7 @@ def plot_period_comparison(ax, yearly_flow_df, transition_rates):
 
 
 def create_transition_flow_by_period(yearly_flow_df, results_dir):
-    """
-    Create visualization showing absolute numbers of workforce flows by period
-    
-    Args:
-        yearly_flow_df: Yearly flow dataframe
-        results_dir: Directory to save results
-    """
+    """Create visualization showing workforce flows by period"""
     print("\nGenerating workforce flow by period...")
     setup_plot_style()
     
@@ -204,7 +170,7 @@ def create_transition_flow_by_period(yearly_flow_df, results_dir):
     
     fig, axes = plt.subplots(2, 1, figsize=(18, 12))
     
-    # Chart 1: Stacked area chart
+    # Chart 1: Permanent exits over time
     ax1 = axes[0]
     
     for period_name, color in PERIOD_COLORS.items():
@@ -225,7 +191,7 @@ def create_transition_flow_by_period(yearly_flow_df, results_dir):
     ax1.legend(loc='best', fontsize=11)
     ax1.grid(axis='y', alpha=0.3)
     
-    # Chart 2: Grouped bar chart - Exits vs Comebacks vs New Entrants
+    # Chart 2: Grouped bar chart
     ax2 = axes[1]
     
     years = yearly_flow_df['Year_To'].values
@@ -242,15 +208,6 @@ def create_transition_flow_by_period(yearly_flow_df, results_dir):
            color='#2ecc71', alpha=0.8, edgecolor='black')
     ax2.bar(x_pos + width, new_entrants, width, label='New Entrants',
            color='#3498db', alpha=0.8, edgecolor='black')
-    
-    # Period background coloring
-    for period_name, (start_year, end_year) in STUDY_PERIODS.items():
-        period_mask = (years >= start_year) & (years <= end_year)
-        if period_mask.any():
-            period_indices = np.where(period_mask)[0]
-            if len(period_indices) > 0:
-                ax2.axvspan(period_indices[0] - 0.5, period_indices[-1] + 0.5,
-                           alpha=0.1, color=PERIOD_COLORS[period_name], zorder=0)
     
     ax2.set_xticks(x_pos)
     ax2.set_xticklabels([str(int(y)) for y in years], rotation=45, ha='right')
@@ -269,14 +226,7 @@ def create_transition_flow_by_period(yearly_flow_df, results_dir):
 
 
 def create_period_summary_table(yearly_flow_df, transition_rates, results_dir):
-    """
-    Create summary statistics table for each period
-    
-    Args:
-        yearly_flow_df: Yearly flow dataframe
-        transition_rates: Transition rates dataframe
-        results_dir: Directory to save results
-    """
+    """Create summary statistics table for each period"""
     print("\nGenerating period summary table...")
     
     yearly_flow_df['Period'] = yearly_flow_df['Year_To'].apply(assign_period)
@@ -303,7 +253,6 @@ def create_period_summary_table(yearly_flow_df, transition_rates, results_dir):
     
     summary_df = pd.DataFrame(summary_records)
     
-    # Save to CSV
     output_path = os.path.join(results_dir, 'period_summary_statistics.csv')
     summary_df.to_csv(output_path, index=False)
     print(f"✓ Saved: period_summary_statistics.csv")
@@ -312,16 +261,8 @@ def create_period_summary_table(yearly_flow_df, transition_rates, results_dir):
 
 
 def create_full_timeline_visualization(yearly_flow_df, transition_rates, results_dir):
-    """
-    Create visualization for full timeline (1990-2023)
-    Shows long-term trends without period segmentation
-    
-    Args:
-        yearly_flow_df: Yearly flow dataframe
-        transition_rates: Transition rates dataframe
-        results_dir: Directory to save results
-    """
-    print("\nGenerating full timeline visualization (1990-2023)...")
+    """Create visualization for full timeline (2000-2023)"""
+    print("\nGenerating full timeline visualization (2000-2023)...")
     setup_plot_style()
     
     fig = plt.figure(figsize=(22, 16))
@@ -330,35 +271,30 @@ def create_full_timeline_visualization(yearly_flow_df, transition_rates, results
     years_flow = yearly_flow_df['Year_To'].values
     years_trans = transition_rates['Year_To'].values
     
-    # 1. Dropout Rate - Full Timeline
+    # Various charts...
     ax1 = fig.add_subplot(gs[0, 0])
     plot_full_timeline_metric(ax1, years_flow, yearly_flow_df['Dropout_Rate'].values,
-                             'Dropout Rate Over Time (1990-2023)', 'Dropout Rate (%)',
+                             'Dropout Rate Over Time (2000-2023)', 'Dropout Rate (%)',
                              '#e74c3c')
     
-    # 2. Permanent Exit Rate - Full Timeline
     ax2 = fig.add_subplot(gs[0, 1])
     plot_full_timeline_metric(ax2, years_flow, yearly_flow_df['Permanent_Exit_Rate'].values,
-                             'Permanent Exit Rate Over Time (1990-2023)', 'Permanent Exit Rate (%)',
+                             'Permanent Exit Rate Over Time (2000-2023)', 'Permanent Exit Rate (%)',
                              '#9b59b6')
     
-    # 3. Comeback Rate - Full Timeline
     ax3 = fig.add_subplot(gs[1, 0])
     plot_full_timeline_metric(ax3, years_flow, yearly_flow_df['Comeback_Rate'].values,
-                             'Comeback Rate Over Time (1990-2023)', 'Comeback Rate (%)',
+                             'Comeback Rate Over Time (2000-2023)', 'Comeback Rate (%)',
                              '#2ecc71')
     
-    # 4. Occupation Change Rate - Full Timeline
     ax4 = fig.add_subplot(gs[1, 1])
     plot_full_timeline_metric(ax4, years_trans, transition_rates['Occupation_Change_Rate'].values,
-                             'Occupation Change Rate Over Time (1990-2023)', 'Change Rate (%)',
+                             'Occupation Change Rate Over Time (2000-2023)', 'Change Rate (%)',
                              '#f39c12')
     
-    # 5. All Metrics Combined - Long-term Trends
     ax5 = fig.add_subplot(gs[2, :])
     plot_combined_metrics_timeline(ax5, yearly_flow_df, transition_rates)
     
-    # 6. Permanent Exits - Absolute Numbers Over Time
     ax6 = fig.add_subplot(gs[3, :])
     plot_permanent_exits_timeline(ax6, yearly_flow_df)
     
@@ -369,28 +305,11 @@ def create_full_timeline_visualization(yearly_flow_df, transition_rates, results
 
 
 def plot_full_timeline_metric(ax, years, values, title, ylabel, color):
-    """
-    Plot a single metric over full timeline
-    
-    Args:
-        ax: Matplotlib axis
-        years: Array of years
-        values: Array of values
-        title: Plot title
-        ylabel: Y-axis label
-        color: Line color
-    """
-    # Main line
+    """Plot a single metric over full timeline"""
     ax.plot(years, values, marker='o', linewidth=2, markersize=5,
             color=color, alpha=0.8, zorder=2)
     
-    # Add study period highlighting (subtle)
-    for period_name, (start_year, end_year) in STUDY_PERIODS.items():
-        if start_year >= years.min() and end_year <= years.max():
-            ax.axvspan(start_year, end_year, alpha=0.08,
-                      color=PERIOD_COLORS[period_name], zorder=1)
-    
-    # Highlight COVID shock year
+    # Highlight COVID
     if 2020 in years:
         covid_idx = list(years).index(2020)
         ax.plot(2020, values[covid_idx], 'r*', markersize=15, 
@@ -400,7 +319,6 @@ def plot_full_timeline_metric(ax, years, values, title, ylabel, color):
     ax.set_title(title, fontsize=12, fontweight='bold', pad=15)
     ax.grid(axis='y', alpha=0.3)
     
-    # X-axis ticks - show every 5 years for readability
     tick_years = [y for y in years if int(y) % 5 == 0 or int(y) == 2020]
     ax.set_xticks(tick_years)
     ax.set_xticklabels([str(int(y)) for y in tick_years], rotation=45, ha='right')
@@ -410,18 +328,10 @@ def plot_full_timeline_metric(ax, years, values, title, ylabel, color):
 
 
 def plot_combined_metrics_timeline(ax, yearly_flow_df, transition_rates):
-    """
-    Plot all key metrics on same chart for comparison
-    
-    Args:
-        ax: Matplotlib axis
-        yearly_flow_df: Yearly flow dataframe
-        transition_rates: Transition rates dataframe
-    """
+    """Plot all key metrics on same chart"""
     years_flow = yearly_flow_df['Year_To'].values
     years_trans = transition_rates['Year_To'].values
     
-    # Plot each metric
     ax.plot(years_flow, yearly_flow_df['Dropout_Rate'].values,
            marker='o', linewidth=2, markersize=4, label='Dropout Rate',
            color='#e74c3c', alpha=0.8)
@@ -438,90 +348,52 @@ def plot_combined_metrics_timeline(ax, yearly_flow_df, transition_rates):
            marker='d', linewidth=2, markersize=4, label='Occupation Change Rate',
            color='#f39c12', alpha=0.8)
     
-    # Highlight COVID period
     ax.axvspan(2020, 2021, alpha=0.15, color='red', label='COVID Shock Period', zorder=0)
     
     ax.set_ylabel('Rate (%)', fontsize=12, fontweight='bold')
-    ax.set_title('All Key Metrics Over Time (1990-2023)', 
+    ax.set_title('All Key Metrics Over Time (2000-2023)', 
                 fontsize=13, fontweight='bold', pad=15)
     ax.legend(loc='best', fontsize=10, ncol=2)
     ax.grid(axis='y', alpha=0.3)
     
-    # X-axis ticks
     tick_years = [y for y in years_flow if int(y) % 5 == 0 or int(y) in [2020, 2021]]
     ax.set_xticks(tick_years)
     ax.set_xticklabels([str(int(y)) for y in tick_years], rotation=45, ha='right')
 
 
 def plot_permanent_exits_timeline(ax, yearly_flow_df):
-    """
-    Plot permanent exits as bars over full timeline
-    
-    Args:
-        ax: Matplotlib axis
-        yearly_flow_df: Yearly flow dataframe
-    """
+    """Plot permanent exits as bars over full timeline"""
     years = yearly_flow_df['Year_To'].values
     exits = yearly_flow_df['Permanent_Exits'].values
     
-    # Create color array - highlight COVID period
     colors = ['#e74c3c' if 2020 <= y <= 2021 else '#95a5a6' for y in years]
     
     bars = ax.bar(years, exits, color=colors, alpha=0.7, edgecolor='black', linewidth=0.5)
     
-    # Add value labels for key years
-    for i, (year, exit_count) in enumerate(zip(years, exits)):
-        if int(year) % 10 == 0 or int(year) in [2020, 2021]:
-            ax.text(year, exit_count, f'{int(exit_count):,}',
-                   ha='center', va='bottom', fontsize=8, fontweight='bold')
-    
     ax.set_ylabel('Number of People', fontsize=12, fontweight='bold')
-    ax.set_title('Permanent Exits Over Time (1990-2023)',
+    ax.set_title('Permanent Exits Over Time (2000-2023)',
                 fontsize=13, fontweight='bold', pad=15)
     ax.grid(axis='y', alpha=0.3)
     
-    # X-axis ticks
     tick_years = [y for y in years if int(y) % 5 == 0 or int(y) in [2020, 2021]]
     ax.set_xticks(tick_years)
     ax.set_xticklabels([str(int(y)) for y in tick_years], rotation=45, ha='right')
-    
-    # Add legend for color coding
-    from matplotlib.patches import Patch
-    legend_elements = [
-        Patch(facecolor='#e74c3c', alpha=0.7, label='COVID Period (2020-2021)'),
-        Patch(facecolor='#95a5a6', alpha=0.7, label='Other Years')
-    ]
-    ax.legend(handles=legend_elements, loc='upper left', fontsize=10)
 
 
 def create_occupation_evolution_full_timeline(occ_dist_df, results_dir):
-    """
-    Create occupation evolution plot for full timeline (1990-2023)
-    
-    Args:
-        occ_dist_df: Occupation distribution dataframe
-        results_dir: Directory to save results
-    """
+    """Create occupation evolution plot for full timeline"""
     print("\nGenerating occupation evolution plot (full timeline)...")
     setup_plot_style()
     
-    # Get top occupations based on average across all years
     avg_occ_size = occ_dist_df.groupby('Occupation')['Count'].mean().sort_values(ascending=False)
     top_occupations = list(avg_occ_size.head(10).index)
     
     fig, ax = plt.subplots(figsize=(22, 12))
     colors = sns.color_palette("husl", len(top_occupations))
     
-    # Subtle study period backgrounds
-    for period_name, (start_year, end_year) in STUDY_PERIODS.items():
-        ax.axvspan(start_year, end_year, alpha=0.05,
-                  color=PERIOD_COLORS[period_name], zorder=0)
-    
-    # COVID shock line
     ax.axvline(x=2020, color='red', linestyle='--', linewidth=2, 
               alpha=0.5, label='COVID-19 Shock', zorder=1)
     
-    # Plot each occupation
     for idx, occ in enumerate(top_occupations):
         occ_data = occ_dist_df[occ_dist_df['Occupation'] == occ].sort_values('Year')
         years_occ = occ_data['Year'].values
@@ -533,16 +405,10 @@ def create_occupation_evolution_full_timeline(occ_dist_df, results_dir):
     
     ax.set_xlabel('Year', fontsize=12, fontweight='bold')
     ax.set_ylabel('Percentage of Workforce (%)', fontsize=12, fontweight='bold')
-    ax.set_title('Top 10 Occupations Evolution Over Time (1990-2023)',
+    ax.set_title('Top 10 Occupations Evolution Over Time (2000-2023)',
                 fontsize=14, fontweight='bold', pad=20)
     ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=10)
     ax.grid(axis='y', alpha=0.3)
-    
-    # X-axis ticks
-    all_years = occ_dist_df['Year'].unique()
-    tick_years = [y for y in all_years if int(y) % 5 == 0 or int(y) == 2020]
-    ax.set_xticks(tick_years)
-    ax.set_xticklabels([str(int(y)) for y in tick_years], rotation=45, ha='right')
     
     plt.tight_layout()
     filepath = os.path.join(results_dir, 'occupation_evolution_full_timeline.png')
@@ -551,98 +417,21 @@ def create_occupation_evolution_full_timeline(occ_dist_df, results_dir):
     print(f"✓ Saved: {filepath}")
 
 
-def create_all_period_visualizations(yearly_flow_df, transition_rates, results_dir):
-    """
-    Create all period-based visualizations
-    
-    Args:
-        yearly_flow_df: Yearly flow dataframe
-        transition_rates: Transition rates dataframe  
-        results_dir: Directory to save results
-    """
-    print("\n" + "="*80)
-    print("GENERATING PERIOD-BASED VISUALIZATIONS")
-    print("="*80)
-    
-    # Main analysis visualization
-    create_period_based_visualization(yearly_flow_df, transition_rates, results_dir)
-    
-    # Workforce flow by period
-    create_transition_flow_by_period(yearly_flow_df, results_dir)
-    
-    # Summary table
-    summary_df = create_period_summary_table(yearly_flow_df, transition_rates, results_dir)
-    
-    print("\n" + "="*80)
-    print("PERIOD SUMMARY STATISTICS")
-    print("="*80)
-    print(summary_df.to_string(index=False))
-    print("="*80)
-
-
-def create_all_visualizations(yearly_flow_df, transition_rates, occ_dist_df, results_dir):
-    """
-    Create ALL visualizations - both full timeline and period-based
-    
-    Args:
-        yearly_flow_df: Yearly flow dataframe
-        transition_rates: Transition rates dataframe
-        occ_dist_df: Occupation distribution dataframe
-        results_dir: Directory to save results
-    """
-    print("\n" + "="*80)
-    print("GENERATING ALL VISUALIZATIONS")
-    print("="*80)
-    
-    # VERSION 1: Full Timeline (1990-2023)
-    print("\n[VERSION 1] Full Timeline Analysis (1990-2023)")
-    print("-" * 80)
-    create_full_timeline_visualization(yearly_flow_df, transition_rates, results_dir)
-    create_occupation_evolution_full_timeline(occ_dist_df, results_dir)
-    
-    # VERSION 2: Study Period Focus (2017-2024)
-    print("\n[VERSION 2] Study Period Analysis (2017-2024)")
-    print("-" * 80)
-    create_all_period_visualizations(yearly_flow_df, transition_rates, results_dir)
-    create_occupation_evolution_plot(occ_dist_df, None, results_dir)
-    
-    print("\n" + "="*80)
-    print("ALL VISUALIZATIONS COMPLETE")
-    print("="*80)
-
-
-# Keep original functions for backward compatibility
-def create_workforce_flow_dashboard(yearly_flow_df, transition_rates, results_dir):
-    """Legacy function - redirects to all visualizations"""
-    # This will be called from main.py with occ_dist_df
-    pass
-
-
 def create_occupation_evolution_plot(occ_dist_df, years, results_dir):
-    """
-    Create occupation evolution plot with period highlighting
-    
-    Args:
-        occ_dist_df: Occupation distribution dataframe
-        years: List of years
-        results_dir: Directory to save results
-    """
+    """Create occupation evolution plot with period highlighting"""
     print("\nGenerating occupation evolution plot...")
     setup_plot_style()
     
-    # Get top occupations
     avg_occ_size = occ_dist_df.groupby('Occupation')['Count'].mean().sort_values(ascending=False)
     top_occupations = list(avg_occ_size.head(10).index)
     
     fig, ax = plt.subplots(figsize=(20, 12))
     colors = sns.color_palette("husl", len(top_occupations))
     
-    # Add period backgrounds
     for period_name, (start_year, end_year) in STUDY_PERIODS.items():
         ax.axvspan(start_year, end_year, alpha=0.1, 
                   color=PERIOD_COLORS[period_name], label=period_name, zorder=0)
     
-    # Plot each occupation
     for idx, occ in enumerate(top_occupations):
         occ_data = occ_dist_df[occ_dist_df['Occupation'] == occ].sort_values('Year')
         years_occ = occ_data['Year'].values
@@ -664,3 +453,43 @@ def create_occupation_evolution_plot(occ_dist_df, years, results_dir):
     plt.savefig(filepath, dpi=300, bbox_inches='tight')
     plt.close()
     print(f"✓ Saved: {filepath}")
+
+
+def create_all_period_visualizations(yearly_flow_df, transition_rates, results_dir):
+    """Create all period-based visualizations"""
+    print("\n" + "="*80)
+    print("GENERATING PERIOD-BASED VISUALIZATIONS")
+    print("="*80)
+    
+    create_period_based_visualization(yearly_flow_df, transition_rates, results_dir)
+    create_transition_flow_by_period(yearly_flow_df, results_dir)
+    summary_df = create_period_summary_table(yearly_flow_df, transition_rates, results_dir)
+    
+    print("\n" + "="*80)
+    print("PERIOD SUMMARY STATISTICS")
+    print("="*80)
+    print(summary_df.to_string(index=False))
+    print("="*80)
+
+
+def create_all_visualizations(yearly_flow_df, transition_rates, occ_dist_df, results_dir):
+    """Create ALL visualizations - both full timeline and period-based"""
+    print("\n" + "="*80)
+    print("GENERATING ALL VISUALIZATIONS")
+    print("="*80)
+    
+    # VERSION 1: Full Timeline
+    print("\n[VERSION 1] Full Timeline Analysis (2000-2023)")
+    print("-" * 80)
+    create_full_timeline_visualization(yearly_flow_df, transition_rates, results_dir)
+    create_occupation_evolution_full_timeline(occ_dist_df, results_dir)
+    
+    # VERSION 2: Study Period Focus
+    print("\n[VERSION 2] Study Period Analysis (2017-2024)")
+    print("-" * 80)
+    create_all_period_visualizations(yearly_flow_df, transition_rates, results_dir)
+    create_occupation_evolution_plot(occ_dist_df, None, results_dir)
+    
+    print("\n" + "="*80)
+    print("ALL VISUALIZATIONS COMPLETE")
+    print("="*80)

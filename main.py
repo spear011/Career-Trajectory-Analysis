@@ -1,5 +1,5 @@
 """
-Labor Market Trend Analysis - Detecting Sudden Changes
+Labor Market Trend Analysis - Refactored Version
 Analyzes workforce dynamics from 2017-2024 with study period focus
 Enhanced with Pre-Pandemic, COVID Shock, and Post-Pandemic period analysis
 """
@@ -8,35 +8,58 @@ import pandas as pd
 
 from src.config import get_windows, RESULTS_DIR, YEARS, OCCUPATION_COLUMN
 from src.utils import ensure_dir
-from src.data_loader import load_job_data, get_window_users, get_occupation_distributions
-from src.transitions import build_transitions, calculate_transition_rates
-from src.workforce_flow import analyze_workforce_flow
+from src.data_loader import DataLoader
+from src.analyzer import MobilityAnalyzer
 from src.benchmark_utils import PipelineBenchmark
 
+# Import visualization - we'll keep these as is for now
 from src.visualization import create_all_visualizations
 
 
-def export_results(transition_rates, yearly_flow_df, all_transitions_df, 
-                  occ_dist_df, user_details_df, results_dir):
-    """Export analysis results to CSV"""
+def export_results(results, occ_dist_df, results_dir):
+    """
+    Export analysis results to CSV
+    
+    Args:
+        results: Dictionary with all analysis results
+        occ_dist_df: Occupation distribution dataframe
+        results_dir: Results directory
+    """
     print("\n" + "="*80)
     print("EXPORTING RESULTS")
     print("="*80)
     
-    transition_rates.to_csv(os.path.join(results_dir, 'transition_rates.csv'), index=False)
-    yearly_flow_df.to_csv(os.path.join(results_dir, 'yearly_workforce_flow.csv'), index=False)
-    all_transitions_df.to_csv(os.path.join(results_dir, 'all_transitions.csv'), index=False)
+    results['transition_rates'].to_csv(os.path.join(results_dir, 'transition_rates.csv'), index=False)
+    results['workforce_flow'].to_csv(os.path.join(results_dir, 'yearly_workforce_flow.csv'), index=False)
+    results['transitions'].to_csv(os.path.join(results_dir, 'all_transitions.csv'), index=False)
     occ_dist_df.to_csv(os.path.join(results_dir, 'occupation_distributions.csv'), index=False)
-    user_details_df.to_csv(os.path.join(results_dir, 'user_detailed_paths.csv'), index=False)
+    results['user_details'].to_csv(os.path.join(results_dir, 'user_detailed_paths.csv'), index=False)
+    
+    # Export occupation flow analysis results
+    if 'outflows' in results:
+        results['outflows'].to_csv(os.path.join(results_dir, 'occupation_outflows.csv'), index=False)
+    if 'inflows' in results:
+        results['inflows'].to_csv(os.path.join(results_dir, 'occupation_inflows.csv'), index=False)
+    if 'critical_transitions' in results:
+        results['critical_transitions'].to_csv(os.path.join(results_dir, 'critical_transitions.csv'), index=False)
     
     print("✓ All results exported to CSV files")
 
 
-def generate_summary_report(transition_rates, yearly_flow_df, results_dir):
-    """Generate text summary report"""
+def generate_summary_report(results, results_dir):
+    """
+    Generate text summary report
+    
+    Args:
+        results: Dictionary with all analysis results
+        results_dir: Results directory
+    """
     print("\n" + "="*80)
     print("GENERATING SUMMARY REPORT")
     print("="*80)
+    
+    yearly_flow_df = results['workforce_flow']
+    transition_rates = results['transition_rates']
     
     report_path = os.path.join(results_dir, 'summary_report.txt')
     
@@ -90,11 +113,11 @@ def generate_summary_report(transition_rates, yearly_flow_df, results_dir):
 
 
 def main():
-    """Main analysis pipeline with period-based visualization focus"""
+    """Main analysis pipeline - refactored version"""
     benchmark = PipelineBenchmark()
     
     print("="*80)
-    print("LABOR MARKET TREND ANALYSIS")
+    print("LABOR MARKET TREND ANALYSIS (REFACTORED)")
     print("Study Period Focus: Pre-Pandemic, COVID Shock, Post-Pandemic")
     print("="*80)
     print(f"\nAnalyzing period: {YEARS[0]}-{YEARS[-1]}")
@@ -113,50 +136,47 @@ def main():
     print(f"\nCreated {len(windows)} yearly windows")
     benchmark.end_stage("Setup")
     
-    # Stage 2: Data Loading
+    # Stage 2: Data Loading (using DataLoader class)
     benchmark.start_stage("Data Loading")
-    job_df = load_job_data()
+    loader = DataLoader(data_dir='data')
+    job_df = loader.load_job_data()
     benchmark.end_stage("Data Loading")
     
     # Stage 3: Window Processing
     benchmark.start_stage("Window Processing")
-    window_users = get_window_users(job_df, windows)
+    window_users = loader.get_window_users(job_df, windows)
     benchmark.end_stage("Window Processing")
     
-    # Stage 4: Transitions
-    benchmark.start_stage("Transition Analysis")
-    all_transitions_df = build_transitions(window_users, windows)
-    transition_rates = calculate_transition_rates(all_transitions_df)
-    benchmark.end_stage("Transition Analysis")
+    # Stage 4: Complete Mobility Analysis (using MobilityAnalyzer class)
+    benchmark.start_stage("Mobility Analysis")
+    analyzer = MobilityAnalyzer(results_dir=RESULTS_DIR, occupation_col=OCCUPATION_COLUMN)
+    results = analyzer.analyze_all(window_users, windows)
+    benchmark.end_stage("Mobility Analysis")
     
-    # Stage 5: Workforce Flow
-    benchmark.start_stage("Workforce Flow Analysis")
-    yearly_flow_df, user_details_df = analyze_workforce_flow(
-        window_users, windows, RESULTS_DIR, OCCUPATION_COLUMN
-    )
-    benchmark.end_stage("Workforce Flow Analysis")
-    
-    # Stage 6: Occupation Distributions
+    # Stage 5: Occupation Distributions
     benchmark.start_stage("Occupation Distributions")
-    occ_dist_df = get_occupation_distributions(window_users, windows, OCCUPATION_COLUMN)
+    occ_dist_df = loader.get_occupation_distributions(window_users, windows, OCCUPATION_COLUMN)
     benchmark.end_stage("Occupation Distributions")
     
-    # Stage 7: VISUALIZATIONS - Both Full Timeline & Study Period
+    # Stage 6: Visualizations
     benchmark.start_stage("Visualizations")
     print("\n" + "="*80)
     print("GENERATING VISUALIZATIONS")
     print("="*80)
     
-
-    create_all_visualizations(yearly_flow_df, transition_rates, occ_dist_df, RESULTS_DIR)
+    create_all_visualizations(
+        results['workforce_flow'], 
+        results['transition_rates'], 
+        occ_dist_df, 
+        RESULTS_DIR
+    )
     
     benchmark.end_stage("Visualizations")
     
-    # Stage 8: Export Results
+    # Stage 7: Export Results
     benchmark.start_stage("Export Results")
-    export_results(transition_rates, yearly_flow_df, all_transitions_df, 
-                  occ_dist_df, user_details_df, RESULTS_DIR)
-    generate_summary_report(transition_rates, yearly_flow_df, RESULTS_DIR)
+    export_results(results, occ_dist_df, RESULTS_DIR)
+    generate_summary_report(results, RESULTS_DIR)
     benchmark.end_stage("Export Results")
     
     # Print performance report
@@ -181,10 +201,15 @@ def main():
     print("  - all_transitions.csv")
     print("  - occupation_distributions.csv")
     print("  - user_detailed_paths.csv")
+    print("  - occupation_outflows.csv")
+    print("  - occupation_inflows.csv")
+    print("  - critical_transitions.csv")
     print("  - summary_report.txt")
     print("\n⚡ PERFORMANCE:")
     print("  - benchmark_report.json")
     print("="*80)
+    
+    return results
 
 
 if __name__ == "__main__":

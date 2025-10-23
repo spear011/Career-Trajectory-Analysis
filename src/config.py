@@ -15,7 +15,7 @@ NETWORK_OUTPUT_DIR = 'results/network_output'
 # ============================================
 COVID_START_DATE = datetime(2020, 3, 11)
 
-# Yearly windows from 2000 to 2023 (analyze full range for all sudden changes)
+# Yearly windows from 2000 to 2023
 YEARS = list(range(2000, 2024))
 
 def get_windows():
@@ -28,32 +28,23 @@ def get_windows():
     return windows
 
 # ============================================
-# Network Analysis Parameters (Research Proposal)
+# Network Analysis Parameters
 # ============================================
-# Study period based on research proposal: 2017-2024
-# - Pre-Pandemic: 2017-2019 (Baseline mobility patterns)
-# - COVID Shock: Mar 2020-2021 (Labor market volatility)
-# - Post-Pandemic Recovery: 2022-2024 (Persistence of changes)
-
 STUDY_START_YEAR = 2017
 STUDY_END_YEAR = 2024
 
-# Occupation classification for network nodes
-NETWORK_OCCUPATION_COLUMN = 'ONET_2019'  # O*NET-SOC 2019 code (detailed)
+NETWORK_OCCUPATION_COLUMN = 'ONET_2019'
 NETWORK_OCCUPATION_NAME_COLUMN = 'ONET_2019_NAME'
-
-# Temporal granularity
-NETWORK_TEMPORAL_GRANULARITY = 'annual'  # 'annual' or 'quarterly'
+NETWORK_TEMPORAL_GRANULARITY = 'annual'
 
 # ============================================
-# Analysis parameters (Original pipeline)
+# Analysis parameters
 # ============================================
-# Occupation classification level
-OCCUPATION_COLUMN = 'ONET_2019_NAME'  # Level 3 - broad categories
+OCCUPATION_COLUMN = 'ONET_2019_NAME'
 
 # Visualization parameters
 TOP_N_OCCUPATIONS = 12
-COVID_YEAR = 2020  # Marked for reference, but analyzing all years
+COVID_YEAR = 2020
 
 # Color scheme
 COLORS = {
