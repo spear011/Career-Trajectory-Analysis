@@ -15,8 +15,8 @@ NETWORK_OUTPUT_DIR = 'results/network_output'
 # ============================================
 COVID_START_DATE = datetime(2020, 3, 11)
 
-# Yearly windows from 2017 to 2023 (analyze full range for all sudden changes)
-YEARS = list(range(2017, 2024))
+# Yearly windows from 2000 to 2023 (analyze full range for all sudden changes)
+YEARS = list(range(2000, 2024))
 
 def get_windows():
     """Generate yearly windows"""
