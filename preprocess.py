@@ -110,4 +110,6 @@ def main():
     print("\n" + "="*80)
     print("PIPELINE COMPLETE")
     print("="*80)
-    benchmark.report()
+
+if __name__ == "__main__":
+    main()

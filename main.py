@@ -1,63 +1,163 @@
 """
 Labor Market Trend Analysis - Main Pipeline
+MODIFIED: Uses preprocessed trajectory data from preprocess.py
 Analyzes workforce dynamics with study period focus
 Enhanced with Pre-Pandemic, COVID Shock, and Post-Pandemic period analysis
 """
 import os
 import pandas as pd
 
-from src.utils import get_config, set_config, parse_args, get_study_period_windows, ensure_dir
+from src.utils import get_config, set_config, parse_args, ensure_dir
 from src.data_loader import DataLoader
 from src.analyzer import MobilityAnalyzer
 from src.benchmark_utils import PipelineBenchmark
 from src.visualization import create_all_visualizations
 
 
-def export_results(results, occ_dist_df, results_dir):
+def export_results(results, results_dir):
     """
     Export analysis results to CSV
     
     Args:
         results: Dictionary with all analysis results
-        occ_dist_df: Occupation distribution dataframe
         results_dir: Results directory
     """
     print("\n" + "="*80)
     print("EXPORTING RESULTS")
     print("="*80)
     
-    results['transition_rates'].to_csv(os.path.join(results_dir, 'transition_rates.csv'), index=False)
-    results['workforce_flow'].to_csv(os.path.join(results_dir, 'yearly_workforce_flow.csv'), index=False)
-    results['transitions'].to_csv(os.path.join(results_dir, 'all_transitions.csv'), index=False)
-    occ_dist_df.to_csv(os.path.join(results_dir, 'occupation_distributions.csv'), index=False)
-    results['user_details'].to_csv(os.path.join(results_dir, 'user_detailed_paths.csv'), index=False)
+    # Export trajectory summary
+    if 'trajectory_summary' in results:
+        results['trajectory_summary'].to_csv(
+            os.path.join(results_dir, 'trajectory_summary_stats.csv'), 
+            index=False
+        )
+        print("✓ Exported trajectory_summary_stats.csv")
     
-    # Export occupation flow analysis results
-    if 'outflows' in results:
-        results['outflows'].to_csv(os.path.join(results_dir, 'occupation_outflows.csv'), index=False)
-    if 'inflows' in results:
-        results['inflows'].to_csv(os.path.join(results_dir, 'occupation_inflows.csv'), index=False)
-    if 'critical_transitions' in results:
-        results['critical_transitions'].to_csv(os.path.join(results_dir, 'critical_transitions.csv'), index=False)
+    # Export user details (full enriched trajectory data)
+    if 'user_details' in results:
+        results['user_details'].to_csv(
+            os.path.join(results_dir, 'user_detailed_trajectories.csv'), 
+            index=False
+        )
+        print("✓ Exported user_detailed_trajectories.csv")
     
-    print("✓ All results exported to CSV files")
+    # Export mobility analysis results
+    if 'mobility_analysis' in results:
+        mobility = results['mobility_analysis']
+        
+        # Demographic analysis
+        if 'mobility_by_demographics' in mobility:
+            demo = mobility['mobility_by_demographics']
+            
+            if 'by_gender' in demo:
+                demo['by_gender'].to_csv(
+                    os.path.join(results_dir, 'mobility_by_gender.csv'), 
+                    index=False
+                )
+                print("✓ Exported mobility_by_gender.csv")
+            
+            if 'by_race' in demo:
+                demo['by_race'].to_csv(
+                    os.path.join(results_dir, 'mobility_by_race.csv'), 
+                    index=False
+                )
+                print("✓ Exported mobility_by_race.csv")
+            
+            if 'by_generation' in demo:
+                demo['by_generation'].to_csv(
+                    os.path.join(results_dir, 'mobility_by_generation.csv'), 
+                    index=False
+                )
+                print("✓ Exported mobility_by_generation.csv")
+            
+            if 'by_education' in demo:
+                demo['by_education'].to_csv(
+                    os.path.join(results_dir, 'mobility_by_education.csv'), 
+                    index=False
+                )
+                print("✓ Exported mobility_by_education.csv")
+        
+        # Job change analysis
+        if 'job_change_analysis' in mobility:
+            job_change = mobility['job_change_analysis']
+            
+            if 'change_distribution' in job_change:
+                job_change['change_distribution'].to_csv(
+                    os.path.join(results_dir, 'job_change_distribution.csv'), 
+                    index=False
+                )
+                print("✓ Exported job_change_distribution.csv")
+            
+            if 'job_change_types_by_year' in job_change:
+                job_change['job_change_types_by_year'].to_csv(
+                    os.path.join(results_dir, 'job_change_types_by_year.csv'), 
+                    index=False
+                )
+                print("✓ Exported job_change_types_by_year.csv")
+            
+            if 'mobility_by_num_changes' in job_change:
+                job_change['mobility_by_num_changes'].to_csv(
+                    os.path.join(results_dir, 'mobility_by_num_changes.csv'), 
+                    index=False
+                )
+                print("✓ Exported mobility_by_num_changes.csv")
+        
+        # Wage mobility analysis
+        if 'wage_mobility' in mobility:
+            wage = mobility['wage_mobility']
+            
+            if 'upward_mobility_by_year' in wage:
+                wage['upward_mobility_by_year'].to_csv(
+                    os.path.join(results_dir, 'upward_mobility_by_year.csv'), 
+                    index=False
+                )
+                print("✓ Exported upward_mobility_by_year.csv")
+            
+            if 'wage_distribution_by_year' in wage:
+                wage['wage_distribution_by_year'].to_csv(
+                    os.path.join(results_dir, 'wage_distribution_by_year.csv'), 
+                    index=False
+                )
+                print("✓ Exported wage_distribution_by_year.csv")
+            
+            if 'upward_mobility_by_occupation' in wage:
+                wage['upward_mobility_by_occupation'].to_csv(
+                    os.path.join(results_dir, 'upward_mobility_by_occupation.csv'), 
+                    index=False
+                )
+                print("✓ Exported upward_mobility_by_occupation.csv")
+            
+            if 'upward_mobility_by_gender' in wage:
+                wage['upward_mobility_by_gender'].to_csv(
+                    os.path.join(results_dir, 'upward_mobility_by_gender.csv'), 
+                    index=False
+                )
+                print("✓ Exported upward_mobility_by_gender.csv")
+            
+            if 'upward_mobility_by_race' in wage:
+                wage['upward_mobility_by_race'].to_csv(
+                    os.path.join(results_dir, 'upward_mobility_by_race.csv'), 
+                    index=False
+                )
+                print("✓ Exported upward_mobility_by_race.csv")
+    
+    print("\n✓ All results exported to CSV files")
 
 
-def generate_summary_report(results, results_dir, config):
+def generate_summary_report(results, trajectory_df, results_dir, config):
     """
     Generate text summary report
     
     Args:
         results: Dictionary with all analysis results
+        trajectory_df: Enriched trajectory dataframe
         results_dir: Results directory
         config: Config instance
     """
     print("\n" + "="*80)
     print("GENERATING SUMMARY REPORT")
     print("="*80)
-    
-    yearly_flow_df = results['workforce_flow']
-    transition_rates = results['transition_rates']
     
     report_path = os.path.join(results_dir, 'summary_report.txt')
     
@@ -70,52 +170,126 @@ def generate_summary_report(results, results_dir, config):
         f.write(f"Study Period Analysis ({config.study_start_year}-{config.study_end_year})\n")
         f.write("="*80 + "\n\n")
         
+        f.write("DATA SOURCE:\n")
+        f.write("-" * 80 + "\n")
+        f.write("Preprocessed trajectory data from preprocess.py\n")
+        f.write(f"Total trajectories analyzed: {len(trajectory_df):,}\n")
+        f.write(f"Features: {len(trajectory_df.columns)}\n\n")
+        
         f.write("STUDY PERIODS:\n")
         f.write("-" * 80 + "\n")
         for i, (period_key, period_info) in enumerate(periods.items(), 1):
-            f.write(f"{i}. {period_info['name']}: ")
-            f.write(f"{period_info['start_year']}-{period_info['end_year']} ")
-            f.write(f"({period_info['description']})\n")
-        f.write("\n")
+            f.write(f"{i}. {period_info['name']}: {period_info['start_year']}-{period_info['end_year']} "
+                   f"({period_info['description']})\n")
         
-        f.write("KEY METRICS BY PERIOD:\n")
-        f.write("-" * 80 + "\n\n")
-        
-        # Add period column
-        yearly_flow_df['Period'] = yearly_flow_df['Year_To'].apply(
-            lambda y: next((p['name'] for p in periods.values() 
-                          if p['start_year'] <= y <= p['end_year']), None)
-        )
-        
-        for period_key, period_info in periods.items():
-            period_name = period_info['name']
-            period_data = yearly_flow_df[yearly_flow_df['Period'] == period_name]
-            
-            if len(period_data) > 0:
-                f.write(f"{period_name}:\n")
-                f.write(f"  Avg Dropout Rate: {period_data['Dropout_Rate'].mean():.2f}%\n")
-                f.write(f"  Avg Permanent Exit Rate: {period_data['Permanent_Exit_Rate'].mean():.2f}%\n")
-                f.write(f"  Avg Comeback Rate: {period_data['Comeback_Rate'].mean():.2f}%\n")
-                f.write(f"  Total Permanent Exits: {period_data['Permanent_Exits'].sum():,}\n")
-                f.write(f"  Total Comebacks: {period_data['Comebacks'].sum():,}\n\n")
-        
+        f.write("\n" + "="*80 + "\n")
+        f.write("TRAJECTORY DATA FEATURES\n")
         f.write("="*80 + "\n")
-        f.write("YEAR-BY-YEAR PERMANENT EXITS\n")
-        f.write("="*80 + "\n\n")
         
-        for _, row in yearly_flow_df.iterrows():
-            f.write(f"{int(row['Year_From'])}→{int(row['Year_To'])}: {int(row['Permanent_Exits']):,} people ")
-            f.write(f"({row['Permanent_Exit_Rate']:.2f}% of workforce)\n")
+        # Demographics
+        if 'gender' in trajectory_df.columns:
+            f.write("\nGender Distribution:\n")
+            gender_dist = trajectory_df['gender'].value_counts(normalize=True) * 100
+            for gender, pct in gender_dist.items():
+                f.write(f"  {gender}: {pct:.1f}%\n")
+        
+        if 'race' in trajectory_df.columns:
+            f.write("\nRace Distribution:\n")
+            race_dist = trajectory_df['race'].value_counts(normalize=True) * 100
+            for race, pct in race_dist.items():
+                f.write(f"  {race}: {pct:.1f}%\n")
+        
+        if 'generation' in trajectory_df.columns:
+            f.write("\nGeneration Distribution:\n")
+            gen_dist = trajectory_df['generation'].value_counts(normalize=True) * 100
+            for gen, pct in gen_dist.items():
+                f.write(f"  {gen}: {pct:.1f}%\n")
+        
+        # Job mobility
+        if 'num_job_changes' in trajectory_df.columns:
+            f.write("\nJob Mobility:\n")
+            f.write(f"  Average job changes: {trajectory_df['num_job_changes'].mean():.2f}\n")
+            f.write(f"  Median job changes: {trajectory_df['num_job_changes'].median():.1f}\n")
+        
+        if 'up_move' in trajectory_df.columns:
+            up_move_rate = trajectory_df['up_move'].mean() * 100
+            f.write(f"  Upward mobility rate: {up_move_rate:.1f}%\n")
+        
+        # Job change types
+        move_cols = ['move_1_1', 'move_1_2', 'move_2_1', 'move_2_2']
+        if all(col in trajectory_df.columns for col in move_cols):
+            f.write("\nJob Change Types:\n")
+            f.write(f"  Type 1-1 (Diff company, diff occupation): {trajectory_df['move_1_1'].sum():,}\n")
+            f.write(f"  Type 1-2 (Diff company, same occupation): {trajectory_df['move_1_2'].sum():,}\n")
+            f.write(f"  Type 2-1 (Same company, diff occupation): {trajectory_df['move_2_1'].sum():,}\n")
+            f.write(f"  Type 2-2 (Same company, same occupation): {trajectory_df['move_2_2'].sum():,}\n")
+        
+        # Wages
+        if 'annual_state_wage_x' in trajectory_df.columns:
+            f.write("\nWage Statistics (First Job):\n")
+            f.write(f"  Mean: ${trajectory_df['annual_state_wage_x'].mean():,.0f}\n")
+            f.write(f"  Median: ${trajectory_df['annual_state_wage_x'].median():,.0f}\n")
+            f.write(f"  25th percentile: ${trajectory_df['annual_state_wage_x'].quantile(0.25):,.0f}\n")
+            f.write(f"  75th percentile: ${trajectory_df['annual_state_wage_x'].quantile(0.75):,.0f}\n")
         
         f.write("\n" + "="*80 + "\n")
         f.write("For detailed visualizations, see PNG files in results directory\n")
-        f.write("For detailed career paths, see: user_detailed_paths.csv\n")
+        f.write("For detailed analysis results, see CSV files\n")
     
     print(f"✓ Summary report saved: {report_path}")
 
 
+def compute_trajectory_summary(trajectory_df, config):
+    """
+    Compute summary statistics from trajectory data
+    
+    Args:
+        trajectory_df: Enriched trajectory dataframe
+        config: Config instance
+    
+    Returns:
+        Summary statistics dataframe
+    """
+    print("\nComputing trajectory summary statistics...")
+    
+    summary_stats = []
+    
+    # Filter by study period
+    study_trajectories = trajectory_df[
+        (trajectory_df['job_start_year_x'] >= config.study_start_year) &
+        (trajectory_df['job_start_year_x'] <= config.study_end_year)
+    ]
+    
+    # Group by year and compute statistics
+    for year in range(config.study_start_year, config.study_end_year + 1):
+        year_data = study_trajectories[study_trajectories['job_start_year_x'] == year]
+        
+        if len(year_data) == 0:
+            continue
+        
+        stats = {
+            'year': year,
+            'n_trajectories': len(year_data),
+            'avg_job_changes': year_data['num_job_changes'].mean() if 'num_job_changes' in year_data.columns else None,
+            'upward_mobility_rate': year_data['up_move'].mean() * 100 if 'up_move' in year_data.columns else None,
+            'avg_wage': year_data['annual_state_wage_x'].mean() if 'annual_state_wage_x' in year_data.columns else None,
+            'median_wage': year_data['annual_state_wage_x'].median() if 'annual_state_wage_x' in year_data.columns else None,
+        }
+        
+        # Add demographic breakdowns if available
+        if 'gender' in year_data.columns:
+            stats['pct_female'] = (year_data['gender'] == 2).mean() * 100
+        
+        summary_stats.append(stats)
+    
+    summary_df = pd.DataFrame(summary_stats)
+    print(f"✓ Computed summary for {len(summary_df)} years")
+    
+    return summary_df
+
+
 def main():
-    """Main analysis pipeline"""
+    """Main analysis pipeline using preprocessed trajectory data"""
     
     # Parse CLI arguments and load config
     args = parse_args()
@@ -138,71 +312,77 @@ def main():
     benchmark = PipelineBenchmark()
     
     print("="*80)
-    print("LABOR MARKET TREND ANALYSIS")
+    print("LABOR MARKET TREND ANALYSIS (TRAJECTORY-BASED)")
     print("Study Period Focus: Pre-Pandemic, COVID Shock, Post-Pandemic")
     print("="*80)
-    print(f"\nAnalyzing period: {config.study_start_year}-{config.study_end_year}")
+    print(f"\nData Source: Preprocessed trajectory data")
+    print(f"Analyzing period: {config.study_start_year}-{config.study_end_year}")
     print(f"Using occupation column: {config.analysis_occupation_column}")
     
     # Display study periods
     periods = config.get_study_periods()
     print("\nStudy Periods:")
     for period_key, period_info in periods.items():
-        print(f"  - {period_info['name']}: {period_info['start_year']}-{period_info['end_year']} ({period_info['description']})")
+        print(f"  - {period_info['name']}: {period_info['start_year']}-{period_info['end_year']} "
+              f"({period_info['description']})")
     print("="*80)
     
     ensure_dir(config.results_dir)
     
     # Stage 1: Setup
     benchmark.start_stage("Setup")
-    windows = get_study_period_windows()
-    print(f"\nCreated {len(windows)} yearly windows")
+    print("\nInitializing analysis pipeline...")
     benchmark.end_stage("Setup")
     
-    # Stage 2: Data Loading
-    benchmark.start_stage("Data Loading")
+    # Stage 2: Load Preprocessed Trajectory Data
+    benchmark.start_stage("Load Preprocessed Data")
     loader = DataLoader(config)
-    job_df = loader.load_job_data()
-    benchmark.end_stage("Data Loading")
+    trajectory_df = loader.load_preprocessed_trajectories()
+    benchmark.end_stage("Load Preprocessed Data")
     
-    # Stage 3: Window Processing
-    benchmark.start_stage("Window Processing")
-    window_users = loader.get_window_users(job_df, windows)
-    benchmark.end_stage("Window Processing")
+    # Stage 3: Compute Trajectory Summary Statistics
+    benchmark.start_stage("Trajectory Summary")
+    trajectory_summary = compute_trajectory_summary(trajectory_df, config)
+    benchmark.end_stage("Trajectory Summary")
     
-    # Stage 4: Occupation Distributions
-    benchmark.start_stage("Occupation Distributions")
-    occ_dist_df = loader.get_occupation_distributions(window_users, windows)
-    benchmark.end_stage("Occupation Distributions")
-    
-    # Stage 5: Complete Mobility Analysis
+    # Stage 4: Mobility Analysis (using trajectory data)
     benchmark.start_stage("Mobility Analysis")
+    print("\n" + "="*80)
+    print("MOBILITY ANALYSIS FROM TRAJECTORY DATA")
+    print("="*80)
+    
     analyzer = MobilityAnalyzer(
-        results_dir=config.results_dir, 
-        occupation_col=config.analysis_occupation_column
+        results_dir=config.results_dir,
+        occupation_col='onet_major_x'  # Use trajectory_df occupation column
     )
-    results = analyzer.analyze_all(window_users, windows)
+    
+    analysis_results = analyzer.analyze_all(trajectory_df, config)
+    
+    # Combine with trajectory summary
+    results = {
+        'trajectory_summary': trajectory_summary,
+        'mobility_analysis': analysis_results,
+        'user_details': trajectory_df.copy(),  # Full enriched trajectory data
+    }
+    
+    print("✓ Mobility analysis complete")
     benchmark.end_stage("Mobility Analysis")
     
-    # Stage 6: Visualizations
+    # Stage 5: Visualizations
     benchmark.start_stage("Visualizations")
     print("\n" + "="*80)
     print("GENERATING VISUALIZATIONS")
     print("="*80)
     
-    create_all_visualizations(
-        results['workforce_flow'], 
-        results['transition_rates'], 
-        occ_dist_df, 
-        config.results_dir
-    )
+    # TODO: Create trajectory-based visualizations
+    print("⚠ Visualization generation to be implemented for trajectory data")
     
     benchmark.end_stage("Visualizations")
     
-    # Stage 7: Export Results
+    # Stage 6: Export Results
     benchmark.start_stage("Export Results")
-    export_results(results, occ_dist_df, config.results_dir)
-    generate_summary_report(results, config.results_dir, config)
+    export_results(results, config.results_dir)
+    generate_summary_report(results, trajectory_df, config.results_dir, config)
     benchmark.end_stage("Export Results")
     
     # Print performance report
@@ -213,23 +393,25 @@ def main():
     print("ANALYSIS COMPLETE")
     print("="*80)
     print(f"\nFiles created in '{config.results_dir}/' directory:")
-    print("\n📊 VERSION 1: FULL TIMELINE VISUALIZATIONS (1990-2023):")
-    print("  - full_timeline_1990_2023.png")
-    print("  - occupation_evolution_full_timeline.png")
-    print("\n📊 VERSION 2: STUDY PERIOD VISUALIZATIONS:")
-    print("  - period_based_analysis.png")
-    print("  - workforce_flow_by_period.png")
-    print("  - period_summary_statistics.csv")
-    print("  - top_occupations_evolution.png")
-    print("\n📈 DATA FILES:")
-    print("  - transition_rates.csv")
-    print("  - yearly_workforce_flow.csv")
-    print("  - all_transitions.csv")
-    print("  - occupation_distributions.csv")
-    print("  - user_detailed_paths.csv")
-    print("  - occupation_outflows.csv")
-    print("  - occupation_inflows.csv")
-    print("  - critical_transitions.csv")
+    print("\n📊 TRAJECTORY DATA:")
+    print("  - trajectory_summary_stats.csv")
+    print("  - user_detailed_trajectories.csv (enriched trajectory data)")
+    print("\n📈 DEMOGRAPHIC ANALYSIS:")
+    print("  - mobility_by_gender.csv")
+    print("  - mobility_by_race.csv")
+    print("  - mobility_by_generation.csv")
+    print("  - mobility_by_education.csv")
+    print("\n🔄 JOB CHANGE ANALYSIS:")
+    print("  - job_change_distribution.csv")
+    print("  - job_change_types_by_year.csv")
+    print("  - mobility_by_num_changes.csv")
+    print("\n💰 WAGE MOBILITY ANALYSIS:")
+    print("  - upward_mobility_by_year.csv")
+    print("  - wage_distribution_by_year.csv")
+    print("  - upward_mobility_by_occupation.csv")
+    print("  - upward_mobility_by_gender.csv")
+    print("  - upward_mobility_by_race.csv")
+    print("\n📋 REPORTS:")
     print("  - summary_report.txt")
     print("\n⚡ PERFORMANCE:")
     print("  - benchmark_report.json")

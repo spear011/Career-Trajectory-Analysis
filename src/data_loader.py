@@ -1,9 +1,10 @@
 """
 Unified data loading and preprocessing for labor market analysis
+MODIFIED: Added support for loading preprocessed trajectory data
 """
 import pandas as pd
 import os
-from .utils import get_config, get_active_jobs, get_latest_job_per_user
+from src.utils import get_config, get_active_jobs, get_latest_job_per_user
 
 
 class DataLoader:
@@ -24,7 +25,60 @@ class DataLoader:
         self.data_dir = config.data_dir
     
     # ========================================
-    # JOB DATA
+    # PREPROCESSED TRAJECTORY DATA
+    # ========================================
+    
+    def load_preprocessed_trajectories(self, trajectory_path=None):
+        """
+        Load preprocessed trajectory data from preprocess.py output
+        
+        Args:
+            trajectory_path: Path to trajectory parquet file.
+                           If None, uses default path from config.
+        
+        Returns:
+            Trajectory dataframe with enriched features including:
+            - Demographics (gender, race, generation)
+            - Education (max_edu_name)
+            - First job info (onet_major_x, naics6_major_x, company_x, state_x, job_start_year_x)
+            - Wages (annual_state_wage_x, log_wage_x)
+            - Mobility indicators (num_job_changes, up_move)
+            - Job change types (move_1_1, move_1_2, move_2_1, move_2_2)
+            - State GDP metrics (state_gdp_decile_x)
+        """
+        if trajectory_path is None:
+            trajectory_path = os.path.join(
+                self.config.results_dir, 
+                'career_trajectories.parquet'
+            )
+        
+        print(f"Loading preprocessed trajectory data from: {trajectory_path}")
+        
+        if not os.path.exists(trajectory_path):
+            raise FileNotFoundError(
+                f"Preprocessed trajectory file not found: {trajectory_path}\n"
+                f"Please run preprocess.py first to generate the trajectory data."
+            )
+        
+        trajectory_df = pd.read_parquet(trajectory_path)
+        
+        print(f"Loaded trajectory data:")
+        print(f"  Total trajectories: {len(trajectory_df):,}")
+        print(f"  Features: {len(trajectory_df.columns)}")
+        
+        # Display key columns
+        key_columns = [
+            'onet_major_x', 'naics6_major_x', 'job_start_year_x', 
+            'num_job_changes', 'gender', 'race', 'generation',
+            'annual_state_wage_x', 'up_move'
+        ]
+        available_keys = [col for col in key_columns if col in trajectory_df.columns]
+        print(f"  Key features available: {available_keys}")
+        
+        return trajectory_df
+    
+    # ========================================
+    # JOB DATA (Original methods preserved)
     # ========================================
     
     def load_job_data(self):
@@ -35,7 +89,7 @@ class DataLoader:
             Preprocessed job dataframe
         """
         print("Loading job data...")
-        job_df = pd.read_csv(os.path.join(self.data_dir, 'job' ,'job_group_0.csv'))
+        job_df = pd.read_csv(os.path.join(self.data_dir, 'job', 'job_group_0.csv'))
         
         # Convert date columns
         job_df['JOB_START_DATE'] = pd.to_datetime(job_df['JOB_START_DATE'], format='%Y-%m', errors='coerce')
@@ -68,35 +122,44 @@ class DataLoader:
     
     def get_occupation_distributions(self, window_users, windows, occupation_col=None):
         """
-        Calculate occupation distributions for each window
+        Compute occupation distributions across windows
         
         Args:
-            window_users: Dictionary of window users
-            windows: List of windows
-            occupation_col: Name of occupation column (uses config if None)
+            window_users: Dictionary mapping window name to user dataframe
+            windows: List of (name, start, end, label) tuples
+            occupation_col: Column name for occupation (uses config default if None)
         
         Returns:
-            Dataframe with occupation distributions by year
+            Long-form dataframe with occupation distributions over time
         """
         if occupation_col is None:
             occupation_col = self.config.analysis_occupation_column
         
-        print("\nAnalyzing occupation distributions...")
-        occ_distributions = []
+        print(f"\nComputing occupation distributions (using {occupation_col})...")
         
-        for name, _, _, label in windows:
-            occ_counts = window_users[name][occupation_col].value_counts()
-            total = len(window_users[name])
+        all_dists = []
+        for name, start, end, label in windows:
+            users = window_users[name]
+            year = int(name.split('_')[0])
             
-            for occ, count in occ_counts.items():
-                occ_distributions.append({
-                    'Year': int(label),
-                    'Occupation': occ,
-                    'Count': count,
-                    'Percentage': (count / total) * 100
-                })
+            # Count occupations
+            occ_counts = users[occupation_col].value_counts()
+            total = len(users)
+            
+            # Create distribution dataframe
+            dist_df = pd.DataFrame({
+                'year': year,
+                'occupation': occ_counts.index,
+                'count': occ_counts.values,
+                'percentage': (occ_counts.values / total * 100).round(2)
+            })
+            
+            all_dists.append(dist_df)
         
-        return pd.DataFrame(occ_distributions)
+        result_df = pd.concat(all_dists, ignore_index=True)
+        print(f"✓ Computed distributions for {len(windows)} time windows")
+        
+        return result_df
     
     # ========================================
     # EDUCATION DATA
@@ -104,88 +167,49 @@ class DataLoader:
     
     def load_education_data(self):
         """
-        Load and preprocess education data
+        Load education data
         
         Returns:
-            Preprocessed education dataframe
+            Education dataframe
         """
         print("Loading education data...")
-        ed_df = pd.read_csv(os.path.join(self.data_dir, 'education_group_0.csv'))
+        edu_df = pd.read_csv(os.path.join(self.data_dir, 'education', 'education_group_0.csv'))
         
         # Convert date columns
-        ed_df['START_DATE'] = pd.to_datetime(ed_df['START_DATE'], format='%Y-%m', errors='coerce')
-        ed_df['END_DATE'] = pd.to_datetime(ed_df['END_DATE'], format='%Y-%m', errors='coerce')
+        edu_df['START_DATE'] = pd.to_datetime(edu_df['START_DATE'], errors='coerce')
+        edu_df['END_DATE'] = pd.to_datetime(edu_df['END_DATE'], errors='coerce')
         
-        # Handle graduation year
-        ed_df['GRAD_YEAR'] = pd.to_numeric(ed_df['GRAD_YEAR'], errors='coerce')
-        
-        print(f"Total education records: {len(ed_df):,}")
-        print(f"Unique individuals: {ed_df['ID'].nunique():,}")
-        
-        return ed_df
+        print(f"Total education records: {len(edu_df):,}")
+        return edu_df
     
-    def get_education_level_distribution(self, ed_df):
-        """
-        Get distribution of education levels
-        
-        Args:
-            ed_df: Education dataframe
-        
-        Returns:
-            DataFrame with education level counts
-        """
-        level_dist = ed_df.groupby(['EDULEVEL_NAME']).size().reset_index(name='count')
-        level_dist = level_dist.sort_values('count', ascending=False)
-        return level_dist
-    
-    def get_major_distribution(self, ed_df, top_n=20):
-        """
-        Get distribution of majors (CIP6)
-        
-        Args:
-            ed_df: Education dataframe
-            top_n: Number of top majors to return
-        
-        Returns:
-            DataFrame with major counts
-        """
-        major_dist = ed_df.groupby(['CIP6_2020_NAME']).size().reset_index(name='count')
-        major_dist = major_dist.sort_values('count', ascending=False).head(top_n)
-        return major_dist
-    
-    def merge_job_education(self, job_df, ed_df):
+    def merge_job_education(self, job_df, edu_df):
         """
         Merge job and education data
         
         Args:
             job_df: Job dataframe
-            ed_df: Education dataframe
+            edu_df: Education dataframe
         
         Returns:
             Merged dataframe
         """
-        print("Merging job and education data...")
-        merged_df = job_df.merge(
-            ed_df[['ID', 'CIP6_2020_NAME', 'EDULEVEL_NAME']], 
-            on='ID', 
-            how='left'
-        )
-        merged_df = merged_df.rename(columns={'CIP6_2020_NAME': 'Major'})
-        print(f"Merged records: {len(merged_df):,}")
-        return merged_df
+        print("\nMerging job and education data...")
+        merged = job_df.merge(edu_df, on='ID', how='inner', suffixes=('', '_edu'))
+        print(f"Merged records: {len(merged):,}")
+        return merged
     
-    def get_occupation_major_mapping(self, job_df, ed_df, occupation_col=None, min_count=50):
+    def get_occupation_major_mappings(self, job_df, ed_df, occupation_col=None, min_count=100):
         """
-        Map occupations to common majors
+        Get occupation to major mappings
         
         Args:
             job_df: Job dataframe
             ed_df: Education dataframe
-            occupation_col: Occupation column name (uses config if None)
-            min_count: Minimum occupation count
+            occupation_col: Occupation column name (uses config default if None)
+            min_count: Minimum count threshold for valid mappings
         
         Returns:
-            DataFrame with occupation-major mappings
+            Dataframe with occupation-major mappings
         """
         if occupation_col is None:
             occupation_col = self.config.analysis_occupation_column

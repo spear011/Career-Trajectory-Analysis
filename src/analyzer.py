@@ -1,6 +1,6 @@
 """
-Unified mobility analyzer
-Combines transitions, workforce flow, and occupation flow analysis
+Unified mobility analyzer - MODIFIED FOR TRAJECTORY DATA
+Analyzes preprocessed trajectory data instead of raw job data
 """
 import pandas as pd
 import numpy as np
@@ -10,693 +10,463 @@ from collections import defaultdict
 
 class MobilityAnalyzer:
     """
-    Labor market mobility analyzer
-    Combines transitions, workforce flow, and occupation flow analysis into a single class
+    Labor market mobility analyzer for trajectory data
+    Analyzes enriched trajectory dataframe from preprocess.py
     """
     
-    def __init__(self, results_dir='results', occupation_col='ONET_2019_NAME'):
+    def __init__(self, results_dir='results', occupation_col='onet_major_x'):
         """
         Initialize analyzer
         
         Args:
             results_dir: Directory for caching and results
-            occupation_col: Occupation column name to use
+            occupation_col: Occupation column name to use (default: onet_major_x from trajectory_df)
         """
         self.results_dir = results_dir
         self.occupation_col = occupation_col
-        
-        # Optimization caches
-        self.user_presence_map = None
-        self.user_info_cache = None
     
     # ========================================
     # PUBLIC API - Main Analysis Method
     # ========================================
     
-    def analyze_all(self, window_users, windows):
+    def analyze_all(self, trajectory_df, config):
         """
-        Run complete mobility analysis pipeline
+        Run complete mobility analysis pipeline using trajectory data
         
         Args:
-            window_users: Dictionary of window users
-            windows: List of windows
+            trajectory_df: Enriched trajectory dataframe from preprocess.py
+            config: Config instance with study period information
         
         Returns:
             Dictionary with all analysis results:
-                - transitions: Year-to-year transition dataframe
-                - transition_rates: Transition rates by period
-                - workforce_flow: Workforce flow summary
-                - user_details: Detailed user paths
-                - outflows: Occupation outflow analysis
-                - inflows: Occupation inflow analysis
-                - critical_transitions: Critical occupation transitions
+                - trajectory_summary: Summary statistics by year
+                - mobility_by_demographics: Mobility metrics by demographic groups
+                - job_change_analysis: Analysis of job change types
+                - wage_mobility: Wage-based mobility analysis
         """
         print("\n" + "="*80)
-        print("RUNNING COMPLETE MOBILITY ANALYSIS")
+        print("RUNNING TRAJECTORY-BASED MOBILITY ANALYSIS")
         print("="*80)
         
         results = {}
         
-        # 1. Build transitions
-        print("\n[1/5] Building transitions...")
-        results['transitions'] = self.build_transitions(window_users, windows)
-        results['transition_rates'] = self.calculate_transition_rates(results['transitions'])
+        # 1. Trajectory summary by year
+        print("\n[1/4] Computing trajectory summary statistics...")
+        results['trajectory_summary'] = self.compute_trajectory_summary(trajectory_df, config)
         
-        # 2. Workforce flow
-        print("\n[2/5] Analyzing workforce flow...")
-        flow_summary, user_details = self.analyze_workforce_flow(window_users, windows)
-        results['workforce_flow'] = flow_summary
-        results['user_details'] = user_details
+        # 2. Demographic analysis
+        print("\n[2/4] Analyzing mobility by demographics...")
+        results['mobility_by_demographics'] = self.analyze_by_demographics(trajectory_df, config)
         
-        # 3. Occupation outflows
-        print("\n[3/5] Analyzing occupation outflows...")
-        results['outflows'] = self.analyze_occupation_outflows(user_details, window_users, windows)
+        # 3. Job change type analysis
+        print("\n[3/4] Analyzing job change patterns...")
+        results['job_change_analysis'] = self.analyze_job_changes(trajectory_df, config)
         
-        # 4. Occupation inflows
-        print("\n[4/5] Analyzing occupation inflows...")
-        results['inflows'] = self.analyze_occupation_inflows(user_details, window_users, windows)
-        
-        # 5. Critical transitions
-        print("\n[5/5] Finding critical transitions...")
-        results['critical_transitions'] = self.find_critical_transitions(results['outflows'])
+        # 4. Wage mobility analysis
+        print("\n[4/4] Analyzing wage-based mobility...")
+        results['wage_mobility'] = self.analyze_wage_mobility(trajectory_df, config)
         
         print("\n" + "="*80)
-        print("ANALYSIS COMPLETE")
+        print("TRAJECTORY ANALYSIS COMPLETE")
         print("="*80)
         
         return results
     
     # ========================================
-    # TRANSITIONS ANALYSIS
+    # TRAJECTORY SUMMARY
     # ========================================
     
-    def build_transitions(self, window_users, windows):
+    def compute_trajectory_summary(self, trajectory_df, config):
         """
-        Build year-to-year transitions for users who stayed
+        Compute summary statistics from trajectory data
         
         Args:
-            window_users: Dictionary of window users
-            windows: List of windows
+            trajectory_df: Enriched trajectory dataframe
+            config: Config instance
         
         Returns:
-            Combined dataframe of all transitions
+            Summary statistics dataframe grouped by year
         """
-        print("\n" + "="*80)
-        print("BUILDING YEAR-TO-YEAR TRANSITIONS")
-        print("="*80)
+        print("\nComputing trajectory summary by year...")
         
-        transitions = []
+        # Debug: Check year column
+        print(f"DEBUG: job_start_year_x dtype: {trajectory_df['job_start_year_x'].dtype}")
+        print(f"DEBUG: job_start_year_x unique values (first 20): {sorted(trajectory_df['job_start_year_x'].dropna().unique())[:20]}")
+        print(f"DEBUG: job_start_year_x range: {trajectory_df['job_start_year_x'].min():.0f} - {trajectory_df['job_start_year_x'].max():.0f}")
         
-        for i in range(len(windows) - 1):
-            w_from_name, _, _, w_from_label = windows[i]
-            w_to_name, _, _, w_to_label = windows[i + 1]
+        summary_stats = []
+        
+        # Convert year to int if needed
+        trajectory_df = trajectory_df.copy()
+        if trajectory_df['job_start_year_x'].dtype in ['float64', 'float32']:
+            trajectory_df['job_start_year_x'] = trajectory_df['job_start_year_x'].astype('Int64')
+        
+        # Filter by study period
+        study_trajectories = trajectory_df[
+            (trajectory_df['job_start_year_x'] >= config.study_start_year) &
+            (trajectory_df['job_start_year_x'] <= config.study_end_year)
+        ].copy()
+        
+        print(f"Analyzing {len(study_trajectories):,} trajectories in study period "
+              f"({config.study_start_year}-{config.study_end_year})")
+        
+        # Debug: Show year distribution in filtered data
+        if len(study_trajectories) > 0:
+            year_counts = study_trajectories['job_start_year_x'].value_counts().sort_index()
+            print(f"DEBUG: Years in filtered data: {year_counts.to_dict()}")
+        
+        # Group by year and compute statistics
+        for year in range(config.study_start_year, config.study_end_year + 1):
+            year_data = study_trajectories[study_trajectories['job_start_year_x'] == year]
             
-            from_users = window_users[w_from_name]
-            to_users = window_users[w_to_name]
-            
-            from_ids = set(from_users['ID'])
-            to_ids = set(to_users['ID'])
-            
-            # Find transitions (users in both years)
-            transition_ids = from_ids & to_ids
-            
-            print(f"{w_from_label}→{w_to_label}: {len(transition_ids):,} users stayed")
-            
-            # Build transition dataframe for users who stayed
-            if len(transition_ids) > 0:
-                from_indexed = from_users[from_users['ID'].isin(transition_ids)].set_index('ID')
-                to_indexed = to_users[to_users['ID'].isin(transition_ids)].set_index('ID')
-                
-                merged = from_indexed.merge(to_indexed, left_index=True, right_index=True, 
-                                            suffixes=('_from', '_to'))
-                
-                trans_df = pd.DataFrame({
-                    'ID': merged.index,
-                    'Year_From': int(w_from_label),
-                    'Year_To': int(w_to_label),
-                    'Period': f'{w_from_label}→{w_to_label}',
-                    'From_Occupation': merged[f'{self.occupation_col}_from'],
-                    'To_Occupation': merged[f'{self.occupation_col}_to'],
-                    'From_Industry': merged['NAICS6_NAME_from'],
-                    'To_Industry': merged['NAICS6_NAME_to'],
-                    'From_State': merged['STATE_RAW_from'],
-                    'To_State': merged['STATE_RAW_to'],
-                    'Occupation_Changed': merged[f'{self.occupation_col}_from'] != merged[f'{self.occupation_col}_to'],
-                    'Industry_Changed': merged['NAICS6_NAME_from'] != merged['NAICS6_NAME_to'],
-                    'State_Changed': merged['STATE_RAW_from'] != merged['STATE_RAW_to']
-                }).reset_index(drop=True)
-                
-                transitions.append(trans_df)
-        
-        return pd.concat(transitions, ignore_index=True)
-    
-    def calculate_transition_rates(self, all_transitions_df):
-        """
-        Calculate transition rates by period
-        
-        Args:
-            all_transitions_df: Combined transitions dataframe
-        
-        Returns:
-            Dataframe with transition rates by period
-        """
-        transition_rates = all_transitions_df.groupby('Period').agg({
-            'Occupation_Changed': 'mean',
-            'Industry_Changed': 'mean',
-            'State_Changed': 'mean',
-            'ID': 'count'
-        }).reset_index()
-        
-        transition_rates.columns = ['Period', 'Occupation_Change_Rate', 'Industry_Change_Rate', 
-                                    'State_Change_Rate', 'Users']
-        transition_rates['Occupation_Change_Rate'] *= 100
-        transition_rates['Industry_Change_Rate'] *= 100
-        transition_rates['State_Change_Rate'] *= 100
-        transition_rates['Year_To'] = [int(p.split('→')[1]) for p in transition_rates['Period']]
-        
-        return transition_rates
-    
-    # ========================================
-    # WORKFORCE FLOW ANALYSIS
-    # ========================================
-    
-    def analyze_workforce_flow(self, window_users, windows):
-        """
-        Comprehensive workforce flow analysis with optimizations
-        
-        Args:
-            window_users: Dictionary of window users
-            windows: List of windows
-        
-        Returns:
-            Tuple of (summary dataframe, detailed user dataframe)
-        """
-        print("\n" + "="*80)
-        print("COMPREHENSIVE WORKFORCE FLOW ANALYSIS (OPTIMIZED)")
-        print("="*80)
-        
-        # Build optimization caches
-        if self.user_presence_map is None:
-            self.user_presence_map = self._build_user_presence_map(window_users, windows)
-        if self.user_info_cache is None:
-            self.user_info_cache = self._build_user_info_cache(window_users, windows)
-        
-        yearly_flow = []
-        all_user_details = []
-        
-        for i in range(len(windows) - 1):
-            w_from_name, _, _, w_from_label = windows[i]
-            w_to_name, _, _, w_to_label = windows[i + 1]
-            
-            # Check cache first
-            cached, cached_users = self._load_cached_transition(w_from_label, w_to_label)
-            if cached is not None:
-                print(f"\n{w_from_label}→{w_to_label}: Loading from cache...")
-                yearly_flow.append(cached)
-                all_user_details.append(cached_users)
-                print(f"  Dropouts: {cached['Dropouts']:,} ({cached['Dropout_Rate']:.2f}%)")
-                print(f"    └─ Career breaks: {cached['Career_Breaks']:,}")
-                print(f"    └─ Permanent exits: {cached['Permanent_Exits']:,}")
-                print(f"  Comebacks: {cached['Comebacks']:,} ({cached['Comeback_Rate']:.2f}%)")
-                print(f"  New entrants: {cached['New_Entrants']:,} ({cached['Entry_Rate']:.2f}%)")
+            if len(year_data) == 0:
                 continue
             
-            print(f"\n{w_from_label}→{w_to_label}: Computing (optimized)...")
-            
-            from_users = window_users[w_from_name]
-            to_users = window_users[w_to_name]
-            
-            from_ids = set(from_users['ID'])
-            to_ids = set(to_users['ID'])
-            
-            # 1. DROPOUTS
-            dropout_ids = from_ids - to_ids
-            
-            # 2. Classify dropouts using pre-computed presence map
-            career_breaks = set()
-            permanent_exits = set()
-            
-            for dropout_id in dropout_ids:
-                if dropout_id in self.user_presence_map:
-                    future_windows = self.user_presence_map[dropout_id]
-                    if any(window_idx > i + 1 for window_idx in future_windows):
-                        career_breaks.add(dropout_id)
-                    else:
-                        permanent_exits.add(dropout_id)
-                else:
-                    permanent_exits.add(dropout_id)
-            
-            # 3. Comebacks using pre-computed presence map
-            comeback_ids = set()
-            comeback_last_seen = {}
-            
-            for user_id in to_ids:
-                if user_id not in from_ids and user_id in self.user_presence_map:
-                    past_windows = [w for w in self.user_presence_map[user_id] if w < i]
-                    if past_windows:
-                        comeback_ids.add(user_id)
-                        comeback_last_seen[user_id] = max(past_windows)
-            
-            # 4. New entrants
-            new_entrants = set()
-            for user_id in to_ids:
-                if user_id not in from_ids:
-                    if user_id not in self.user_presence_map or all(w > i for w in self.user_presence_map[user_id]):
-                        new_entrants.add(user_id)
-            
-            # 5. Stayed
-            stayed_ids = from_ids & to_ids
-            
-            # Build detailed user-level data
-            user_records = []
-            
-            # Career breaks
-            for user_id in career_breaks:
-                from_info = self.user_info_cache.get((i, user_id))
-                user_records.append({
-                    'ID': user_id,
-                    'Year_From': int(w_from_label),
-                    'Year_To': int(w_to_label),
-                    'Status': 'dropout_career_break',
-                    'From_Occupation': from_info['Occupation'] if from_info else None,
-                    'From_Industry': from_info['Industry'] if from_info else None,
-                    'From_State': from_info['State'] if from_info else None,
-                    'To_Occupation': None,
-                    'To_Industry': None,
-                    'To_State': None,
-                    'Occupation_Changed': None,
-                    'Industry_Changed': None,
-                    'State_Changed': None
-                })
-            
-            # Permanent exits
-            for user_id in permanent_exits:
-                from_info = self.user_info_cache.get((i, user_id))
-                user_records.append({
-                    'ID': user_id,
-                    'Year_From': int(w_from_label),
-                    'Year_To': int(w_to_label),
-                    'Status': 'dropout_permanent_exit',
-                    'From_Occupation': from_info['Occupation'] if from_info else None,
-                    'From_Industry': from_info['Industry'] if from_info else None,
-                    'From_State': from_info['State'] if from_info else None,
-                    'To_Occupation': None,
-                    'To_Industry': None,
-                    'To_State': None,
-                    'Occupation_Changed': None,
-                    'Industry_Changed': None,
-                    'State_Changed': None
-                })
-            
-            # Comebacks
-            for user_id in comeback_ids:
-                to_info = self.user_info_cache.get((i + 1, user_id))
-                last_seen_idx = comeback_last_seen[user_id]
-                from_info = self.user_info_cache.get((last_seen_idx, user_id))
-                
-                user_records.append({
-                    'ID': user_id,
-                    'Year_From': int(w_from_label),
-                    'Year_To': int(w_to_label),
-                    'Status': 'comeback',
-                    'From_Occupation': from_info['Occupation'] if from_info else None,
-                    'From_Industry': from_info['Industry'] if from_info else None,
-                    'From_State': from_info['State'] if from_info else None,
-                    'To_Occupation': to_info['Occupation'] if to_info else None,
-                    'To_Industry': to_info['Industry'] if to_info else None,
-                    'To_State': to_info['State'] if to_info else None,
-                    'Occupation_Changed': (from_info['Occupation'] != to_info['Occupation']) if (from_info and to_info) else None,
-                    'Industry_Changed': (from_info['Industry'] != to_info['Industry']) if (from_info and to_info) else None,
-                    'State_Changed': (from_info['State'] != to_info['State']) if (from_info and to_info) else None
-                })
-            
-            # New entrants
-            for user_id in new_entrants:
-                to_info = self.user_info_cache.get((i + 1, user_id))
-                user_records.append({
-                    'ID': user_id,
-                    'Year_From': int(w_from_label),
-                    'Year_To': int(w_to_label),
-                    'Status': 'new_entrant',
-                    'From_Occupation': None,
-                    'From_Industry': None,
-                    'From_State': None,
-                    'To_Occupation': to_info['Occupation'] if to_info else None,
-                    'To_Industry': to_info['Industry'] if to_info else None,
-                    'To_State': to_info['State'] if to_info else None,
-                    'Occupation_Changed': None,
-                    'Industry_Changed': None,
-                    'State_Changed': None
-                })
-            
-            # Stayed
-            for user_id in stayed_ids:
-                from_info = self.user_info_cache.get((i, user_id))
-                to_info = self.user_info_cache.get((i + 1, user_id))
-                
-                user_records.append({
-                    'ID': user_id,
-                    'Year_From': int(w_from_label),
-                    'Year_To': int(w_to_label),
-                    'Status': 'stayed',
-                    'From_Occupation': from_info['Occupation'] if from_info else None,
-                    'From_Industry': from_info['Industry'] if from_info else None,
-                    'From_State': from_info['State'] if from_info else None,
-                    'To_Occupation': to_info['Occupation'] if to_info else None,
-                    'To_Industry': to_info['Industry'] if to_info else None,
-                    'To_State': to_info['State'] if to_info else None,
-                    'Occupation_Changed': (from_info['Occupation'] != to_info['Occupation']) if (from_info and to_info) else None,
-                    'Industry_Changed': (from_info['Industry'] != to_info['Industry']) if (from_info and to_info) else None,
-                    'State_Changed': (from_info['State'] != to_info['State']) if (from_info and to_info) else None
-                })
-            
-            user_data = pd.DataFrame(user_records)
-            
-            transition_data = {
-                'Year_From': int(w_from_label),
-                'Year_To': int(w_to_label),
-                'Period': f'{w_from_label}→{w_to_label}',
-                'Total_From': len(from_ids),
-                'Total_To': len(to_ids),
-                'Dropouts': len(dropout_ids),
-                'Dropout_Rate': (len(dropout_ids) / len(from_ids)) * 100 if len(from_ids) > 0 else 0,
-                'Career_Breaks': len(career_breaks),
-                'Permanent_Exits': len(permanent_exits),
-                'Permanent_Exit_Rate': (len(permanent_exits) / len(from_ids)) * 100 if len(from_ids) > 0 else 0,
-                'Comebacks': len(comeback_ids),
-                'Comeback_Rate': (len(comeback_ids) / len(to_ids)) * 100 if len(to_ids) > 0 else 0,
-                'New_Entrants': len(new_entrants),
-                'Entry_Rate': (len(new_entrants) / len(to_ids)) * 100 if len(to_ids) > 0 else 0,
+            stats = {
+                'year': year,
+                'n_trajectories': len(year_data),
             }
             
-            self._save_transition_cache(w_from_label, w_to_label, transition_data, user_data)
+            # Job mobility metrics
+            if 'num_job_changes' in year_data.columns:
+                stats['avg_job_changes'] = year_data['num_job_changes'].mean()
+                stats['median_job_changes'] = year_data['num_job_changes'].median()
+                stats['pct_no_change'] = (year_data['num_job_changes'] == 0).mean() * 100
+                stats['pct_multiple_changes'] = (year_data['num_job_changes'] >= 2).mean() * 100
             
-            yearly_flow.append(transition_data)
-            all_user_details.append(user_data)
+            # Upward mobility
+            if 'up_move' in year_data.columns:
+                stats['upward_mobility_rate'] = year_data['up_move'].mean() * 100
             
-            print(f"  Dropouts: {len(dropout_ids):,} ({len(dropout_ids)/len(from_ids)*100:.2f}%)")
-            print(f"    └─ Career breaks: {len(career_breaks):,}")
-            print(f"    └─ Permanent exits: {len(permanent_exits):,}")
-            print(f"  Comebacks: {len(comeback_ids):,} ({len(comeback_ids)/len(to_ids)*100:.2f}%)")
-            print(f"  New entrants: {len(new_entrants):,} ({len(new_entrants)/len(to_ids)*100:.2f}%)")
-            print(f"  Stayed: {len(stayed_ids):,}")
-            print(f"  ✓ Processed {len(user_records):,} users (optimized)")
+            # Wage statistics
+            if 'annual_state_wage_x' in year_data.columns:
+                stats['avg_wage'] = year_data['annual_state_wage_x'].mean()
+                stats['median_wage'] = year_data['annual_state_wage_x'].median()
+                stats['wage_25th_pct'] = year_data['annual_state_wage_x'].quantile(0.25)
+                stats['wage_75th_pct'] = year_data['annual_state_wage_x'].quantile(0.75)
+            
+            # Demographics
+            if 'gender' in year_data.columns:
+                stats['pct_female'] = (year_data['gender'] == 2).mean() * 100
+            
+            if 'race' in year_data.columns:
+                race_dist = year_data['race'].value_counts(normalize=True) * 100
+                for race_code, pct in race_dist.items():
+                    stats[f'pct_race_{int(race_code)}'] = pct
+            
+            # Job change types
+            move_cols = ['move_1_1', 'move_1_2', 'move_2_1', 'move_2_2']
+            if all(col in year_data.columns for col in move_cols):
+                stats['pct_move_1_1'] = year_data['move_1_1'].mean() * 100  # Diff company, diff occ
+                stats['pct_move_1_2'] = year_data['move_1_2'].mean() * 100  # Diff company, same occ
+                stats['pct_move_2_1'] = year_data['move_2_1'].mean() * 100  # Same company, diff occ
+                stats['pct_move_2_2'] = year_data['move_2_2'].mean() * 100  # Same company, same occ
+            
+            summary_stats.append(stats)
         
-        combined_user_details = pd.concat(all_user_details, ignore_index=True)
+        summary_df = pd.DataFrame(summary_stats)
+        print(f"✓ Computed summary for {len(summary_df)} years")
         
-        return pd.DataFrame(yearly_flow), combined_user_details
+        return summary_df
     
     # ========================================
-    # OCCUPATION FLOW ANALYSIS
+    # DEMOGRAPHIC ANALYSIS
     # ========================================
     
-    def analyze_occupation_outflows(self, user_details_df, window_users, windows):
+    def analyze_by_demographics(self, trajectory_df, config):
         """
-        Analyze where people go when they leave each occupation
+        Analyze mobility patterns by demographic groups
         
         Args:
-            user_details_df: Detailed user paths dataframe
-            window_users: Dictionary of window users (for API consistency)
-            windows: List of windows
+            trajectory_df: Enriched trajectory dataframe
+            config: Config instance
         
         Returns:
-            Dataframe with occupation outflow analysis
+            Dictionary with demographic breakdowns
         """
-        print("\n" + "="*80)
-        print("OCCUPATION OUTFLOW ANALYSIS (OPTIMIZED)")
-        print("="*80)
+        print("\nAnalyzing mobility by demographic groups...")
         
-        outflow_records = []
+        # Convert year to int if needed
+        trajectory_df = trajectory_df.copy()
+        if trajectory_df['job_start_year_x'].dtype in ['float64', 'float32']:
+            trajectory_df['job_start_year_x'] = trajectory_df['job_start_year_x'].astype('Int64')
         
-        for i in range(len(windows) - 1):
-            _, _, _, year_from = windows[i]
-            _, _, _, year_to = windows[i + 1]
-            
-            period_data = user_details_df[
-                (user_details_df['Year_From'] == int(year_from)) & 
-                (user_details_df['Year_To'] == int(year_to))
-            ].copy()
-            
-            if len(period_data) == 0:
-                print(f"  Warning: No data for {year_from}→{year_to}")
-                continue
-            
-            # Group by occupation once
-            grouped = period_data.groupby('From_Occupation', dropna=True)
-            
-            for occ, occ_data in grouped:
-                total_from_occ = len(occ_data)
+        study_trajectories = trajectory_df[
+            (trajectory_df['job_start_year_x'] >= config.study_start_year) &
+            (trajectory_df['job_start_year_x'] <= config.study_end_year)
+        ].copy()
+        
+        results = {}
+        
+        # By gender
+        if 'gender' in study_trajectories.columns:
+            gender_analysis = []
+            for gender in study_trajectories['gender'].dropna().unique():
+                gender_data = study_trajectories[study_trajectories['gender'] == gender]
                 
-                # Vectorized counting
-                stayed_same = ((occ_data['Status'] == 'stayed') & 
-                              (occ_data['Occupation_Changed'] == False)).sum()
-                
-                changed_mask = ((occ_data['Status'] == 'stayed') & 
-                               (occ_data['Occupation_Changed'] == True))
-                changed_occ_count = changed_mask.sum()
-                
-                career_break = (occ_data['Status'] == 'dropout_career_break').sum()
-                perm_exit = (occ_data['Status'] == 'dropout_permanent_exit').sum()
-                
-                # Get destination occupations for those who changed
-                if changed_occ_count > 0:
-                    dest_occupations = occ_data[changed_mask]['To_Occupation'].value_counts().to_dict()
-                else:
-                    dest_occupations = {}
-                
-                outflow_records.append({
-                    'Year_From': int(year_from),
-                    'Year_To': int(year_to),
-                    'Period': f'{year_from}→{year_to}',
-                    'From_Occupation': occ,
-                    'Total_Count': total_from_occ,
-                    'Stayed_Same_Occ': int(stayed_same),
-                    'Changed_Occupation': int(changed_occ_count),
-                    'Career_Break': int(career_break),
-                    'Permanent_Exit': int(perm_exit),
-                    'Retention_Rate': (stayed_same / total_from_occ) * 100,
-                    'Turnover_Rate': ((changed_occ_count + career_break + perm_exit) / total_from_occ) * 100,
-                    'Permanent_Exit_Rate': (perm_exit / total_from_occ) * 100,
-                    'Top_Destination_Occupations': dest_occupations
-                })
-        
-        print(f"  ✓ Analyzed {len(outflow_records):,} occupation-period combinations")
-        return pd.DataFrame(outflow_records)
-    
-    def analyze_occupation_inflows(self, user_details_df, window_users, windows):
-        """
-        Analyze where people come from when entering each occupation
-        
-        Returns:
-            Dataframe with occupation inflow analysis
-        """
-        print("\nOCCUPATION INFLOW ANALYSIS (OPTIMIZED)")
-        print("="*80)
-        
-        inflow_records = []
-        
-        for i in range(len(windows) - 1):
-            _, _, _, year_from = windows[i]
-            _, _, _, year_to = windows[i + 1]
-            
-            period_data = user_details_df[
-                (user_details_df['Year_From'] == int(year_from)) & 
-                (user_details_df['Year_To'] == int(year_to))
-            ].copy()
-            
-            # Group by target occupation once
-            grouped = period_data.groupby('To_Occupation', dropna=True)
-            
-            for occ, occ_data in grouped:
-                total_to_occ = len(occ_data)
-                
-                # Vectorized counting
-                stayed_same = ((occ_data['Status'] == 'stayed') & 
-                              (occ_data['Occupation_Changed'] == False)).sum()
-                
-                from_diff_mask = ((occ_data['Status'] == 'stayed') & 
-                                 (occ_data['Occupation_Changed'] == True))
-                from_diff_count = from_diff_mask.sum()
-                
-                new_entrants = (occ_data['Status'] == 'new_entrant').sum()
-                comebacks = (occ_data['Status'] == 'comeback').sum()
-                
-                # Get source occupations
-                if from_diff_count > 0:
-                    source_occupations = occ_data[from_diff_mask]['From_Occupation'].value_counts().to_dict()
-                else:
-                    source_occupations = {}
-                
-                inflow_records.append({
-                    'Year_From': int(year_from),
-                    'Year_To': int(year_to),
-                    'Period': f'{year_from}→{year_to}',
-                    'To_Occupation': occ,
-                    'Total_Count': total_to_occ,
-                    'Stayed_Same_Occ': stayed_same,
-                    'From_Other_Occ': from_diff_count,
-                    'New_Entrants': new_entrants,
-                    'Comebacks': comebacks,
-                    'Internal_Retention_Rate': (stayed_same / total_to_occ) * 100,
-                    'External_Recruitment_Rate': ((from_diff_count + new_entrants) / total_to_occ) * 100,
-                    'Top_Source_Occupations': source_occupations
-                })
-        
-        print(f"  ✓ Analyzed {len(inflow_records):,} occupation-period combinations")
-        return pd.DataFrame(inflow_records)
-    
-    def find_critical_transitions(self, outflow_df, min_count=100, top_n=10):
-        """
-        Find the most significant occupation-to-occupation transitions
-        
-        Args:
-            outflow_df: Occupation outflow dataframe
-            min_count: Minimum count to consider
-            top_n: Number of top transitions to return
-        
-        Returns:
-            Dataframe with top transitions
-        """
-        print("\nFINDING CRITICAL OCCUPATION TRANSITIONS (OPTIMIZED)")
-        print("="*80)
-        
-        transition_records = []
-        
-        for _, row in outflow_df.iterrows():
-            if not row['Top_Destination_Occupations']:
-                continue
-                
-            from_occ = row['From_Occupation']
-            period = row['Period']
-            year_from = row['Year_From']
-            year_to = row['Year_To']
-            from_total = row['Total_Count']
-            
-            for to_occ, count in row['Top_Destination_Occupations'].items():
-                if count >= min_count:
-                    transition_records.append({
-                        'Period': period,
-                        'Year_From': year_from,
-                        'Year_To': year_to,
-                        'From_Occupation': from_occ,
-                        'To_Occupation': to_occ,
-                        'Count': count,
-                        'From_Total': from_total,
-                        'Transition_Rate': (count / from_total) * 100
-                    })
-        
-        if not transition_records:
-            print("  No transitions found with minimum count threshold")
-            return pd.DataFrame()
-        
-        transitions_df = pd.DataFrame(transition_records)
-        transitions_df = transitions_df.sort_values('Count', ascending=False)
-        
-        print(f"  Found {len(transitions_df):,} significant transitions")
-        print(f"\n  Top {top_n} transitions by volume:")
-        for idx, row in transitions_df.head(top_n).iterrows():
-            print(f"    {row['Period']}: {row['From_Occupation'][:40]} → {row['To_Occupation'][:40]}")
-            print(f"      {row['Count']:,} people ({row['Transition_Rate']:.1f}% of source occupation)\n")
-        
-        return transitions_df
-    
-    # ========================================
-    # PRIVATE - Optimization Helpers
-    # ========================================
-    
-    def _build_user_presence_map(self, window_users, windows):
-        """
-        Pre-compute which windows each user appears in
-        KEY optimization - O(1) lookups instead of O(n) searches
-        
-        Returns:
-            dict: user_id -> set of window indices where user appears
-        """
-        print("  Building user presence map (optimization)...")
-        user_presence = {}
-        
-        for window_idx, (window_name, _, _, _) in enumerate(windows):
-            user_ids = set(window_users[window_name]['ID'])
-            for user_id in user_ids:
-                if user_id not in user_presence:
-                    user_presence[user_id] = set()
-                user_presence[user_id].add(window_idx)
-        
-        print(f"  ✓ Mapped {len(user_presence):,} users across {len(windows)} windows")
-        return user_presence
-    
-    def _build_user_info_cache(self, window_users, windows):
-        """
-        Pre-build user info cache for fast lookups
-        
-        Returns:
-            dict: (window_idx, user_id) -> user_info dict
-        """
-        print("  Building user info cache...")
-        user_info_cache = {}
-        
-        for window_idx, (window_name, _, _, _) in enumerate(windows):
-            users_df = window_users[window_name].set_index('ID')
-            
-            for user_id in users_df.index:
-                user_row = users_df.loc[user_id]
-                user_info_cache[(window_idx, user_id)] = {
-                    'Occupation': user_row[self.occupation_col],
-                    'Industry': user_row['NAICS6_NAME'],
-                    'State': user_row['STATE_RAW'],
-                    'Job_Start_Date': user_row['JOB_START_DATE']
+                stats = {
+                    'gender': int(gender),
+                    'n': len(gender_data),
+                    'avg_job_changes': gender_data['num_job_changes'].mean() if 'num_job_changes' in gender_data.columns else None,
+                    'upward_mobility_rate': gender_data['up_move'].mean() * 100 if 'up_move' in gender_data.columns else None,
+                    'avg_wage': gender_data['annual_state_wage_x'].mean() if 'annual_state_wage_x' in gender_data.columns else None,
                 }
+                gender_analysis.append(stats)
+            
+            results['by_gender'] = pd.DataFrame(gender_analysis)
+            print(f"  ✓ Gender analysis: {len(gender_analysis)} groups")
         
-        print(f"  ✓ Cached info for {len(user_info_cache):,} user-window pairs")
-        return user_info_cache
+        # By race
+        if 'race' in study_trajectories.columns:
+            race_analysis = []
+            for race in study_trajectories['race'].dropna().unique():
+                race_data = study_trajectories[study_trajectories['race'] == race]
+                
+                stats = {
+                    'race': int(race),
+                    'n': len(race_data),
+                    'avg_job_changes': race_data['num_job_changes'].mean() if 'num_job_changes' in race_data.columns else None,
+                    'upward_mobility_rate': race_data['up_move'].mean() * 100 if 'up_move' in race_data.columns else None,
+                    'avg_wage': race_data['annual_state_wage_x'].mean() if 'annual_state_wage_x' in race_data.columns else None,
+                }
+                race_analysis.append(stats)
+            
+            results['by_race'] = pd.DataFrame(race_analysis)
+            print(f"  ✓ Race analysis: {len(race_analysis)} groups")
+        
+        # By generation
+        if 'generation' in study_trajectories.columns:
+            gen_analysis = []
+            for gen in study_trajectories['generation'].dropna().unique():
+                gen_data = study_trajectories[study_trajectories['generation'] == gen]
+                
+                stats = {
+                    'generation': gen,
+                    'n': len(gen_data),
+                    'avg_job_changes': gen_data['num_job_changes'].mean() if 'num_job_changes' in gen_data.columns else None,
+                    'upward_mobility_rate': gen_data['up_move'].mean() * 100 if 'up_move' in gen_data.columns else None,
+                    'avg_wage': gen_data['annual_state_wage_x'].mean() if 'annual_state_wage_x' in gen_data.columns else None,
+                }
+                gen_analysis.append(stats)
+            
+            results['by_generation'] = pd.DataFrame(gen_analysis)
+            print(f"  ✓ Generation analysis: {len(gen_analysis)} groups")
+        
+        # By education
+        if 'max_edu_name' in study_trajectories.columns:
+            edu_analysis = []
+            for edu in study_trajectories['max_edu_name'].dropna().unique():
+                edu_data = study_trajectories[study_trajectories['max_edu_name'] == edu]
+                
+                stats = {
+                    'education': edu,
+                    'n': len(edu_data),
+                    'avg_job_changes': edu_data['num_job_changes'].mean() if 'num_job_changes' in edu_data.columns else None,
+                    'upward_mobility_rate': edu_data['up_move'].mean() * 100 if 'up_move' in edu_data.columns else None,
+                    'avg_wage': edu_data['annual_state_wage_x'].mean() if 'annual_state_wage_x' in edu_data.columns else None,
+                }
+                edu_analysis.append(stats)
+            
+            results['by_education'] = pd.DataFrame(edu_analysis)
+            print(f"  ✓ Education analysis: {len(edu_analysis)} groups")
+        
+        return results
     
     # ========================================
-    # CACHING
+    # JOB CHANGE ANALYSIS
     # ========================================
     
-    def _get_cache_filepath(self, year_from, year_to):
-        """Get cache file path for a transition"""
-        from .utils import ensure_dir
-        cache_dir = os.path.join(self.results_dir, 'workforce_flow_cache')
-        ensure_dir(cache_dir)
-        return os.path.join(cache_dir, f'transition_{year_from}_to_{year_to}.csv')
-    
-    def _get_users_cache_filepath(self, year_from, year_to):
-        """Get user-level cache file path"""
-        from .utils import ensure_dir
-        cache_dir = os.path.join(self.results_dir, 'workforce_flow_cache')
-        ensure_dir(cache_dir)
-        return os.path.join(cache_dir, f'users_{year_from}_to_{year_to}.csv')
-    
-    def _load_cached_transition(self, year_from, year_to):
-        """Load cached transition if exists"""
-        filepath = self._get_cache_filepath(year_from, year_to)
-        users_filepath = self._get_users_cache_filepath(year_from, year_to)
+    def analyze_job_changes(self, trajectory_df, config):
+        """
+        Analyze job change patterns and types
         
-        if os.path.exists(filepath) and os.path.exists(users_filepath):
-            try:
-                summary = pd.read_csv(filepath).iloc[0].to_dict()
-                users = pd.read_csv(
-                    users_filepath,
-                    dtype={
-                        'Occupation_Changed': 'object',
-                        'Industry_Changed': 'object',
-                        'State_Changed': 'object'
-                    }
+        Args:
+            trajectory_df: Enriched trajectory dataframe
+            config: Config instance
+        
+        Returns:
+            Dictionary with job change analysis results
+        """
+        print("\nAnalyzing job change patterns...")
+        
+        # Convert year to int if needed
+        trajectory_df = trajectory_df.copy()
+        if trajectory_df['job_start_year_x'].dtype in ['float64', 'float32']:
+            trajectory_df['job_start_year_x'] = trajectory_df['job_start_year_x'].astype('Int64')
+        
+        study_trajectories = trajectory_df[
+            (trajectory_df['job_start_year_x'] >= config.study_start_year) &
+            (trajectory_df['job_start_year_x'] <= config.study_end_year)
+        ].copy()
+        
+        results = {}
+        
+        # Overall distribution of job changes
+        if 'num_job_changes' in study_trajectories.columns:
+            change_dist = study_trajectories['num_job_changes'].value_counts().sort_index()
+            results['change_distribution'] = pd.DataFrame({
+                'num_changes': change_dist.index,
+                'count': change_dist.values,
+                'percentage': (change_dist.values / len(study_trajectories) * 100).round(2)
+            })
+            print(f"  ✓ Job change distribution computed")
+        
+        # Job change types over time
+        move_cols = ['move_1_1', 'move_1_2', 'move_2_1', 'move_2_2']
+        if all(col in study_trajectories.columns for col in move_cols):
+            move_by_year = []
+            for year in range(config.study_start_year, config.study_end_year + 1):
+                year_data = study_trajectories[study_trajectories['job_start_year_x'] == year]
+                if len(year_data) == 0:
+                    continue
+                
+                move_stats = {
+                    'year': year,
+                    'n': len(year_data),
+                    'move_1_1_count': year_data['move_1_1'].sum(),
+                    'move_1_2_count': year_data['move_1_2'].sum(),
+                    'move_2_1_count': year_data['move_2_1'].sum(),
+                    'move_2_2_count': year_data['move_2_2'].sum(),
+                    'move_1_1_pct': year_data['move_1_1'].mean() * 100,
+                    'move_1_2_pct': year_data['move_1_2'].mean() * 100,
+                    'move_2_1_pct': year_data['move_2_1'].mean() * 100,
+                    'move_2_2_pct': year_data['move_2_2'].mean() * 100,
+                }
+                move_by_year.append(move_stats)
+            
+            results['job_change_types_by_year'] = pd.DataFrame(move_by_year)
+            print(f"  ✓ Job change types by year computed")
+        
+        # Relationship between job changes and upward mobility
+        if 'num_job_changes' in study_trajectories.columns and 'up_move' in study_trajectories.columns:
+            mobility_by_changes = []
+            for n_changes in sorted(study_trajectories['num_job_changes'].unique()):
+                subset = study_trajectories[study_trajectories['num_job_changes'] == n_changes]
+                
+                mobility_by_changes.append({
+                    'num_changes': n_changes,
+                    'n': len(subset),
+                    'upward_mobility_rate': subset['up_move'].mean() * 100,
+                    'avg_wage': subset['annual_state_wage_x'].mean() if 'annual_state_wage_x' in subset.columns else None
+                })
+            
+            results['mobility_by_num_changes'] = pd.DataFrame(mobility_by_changes)
+            print(f"  ✓ Mobility by number of changes computed")
+        
+        return results
+    
+    # ========================================
+    # WAGE MOBILITY ANALYSIS
+    # ========================================
+    
+    def analyze_wage_mobility(self, trajectory_df, config):
+        """
+        Analyze wage-based mobility patterns
+        
+        Args:
+            trajectory_df: Enriched trajectory dataframe
+            config: Config instance
+        
+        Returns:
+            Dictionary with wage mobility analysis
+        """
+        print("\nAnalyzing wage-based mobility...")
+        
+        # Convert year to int if needed
+        trajectory_df = trajectory_df.copy()
+        if trajectory_df['job_start_year_x'].dtype in ['float64', 'float32']:
+            trajectory_df['job_start_year_x'] = trajectory_df['job_start_year_x'].astype('Int64')
+        
+        study_trajectories = trajectory_df[
+            (trajectory_df['job_start_year_x'] >= config.study_start_year) &
+            (trajectory_df['job_start_year_x'] <= config.study_end_year)
+        ].copy()
+        
+        results = {}
+        
+        # Upward mobility by year
+        if 'up_move' in study_trajectories.columns:
+            up_move_by_year = []
+            for year in range(config.study_start_year, config.study_end_year + 1):
+                year_data = study_trajectories[study_trajectories['job_start_year_x'] == year]
+                if len(year_data) == 0:
+                    continue
+                
+                up_move_by_year.append({
+                    'year': year,
+                    'n': len(year_data),
+                    'upward_mobility_count': year_data['up_move'].sum(),
+                    'upward_mobility_rate': year_data['up_move'].mean() * 100
+                })
+            
+            results['upward_mobility_by_year'] = pd.DataFrame(up_move_by_year)
+            print(f"  ✓ Upward mobility by year computed")
+        
+        # Wage distribution by year
+        if 'annual_state_wage_x' in study_trajectories.columns:
+            wage_by_year = []
+            for year in range(config.study_start_year, config.study_end_year + 1):
+                year_data = study_trajectories[study_trajectories['job_start_year_x'] == year]
+                if len(year_data) == 0:
+                    continue
+                
+                wage_by_year.append({
+                    'year': year,
+                    'n': len(year_data),
+                    'mean_wage': year_data['annual_state_wage_x'].mean(),
+                    'median_wage': year_data['annual_state_wage_x'].median(),
+                    'p10_wage': year_data['annual_state_wage_x'].quantile(0.10),
+                    'p25_wage': year_data['annual_state_wage_x'].quantile(0.25),
+                    'p75_wage': year_data['annual_state_wage_x'].quantile(0.75),
+                    'p90_wage': year_data['annual_state_wage_x'].quantile(0.90),
+                })
+            
+            results['wage_distribution_by_year'] = pd.DataFrame(wage_by_year)
+            print(f"  ✓ Wage distribution by year computed")
+        
+        # Upward mobility by occupation
+        if 'up_move' in study_trajectories.columns and self.occupation_col in study_trajectories.columns:
+            up_move_by_occ = []
+            for occ in study_trajectories[self.occupation_col].dropna().unique():
+                occ_data = study_trajectories[study_trajectories[self.occupation_col] == occ]
+                
+                if len(occ_data) < 30:  # Minimum threshold
+                    continue
+                
+                up_move_by_occ.append({
+                    'occupation': occ,
+                    'n': len(occ_data),
+                    'upward_mobility_rate': occ_data['up_move'].mean() * 100,
+                    'avg_wage': occ_data['annual_state_wage_x'].mean() if 'annual_state_wage_x' in occ_data.columns else None
+                })
+            
+            if len(up_move_by_occ) > 0:
+                results['upward_mobility_by_occupation'] = pd.DataFrame(up_move_by_occ).sort_values(
+                    'upward_mobility_rate', ascending=False
                 )
-                return summary, users
-            except Exception as e:
-                print(f"  Warning: Cache corrupted, recomputing...")
-                return None, None
-        return None, None
-    
-    def _save_transition_cache(self, year_from, year_to, transition_data, user_data):
-        """Save transition and user-level data to cache"""
-        filepath = self._get_cache_filepath(year_from, year_to)
-        pd.DataFrame([transition_data]).to_csv(filepath, index=False)
+                print(f"  ✓ Upward mobility by occupation computed ({len(up_move_by_occ)} occupations)")
+            else:
+                print(f"  ⚠ No occupations met minimum threshold for upward mobility analysis")
         
-        users_filepath = self._get_users_cache_filepath(year_from, year_to)
-        user_data.to_csv(users_filepath, index=False)
+        # Wage mobility by demographics
+        if 'up_move' in study_trajectories.columns:
+            if 'gender' in study_trajectories.columns:
+                results['upward_mobility_by_gender'] = study_trajectories.groupby('gender')['up_move'].agg([
+                    ('n', 'count'),
+                    ('upward_count', 'sum'),
+                    ('upward_rate', lambda x: x.mean() * 100)
+                ]).reset_index()
+                print(f"  ✓ Upward mobility by gender computed")
+            
+            if 'race' in study_trajectories.columns:
+                results['upward_mobility_by_race'] = study_trajectories.groupby('race')['up_move'].agg([
+                    ('n', 'count'),
+                    ('upward_count', 'sum'),
+                    ('upward_rate', lambda x: x.mean() * 100)
+                ]).reset_index()
+                print(f"  ✓ Upward mobility by race computed")
+        
+        return results
 
 
 # ========================================
@@ -704,38 +474,25 @@ class MobilityAnalyzer:
 # ========================================
 
 def build_transitions(window_users, windows):
-    """Legacy function - use MobilityAnalyzer class instead"""
-    analyzer = MobilityAnalyzer()
-    return analyzer.build_transitions(window_users, windows)
+    """Legacy function - not compatible with trajectory data"""
+    raise NotImplementedError(
+        "build_transitions() requires window_users format. "
+        "Use MobilityAnalyzer.analyze_all() with trajectory_df instead."
+    )
 
 
 def calculate_transition_rates(all_transitions_df):
-    """Legacy function - use MobilityAnalyzer class instead"""
-    analyzer = MobilityAnalyzer()
-    return analyzer.calculate_transition_rates(all_transitions_df)
+    """Legacy function - not compatible with trajectory data"""
+    raise NotImplementedError(
+        "calculate_transition_rates() requires transition dataframe. "
+        "Use MobilityAnalyzer.analyze_all() with trajectory_df instead."
+    )
 
 
 def analyze_workforce_flow(window_users, windows, results_dir='results', 
                           occupation_col='SOC_EMSI_2019_3_NAME'):
-    """Legacy function - use MobilityAnalyzer class instead"""
-    analyzer = MobilityAnalyzer(results_dir, occupation_col)
-    return analyzer.analyze_workforce_flow(window_users, windows)
-
-
-def analyze_occupation_outflows(user_details_df, window_users, windows, 
-                                occupation_col='SOC_EMSI_2019_3_NAME'):
-    """Legacy function - use MobilityAnalyzer class instead"""
-    analyzer = MobilityAnalyzer(occupation_col=occupation_col)
-    return analyzer.analyze_occupation_outflows(user_details_df, window_users, windows)
-
-
-def analyze_occupation_inflows(user_details_df, window_users, windows):
-    """Legacy function - use MobilityAnalyzer class instead"""
-    analyzer = MobilityAnalyzer()
-    return analyzer.analyze_occupation_inflows(user_details_df, window_users, windows)
-
-
-def find_critical_transitions(outflow_df, min_count=100, top_n=10):
-    """Legacy function - use MobilityAnalyzer class instead"""
-    analyzer = MobilityAnalyzer()
-    return analyzer.find_critical_transitions(outflow_df, min_count, top_n)
+    """Legacy function - not compatible with trajectory data"""
+    raise NotImplementedError(
+        "analyze_workforce_flow() requires window_users format. "
+        "Use MobilityAnalyzer.analyze_all() with trajectory_df instead."
+    )
