@@ -49,16 +49,21 @@ class Config:
     _raw_config: Dict = field(default_factory=dict, repr=False)
     
     @classmethod
-    def from_yaml(cls, yaml_path: str = "config.yaml") -> "Config":
+    def from_yaml(cls, yaml_path: str = None) -> "Config":
         """
         Load configuration from YAML file
         
         Args:
-            yaml_path: Path to YAML config file
+            yaml_path: Path to YAML config file (default: config.yaml in same dir as utils.py)
         
         Returns:
             Config instance
         """
+        if yaml_path is None:
+            # Get path relative to this file
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            yaml_path = os.path.join(current_dir, "config.yaml")
+        
         with open(yaml_path, 'r') as f:
             raw_config = yaml.safe_load(f)
         
@@ -66,7 +71,6 @@ class Config:
         config._raw_config = raw_config
         
         # Flatten nested config into attributes
-        config.dataset_base_dir = raw_config['paths']['dataset_base_dir']
         config.onet_dir = raw_config['paths']['onet_dir']
         config.data_dir = raw_config['paths']['data_dir']
         config.results_dir = raw_config['paths']['results_dir']
@@ -106,7 +110,10 @@ class Config:
             args = parse_args()
         
         # Load base config from YAML
-        config = cls.from_yaml(args.config)
+        if args.config:
+            config = cls.from_yaml(args.config)
+        else:
+            config = cls.from_yaml()  # Use default path
         
         # Override with command line arguments
         if args.data_dir:
@@ -173,8 +180,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         '--config',
         type=str,
-        default='config.yaml',
-        help='Path to config YAML file'
+        default=None,
+        help='Path to config YAML file (default: config.yaml in src/)'
     )
     
     parser.add_argument(
@@ -384,10 +391,10 @@ def get_dataset_file_path(folder: str, group_num: int) -> str:
         '/common/home/users/c/chhan/Work/lightcast/Data/job/job_group_0.csv.gz'
     """
     config = get_config()
-    base_dir = config.dataset_base_dir
+    data_dir = config.data_dir
     filename = f"{folder}_group_{group_num}.csv.gz"
     
-    return os.path.join(base_dir, folder, filename)
+    return os.path.join(data_dir, folder, filename)
 
 
 def list_available_groups(folder: str) -> List[int]:
@@ -404,8 +411,8 @@ def list_available_groups(folder: str) -> List[int]:
         Group numbers are not continuous (e.g., 19, 52, 195)
     """
     config = get_config()
-    base_dir = config.dataset_base_dir
-    folder_path = os.path.join(base_dir, folder)
+    data_dir = config.data_dir
+    folder_path = os.path.join(data_dir, folder)
     
     if not os.path.exists(folder_path):
         return []

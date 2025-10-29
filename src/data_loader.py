@@ -1,9 +1,9 @@
 """
 Unified data loading and preprocessing for labor market analysis
-Combines job, education, skills, and wage data loading
 """
 import pandas as pd
 import os
+from .utils import get_config, get_active_jobs, get_latest_job_per_user
 
 
 class DataLoader:
@@ -11,8 +11,17 @@ class DataLoader:
     Unified data loader for all labor market data sources
     """
     
-    def __init__(self, data_dir='data'):
-        self.data_dir = data_dir
+    def __init__(self, config=None):
+        """
+        Initialize DataLoader
+        
+        Args:
+            config: Config instance (loads default if None)
+        """
+        if config is None:
+            config = get_config()
+        self.config = config
+        self.data_dir = config.data_dir
     
     # ========================================
     # JOB DATA
@@ -26,7 +35,7 @@ class DataLoader:
             Preprocessed job dataframe
         """
         print("Loading job data...")
-        job_df = pd.read_csv(os.path.join(self.data_dir, 'job_group_0.csv'))
+        job_df = pd.read_csv(os.path.join(self.data_dir, 'job' ,'job_group_0.csv'))
         
         # Convert date columns
         job_df['JOB_START_DATE'] = pd.to_datetime(job_df['JOB_START_DATE'], format='%Y-%m', errors='coerce')
@@ -46,8 +55,6 @@ class DataLoader:
         Returns:
             Dictionary mapping window name to user dataframe
         """
-        from .utils import get_active_jobs, get_latest_job_per_user
-        
         print("\nProcessing yearly windows...")
         window_users = {}
         
@@ -59,18 +66,21 @@ class DataLoader:
         
         return window_users
     
-    def get_occupation_distributions(self, window_users, windows, occupation_col):
+    def get_occupation_distributions(self, window_users, windows, occupation_col=None):
         """
         Calculate occupation distributions for each window
         
         Args:
             window_users: Dictionary of window users
             windows: List of windows
-            occupation_col: Name of occupation column
+            occupation_col: Name of occupation column (uses config if None)
         
         Returns:
             Dataframe with occupation distributions by year
         """
+        if occupation_col is None:
+            occupation_col = self.config.analysis_occupation_column
+        
         print("\nAnalyzing occupation distributions...")
         occ_distributions = []
         
@@ -139,126 +149,52 @@ class DataLoader:
         Returns:
             DataFrame with major counts
         """
-        major_dist = ed_df[ed_df['CIP6_2020_NAME'].notna()].groupby('CIP6_2020_NAME').size().reset_index(name='count')
+        major_dist = ed_df.groupby(['CIP6_2020_NAME']).size().reset_index(name='count')
         major_dist = major_dist.sort_values('count', ascending=False).head(top_n)
         return major_dist
-    
-    def get_user_highest_education(self, ed_df):
-        """
-        For each user, get their highest education level
-        Priority: Doctoral > Master's > Bachelor's > Associate's > Other
-        
-        Args:
-            ed_df: Education dataframe
-        
-        Returns:
-            DataFrame with one row per user (their highest education)
-        """
-        # Define education level priority
-        level_priority = {
-            "Doctoral Degree": 1,
-            "Master's Degree": 2,
-            "Bachelor's Degree": 3,
-            "Associate's Degree": 4,
-            "Post-Baccalaureate Certificate": 5,
-            "Certificate": 6,
-        }
-        
-        # Add priority column
-        ed_df_copy = ed_df.copy()
-        ed_df_copy['edu_priority'] = ed_df_copy['EDULEVEL_NAME'].map(level_priority)
-        ed_df_copy['edu_priority'] = ed_df_copy['edu_priority'].fillna(99)
-        
-        # Sort by priority and graduation year (most recent first)
-        ed_df_copy = ed_df_copy.sort_values(['edu_priority', 'GRAD_YEAR'], 
-                                            ascending=[True, False])
-        
-        # Get first (highest) education per user
-        highest_ed = ed_df_copy.groupby('ID').first().reset_index()
-        
-        return highest_ed
     
     def merge_job_education(self, job_df, ed_df):
         """
         Merge job and education data
         
         Args:
-            job_df: Job dataframe with ID column
+            job_df: Job dataframe
             ed_df: Education dataframe
         
         Returns:
             Merged dataframe
         """
-        print("\nMerging job and education data...")
-        
-        # Get highest education per user
-        highest_ed = self.get_user_highest_education(ed_df)
-        
-        # Select key education columns
-        ed_cols = ['ID', 'EDULEVEL_NAME', 'CIP6_2020_NAME', 'SCHOOL_NAME', 
-                   'GRAD_YEAR', 'ED_STATE', 'ED_COUNTRY']
-        highest_ed_subset = highest_ed[ed_cols].copy()
-        
-        # Rename for clarity
-        highest_ed_subset = highest_ed_subset.rename(columns={
-            'EDULEVEL_NAME': 'Education_Level',
-            'CIP6_2020_NAME': 'Major',
-            'SCHOOL_NAME': 'School',
-            'GRAD_YEAR': 'Graduation_Year',
-            'ED_STATE': 'Education_State',
-            'ED_COUNTRY': 'Education_Country'
-        })
-        
-        # Merge with job data
-        merged = job_df.merge(highest_ed_subset, on='ID', how='left')
-        
-        print(f"Jobs with education data: {merged['Education_Level'].notna().sum():,} / {len(merged):,}")
-        
-        return merged
+        print("Merging job and education data...")
+        merged_df = job_df.merge(
+            ed_df[['ID', 'CIP6_2020_NAME', 'EDULEVEL_NAME']], 
+            on='ID', 
+            how='left'
+        )
+        merged_df = merged_df.rename(columns={'CIP6_2020_NAME': 'Major'})
+        print(f"Merged records: {len(merged_df):,}")
+        return merged_df
     
-    def analyze_education_by_occupation(self, merged_df, occupation_col='SOC_EMSI_2019_3_NAME'):
+    def get_occupation_major_mapping(self, job_df, ed_df, occupation_col=None, min_count=50):
         """
-        Analyze education distribution by occupation
+        Map occupations to common majors
         
         Args:
-            merged_df: Merged job-education dataframe
-            occupation_col: Name of occupation column
+            job_df: Job dataframe
+            ed_df: Education dataframe
+            occupation_col: Occupation column name (uses config if None)
+            min_count: Minimum occupation count
         
         Returns:
-            DataFrame with education stats by occupation
+            DataFrame with occupation-major mappings
         """
-        print("\nAnalyzing education by occupation...")
+        if occupation_col is None:
+            occupation_col = self.config.analysis_occupation_column
         
-        # Filter for records with both occupation and education
-        valid_data = merged_df[
-            (merged_df[occupation_col].notna()) & 
-            (merged_df['Education_Level'].notna())
-        ].copy()
+        print(f"\nMapping occupations to majors (min_count={min_count})...")
         
-        # Group by occupation and education level
-        edu_occ = valid_data.groupby([occupation_col, 'Education_Level']).size().reset_index(name='count')
+        merged_df = self.merge_job_education(job_df, ed_df)
         
-        # Calculate percentage within each occupation
-        occ_totals = edu_occ.groupby(occupation_col)['count'].transform('sum')
-        edu_occ['percentage'] = (edu_occ['count'] / occ_totals) * 100
-        
-        return edu_occ
-    
-    def analyze_major_by_occupation(self, merged_df, occupation_col='SOC_EMSI_2019_3_NAME', min_count=50):
-        """
-        Analyze major distribution by occupation
-        
-        Args:
-            merged_df: Merged job-education dataframe
-            occupation_col: Name of occupation column
-            min_count: Minimum count to include occupation
-        
-        Returns:
-            DataFrame with top majors by occupation
-        """
-        print("\nAnalyzing majors by occupation...")
-        
-        # Filter for records with both occupation and major
+        # Filter valid data
         valid_data = merged_df[
             (merged_df[occupation_col].notna()) & 
             (merged_df['Major'].notna())
@@ -297,36 +233,17 @@ class DataLoader:
     # WAGE DATA
     # ========================================
     
-    def load_wage_data(self):
+    def load_wage_data(self, filename='wages.csv'):
         """
         Load wage data
+        
+        Args:
+            filename: Wage data filename
         
         Returns:
             Wage dataframe
         """
         print("Loading wage data...")
-        wage_df = pd.read_csv(os.path.join(self.data_dir, 'wages.csv'))
+        wage_df = pd.read_csv(os.path.join(self.data_dir, filename))
         print(f"Total wage records: {len(wage_df):,}")
         return wage_df
-
-
-# ========================================
-# LEGACY FUNCTIONS (for backward compatibility)
-# ========================================
-
-def load_job_data():
-    """Legacy function - use DataLoader class instead"""
-    loader = DataLoader()
-    return loader.load_job_data()
-
-
-def get_window_users(job_df, windows):
-    """Legacy function - use DataLoader class instead"""
-    loader = DataLoader()
-    return loader.get_window_users(job_df, windows)
-
-
-def get_occupation_distributions(window_users, windows, occupation_col):
-    """Legacy function - use DataLoader class instead"""
-    loader = DataLoader()
-    return loader.get_occupation_distributions(window_users, windows, occupation_col)

@@ -1,23 +1,15 @@
 """
-Labor Market Trend Analysis - Refactored Version
-Analyzes workforce dynamics from 2017-2024 with study period focus
+Labor Market Trend Analysis - Main Pipeline
+Analyzes workforce dynamics with study period focus
 Enhanced with Pre-Pandemic, COVID Shock, and Post-Pandemic period analysis
 """
 import os
 import pandas as pd
 
-from src.utils import get_config
-config = get_config()
-RESULTS_DIR = config.results_dir
-YEARS = [config.analysis_start_year, config.analysis_end_year]
-OCCUPATION_COLUMN = config.analysis_occupation_column
-
-from src.utils import ensure_dir
+from src.utils import get_config, set_config, parse_args, get_study_period_windows, ensure_dir
 from src.data_loader import DataLoader
 from src.analyzer import MobilityAnalyzer
 from src.benchmark_utils import PipelineBenchmark
-
-# Import visualization - we'll keep these as is for now
 from src.visualization import create_all_visualizations
 
 
@@ -51,13 +43,14 @@ def export_results(results, occ_dist_df, results_dir):
     print("✓ All results exported to CSV files")
 
 
-def generate_summary_report(results, results_dir):
+def generate_summary_report(results, results_dir, config):
     """
     Generate text summary report
     
     Args:
         results: Dictionary with all analysis results
         results_dir: Results directory
+        config: Config instance
     """
     print("\n" + "="*80)
     print("GENERATING SUMMARY REPORT")
@@ -68,34 +61,38 @@ def generate_summary_report(results, results_dir):
     
     report_path = os.path.join(results_dir, 'summary_report.txt')
     
+    # Get study periods from config
+    periods = config.get_study_periods()
+    
     with open(report_path, 'w') as f:
         f.write("="*80 + "\n")
         f.write("LABOR MARKET TREND ANALYSIS - SUMMARY REPORT\n")
-        f.write("Study Period Analysis (2017-2024)\n")
+        f.write(f"Study Period Analysis ({config.study_start_year}-{config.study_end_year})\n")
         f.write("="*80 + "\n\n")
         
         f.write("STUDY PERIODS:\n")
         f.write("-" * 80 + "\n")
-        f.write("1. Pre-Pandemic: 2017-2019 (Baseline patterns)\n")
-        f.write("2. COVID Shock: 2020-2021 (Labor market disruption)\n")
-        f.write("3. Post-Pandemic: 2022-2024 (Recovery & restructuring)\n\n")
+        for i, (period_key, period_info) in enumerate(periods.items(), 1):
+            f.write(f"{i}. {period_info['name']}: ")
+            f.write(f"{period_info['start_year']}-{period_info['end_year']} ")
+            f.write(f"({period_info['description']})\n")
+        f.write("\n")
         
         f.write("KEY METRICS BY PERIOD:\n")
         f.write("-" * 80 + "\n\n")
         
         # Add period column
         yearly_flow_df['Period'] = yearly_flow_df['Year_To'].apply(
-            lambda y: 'Pre-Pandemic' if 2017 <= y <= 2019 
-                     else 'COVID Shock' if 2020 <= y <= 2021
-                     else 'Post-Pandemic' if 2022 <= y <= 2024
-                     else None
+            lambda y: next((p['name'] for p in periods.values() 
+                          if p['start_year'] <= y <= p['end_year']), None)
         )
         
-        for period in ['Pre-Pandemic', 'COVID Shock', 'Post-Pandemic']:
-            period_data = yearly_flow_df[yearly_flow_df['Period'] == period]
+        for period_key, period_info in periods.items():
+            period_name = period_info['name']
+            period_data = yearly_flow_df[yearly_flow_df['Period'] == period_name]
             
             if len(period_data) > 0:
-                f.write(f"{period}:\n")
+                f.write(f"{period_name}:\n")
                 f.write(f"  Avg Dropout Rate: {period_data['Dropout_Rate'].mean():.2f}%\n")
                 f.write(f"  Avg Permanent Exit Rate: {period_data['Permanent_Exit_Rate'].mean():.2f}%\n")
                 f.write(f"  Avg Comeback Rate: {period_data['Comeback_Rate'].mean():.2f}%\n")
@@ -118,32 +115,53 @@ def generate_summary_report(results, results_dir):
 
 
 def main():
-    """Main analysis pipeline - refactored version"""
+    """Main analysis pipeline"""
+    
+    # Parse CLI arguments and load config
+    args = parse_args()
+    config = get_config() if args.config is None else get_config()
+    
+    # Override config with CLI args if provided
+    if args.data_dir:
+        config.data_dir = args.data_dir
+    if args.results_dir:
+        config.results_dir = args.results_dir
+    if args.study_start_year:
+        config.study_start_year = args.study_start_year
+    if args.study_end_year:
+        config.study_end_year = args.study_end_year
+    if args.no_cache:
+        config.cache_enabled = False
+    
+    set_config(config)
+    
     benchmark = PipelineBenchmark()
     
     print("="*80)
-    print("LABOR MARKET TREND ANALYSIS (REFACTORED)")
+    print("LABOR MARKET TREND ANALYSIS")
     print("Study Period Focus: Pre-Pandemic, COVID Shock, Post-Pandemic")
     print("="*80)
-    print(f"\nAnalyzing period: {YEARS[0]}-{YEARS[-1]}")
-    print(f"Using {OCCUPATION_COLUMN}")
+    print(f"\nAnalyzing period: {config.study_start_year}-{config.study_end_year}")
+    print(f"Using occupation column: {config.analysis_occupation_column}")
+    
+    # Display study periods
+    periods = config.get_study_periods()
     print("\nStudy Periods:")
-    print("  - Pre-Pandemic: 2017-2019")
-    print("  - COVID Shock: 2020-2021")
-    print("  - Post-Pandemic: 2022-2024")
+    for period_key, period_info in periods.items():
+        print(f"  - {period_info['name']}: {period_info['start_year']}-{period_info['end_year']} ({period_info['description']})")
     print("="*80)
     
-    ensure_dir(RESULTS_DIR)
+    ensure_dir(config.results_dir)
     
     # Stage 1: Setup
     benchmark.start_stage("Setup")
-    windows = get_windows()
+    windows = get_study_period_windows()
     print(f"\nCreated {len(windows)} yearly windows")
     benchmark.end_stage("Setup")
     
-    # Stage 2: Data Loading (using DataLoader class)
+    # Stage 2: Data Loading
     benchmark.start_stage("Data Loading")
-    loader = DataLoader(data_dir='data')
+    loader = DataLoader(config)
     job_df = loader.load_job_data()
     benchmark.end_stage("Data Loading")
     
@@ -152,16 +170,19 @@ def main():
     window_users = loader.get_window_users(job_df, windows)
     benchmark.end_stage("Window Processing")
     
-    # Stage 4: Complete Mobility Analysis (using MobilityAnalyzer class)
+    # Stage 4: Occupation Distributions
+    benchmark.start_stage("Occupation Distributions")
+    occ_dist_df = loader.get_occupation_distributions(window_users, windows)
+    benchmark.end_stage("Occupation Distributions")
+    
+    # Stage 5: Complete Mobility Analysis
     benchmark.start_stage("Mobility Analysis")
-    analyzer = MobilityAnalyzer(results_dir=RESULTS_DIR, occupation_col=OCCUPATION_COLUMN)
+    analyzer = MobilityAnalyzer(
+        results_dir=config.results_dir, 
+        occupation_col=config.analysis_occupation_column
+    )
     results = analyzer.analyze_all(window_users, windows)
     benchmark.end_stage("Mobility Analysis")
-    
-    # Stage 5: Occupation Distributions
-    benchmark.start_stage("Occupation Distributions")
-    occ_dist_df = loader.get_occupation_distributions(window_users, windows, OCCUPATION_COLUMN)
-    benchmark.end_stage("Occupation Distributions")
     
     # Stage 6: Visualizations
     benchmark.start_stage("Visualizations")
@@ -173,33 +194,33 @@ def main():
         results['workforce_flow'], 
         results['transition_rates'], 
         occ_dist_df, 
-        RESULTS_DIR
+        config.results_dir
     )
     
     benchmark.end_stage("Visualizations")
     
     # Stage 7: Export Results
     benchmark.start_stage("Export Results")
-    export_results(results, occ_dist_df, RESULTS_DIR)
-    generate_summary_report(results, RESULTS_DIR)
+    export_results(results, occ_dist_df, config.results_dir)
+    generate_summary_report(results, config.results_dir, config)
     benchmark.end_stage("Export Results")
     
     # Print performance report
     benchmark.print_report()
-    benchmark.save_report(os.path.join(RESULTS_DIR, 'benchmark_report.json'))
+    benchmark.save_report(os.path.join(config.results_dir, 'benchmark_report.json'))
     
     print("\n" + "="*80)
     print("ANALYSIS COMPLETE")
     print("="*80)
-    print("\nFiles created in 'results/' directory:")
+    print(f"\nFiles created in '{config.results_dir}/' directory:")
     print("\n📊 VERSION 1: FULL TIMELINE VISUALIZATIONS (1990-2023):")
-    print("  - full_timeline_1990_2023.png ⭐ Complete historical trends")
-    print("  - occupation_evolution_full_timeline.png ⭐ Long-term occupation changes")
-    print("\n📊 VERSION 2: STUDY PERIOD VISUALIZATIONS (2017-2024):")
-    print("  - period_based_analysis.png ⭐ Pre/COVID/Post period analysis")
-    print("  - workforce_flow_by_period.png ⭐ Workforce flows by period")
-    print("  - period_summary_statistics.csv ⭐ Statistical summary by period")
-    print("  - top_occupations_evolution.png ⭐ Occupation trends with periods")
+    print("  - full_timeline_1990_2023.png")
+    print("  - occupation_evolution_full_timeline.png")
+    print("\n📊 VERSION 2: STUDY PERIOD VISUALIZATIONS:")
+    print("  - period_based_analysis.png")
+    print("  - workforce_flow_by_period.png")
+    print("  - period_summary_statistics.csv")
+    print("  - top_occupations_evolution.png")
     print("\n📈 DATA FILES:")
     print("  - transition_rates.csv")
     print("  - yearly_workforce_flow.csv")
