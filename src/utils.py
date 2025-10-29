@@ -21,6 +21,7 @@ class Config:
     dataset_base_dir: str = ""
     onet_dir: str = ""
     data_dir: str = "data"
+    enrich_dir: str = "data/enrich"
     results_dir: str = "results"
     network_output_dir: str = "results/network_output"
     
@@ -73,6 +74,7 @@ class Config:
         # Flatten nested config into attributes
         config.onet_dir = raw_config['paths']['onet_dir']
         config.data_dir = raw_config['paths']['data_dir']
+        config.enrich_dir = raw_config['paths']['enrich_dir']
         config.results_dir = raw_config['paths']['results_dir']
         config.network_output_dir = raw_config['paths']['network_output_dir']
         
@@ -388,14 +390,27 @@ def get_dataset_file_path(folder: str, group_num: int) -> str:
     
     Example:
         >>> get_dataset_file_path('job', 0)
-        '/common/home/users/c/chhan/Work/lightcast/Data/job/job_group_0.csv.gz'
+        '/common/home/users/c/chhan/Work/lightcast/Data/job/job_group_0.csv'
     """
     config = get_config()
     data_dir = config.data_dir
-    filename = f"{folder}_group_{group_num}.csv.gz"
+    filename = f"{folder}_group_{group_num}.csv"
     
     return os.path.join(data_dir, folder, filename)
 
+def get_occupation_file_path(group_num: int) -> str:
+    config = get_config()
+    onet_dir = config.onet_dir
+    filename = f"lc{group_num}_pred.csv"
+    return os.path.join(onet_dir, filename)
+
+def get_enrich_file_path(filename) -> str:
+    config = get_config()
+    enrich_dir = config.enrich_dir
+    if filename == 'gdp':
+        return os.path.join(enrich_dir, '1998_2022_real_gdp_by_state.csv')
+    elif filename == 'wage':
+        return os.path.join(enrich_dir, 'wage_interpolated_1999_2022_soc_2019.csv')
 
 def list_available_groups(folder: str) -> List[int]:
     """
@@ -422,10 +437,10 @@ def list_available_groups(folder: str) -> List[int]:
     groups = []
     
     for filename in os.listdir(folder_path):
-        if filename.startswith(pattern_prefix) and filename.endswith('.csv.gz'):
+        if filename.startswith(pattern_prefix) and filename.endswith('.csv'):
             try:
-                # Extract number between 'group_' and '.csv.gz'
-                group_num = int(filename[len(pattern_prefix):-7])
+                # Extract number between 'group_' and '.csv'
+                group_num = int(filename[len(pattern_prefix):-4])
                 groups.append(group_num)
             except ValueError:
                 continue
