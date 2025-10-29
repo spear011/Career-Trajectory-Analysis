@@ -8,14 +8,17 @@ import pandas as pd
 from pathlib import Path
 
 from src.network import NetworkBuilder, NetworkVisualizer
-from src.config import (
-    DATA_DIR,
-    NETWORK_OUTPUT_DIR,
-    STUDY_START_YEAR,
-    STUDY_END_YEAR,
-    NETWORK_OCCUPATION_COLUMN,
-    NETWORK_OCCUPATION_NAME_COLUMN
-)
+
+from src.utils import get_config
+config = get_config()
+DATA_DIR = config.paths.dataset_base_dir
+NETWORK_OUTPUT_DIR = config.paths.network_output_dir
+STUDY_START_YEAR = config.date_ranges.study_start_year
+STUDY_END_YEAR = config.date_ranges.study_end_year
+NETWORK_OCCUPATION_COLUMN = config.network_analysis.occupation_column
+NETWORK_OCCUPATION_NAME_COLUMN = config.network_analysis.occupation_name_column
+
+
 from src.benchmark_utils import PipelineBenchmark
 
 

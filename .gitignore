@@ -9,6 +9,7 @@ runs/
 results/
 memo.ipynb
 *.sh
+*.yaml
 
 # Distribution / packaging
 .Python

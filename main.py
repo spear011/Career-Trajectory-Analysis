@@ -6,7 +6,12 @@ Enhanced with Pre-Pandemic, COVID Shock, and Post-Pandemic period analysis
 import os
 import pandas as pd
 
-from src.config import get_windows, RESULTS_DIR, YEARS, OCCUPATION_COLUMN
+from src.utils import get_config
+config = get_config()
+RESULTS_DIR = config.results_dir
+YEARS = [config.analysis_start_year, config.analysis_end_year]
+OCCUPATION_COLUMN = config.analysis_occupation_column
+
 from src.utils import ensure_dir
 from src.data_loader import DataLoader
 from src.analyzer import MobilityAnalyzer
