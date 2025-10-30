@@ -355,8 +355,8 @@ class DataPreprocessor:
             duration_years = (traj_end - traj_start).days / 365.25
             
             # Filter out trajectories shorter than required years
-            if duration_years < trajectory_years:
-                continue
+            # if duration_years < trajectory_years:
+            #     continue
             
             # Truncate to first N years from trajectory start
             cutoff_date = traj_start + pd.DateOffset(years=trajectory_years)
