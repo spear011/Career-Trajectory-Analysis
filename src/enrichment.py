@@ -362,7 +362,7 @@ class TrajectoryEnricher:
         print("\nFinal cleanup...")
         
         # Drop unnecessary columns
-        drop_cols = ['ID', 'onet_detailed_x']
+        drop_cols = ['onet_detailed_x']
         self.trajectory_df = self.trajectory_df.drop(
             columns=[c for c in drop_cols if c in self.trajectory_df.columns]
         )

@@ -60,7 +60,7 @@ def main():
         occ_path=occ_path,
         start_year=start_year,
         end_year=end_year,
-        trajectory_years=5
+        trajectory_years=1
     )
     
     linear_job_df = preprocessor.linear_job_df

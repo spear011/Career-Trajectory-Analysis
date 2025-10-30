@@ -223,49 +223,38 @@ class DataPreprocessor:
         self._log("\n" + "="*80)
         self._log("STEP 4: Post-Graduation Gap Filtering")
         self._log("="*80)
-        
-        # Get BA graduation dates
-        ba_degrees = self.edu_df[
-            self.edu_df['EDULEVEL_NAME'] == "Bachelor's Degree"
-        ].sort_values('END_DATE')
-        ba_grad = ba_degrees.groupby('ID')['END_DATE'].first()
-        
-        # Get first job dates
-        first_jobs = self.job_df.groupby('ID')['JOB_START_DATE'].min()
-        
-        # Compute gap
-        gap_df = pd.DataFrame({
-            'BA_GRAD': ba_grad,
-            'FIRST_JOB': first_jobs
-        })
-        gap_df['POST_GRAD_GAP_YEARS'] = (
-            (gap_df['FIRST_JOB'] - gap_df['BA_GRAD']).dt.days / 365.25
-        )
-        
-        # Get highest degree per user
+
+        # Sort education table deterministically
+        edu_df = self.edu_df.sort_values(['ID', 'EDULEVEL_NAME', 'END_DATE'], 
+                                    key=lambda col: col.map({"Bachelor's Degree":1, "Master's Degree":2, "Doctorate":3}) 
+                                                    if col.name=='EDULEVEL_NAME' else col)
+
+        # Compute BA graduation date per user
+        ba_df = edu_df[edu_df['EDULEVEL_NAME'] == "Bachelor's Degree"]
+        ba_grad_dates = ba_df.groupby('ID')['END_DATE'].min().rename('BA_GRAD_DATE')
+
+        # First job start date
+        first_job_dates = self.job_df.groupby('ID')['JOB_START_DATE'].min().rename('FIRST_JOB_DATE')
+
+        # Highest degree per user
         degree_order = {"Bachelor's Degree": 1, "Master's Degree": 2, "Doctorate": 3}
-        edu_with_order = self.edu_df.copy()
-        edu_with_order['degree_num'] = edu_with_order['EDULEVEL_NAME'].map(degree_order)
+        edu_df['DEGREE_ORDER'] = edu_df['EDULEVEL_NAME'].map(degree_order)
+        # Take the row with max degree order per user
+        idx = edu_df.groupby('ID')['DEGREE_ORDER'].idxmax()
+        highest_degree = edu_df.loc[idx, ['ID','EDULEVEL_NAME']].set_index('ID')['EDULEVEL_NAME'].rename('HIGHEST_DEGREE')
 
-        # highest_degrees = edu_with_order.groupby('ID')['EDULEVEL_NAME'].agg(
-        #     lambda x: x.iloc[edu_with_order.loc[x.index, 'degree_num'].idxmax()]
-        # )
-        # gap_df['HIGHEST_DEGREE'] = highest_degrees
+        # Combine into gap dataframe
+        gap_df = pd.concat([ba_grad_dates, first_job_dates, highest_degree], axis=1).dropna()
 
-        idx = edu_with_order.groupby('ID')['degree_num'].idxmax()
-        highest_degrees = edu_with_order.loc[idx].set_index('ID')['EDULEVEL_NAME']
+        # Remove negative gaps (first job before BA graduation)
+        gap_df = gap_df[gap_df['FIRST_JOB_DATE'] >= gap_df['BA_GRAD_DATE']]
 
-        gap_df['HIGHEST_DEGREE'] = highest_degrees
-        
-        # Apply thresholds
-        gap_thresholds = {
-            "Bachelor's Degree": 5.5,
-            "Master's Degree": 7.25,
-            "Doctorate": 8.25
-        }
-        valid_ids_gap = gap_df[
-            gap_df['POST_GRAD_GAP_YEARS'] <= gap_df['HIGHEST_DEGREE'].map(gap_thresholds)
-        ].index
+        # Compute post-grad gap in years (rounded to 4 decimals)
+        gap_df['POST_GRAD_GAP_YEARS'] = ((gap_df['FIRST_JOB_DATE'] - gap_df['BA_GRAD_DATE']).dt.days / 365.25).round(4)
+
+        # pply maximum allowed gap thresholds according to highest degree
+        gap_thresholds = {"Bachelor's Degree": 3.75, "Master's Degree": 5.59, "Doctorate": 8.25}
+        valid_ids_gap = gap_df[gap_df['POST_GRAD_GAP_YEARS'] <= gap_df['HIGHEST_DEGREE'].map(gap_thresholds)].index
         
         initial_users = len(gap_df)
         self._log(f"Users before gap filter: {initial_users:,}")
@@ -431,6 +420,7 @@ class DataPreprocessor:
             company_x = first_job.get('COMPANY_NAME', None)
             state_x = first_job.get('STATE_RAW', None)
             job_start_year_x = first_job['JOB_START_DATE'].year if pd.notna(first_job['JOB_START_DATE']) else None
+            job_end_year_x = last_job_end.year if pd.notna(last_job_end) else None
             
             # Number of job changes
             num_job_changes = len(group) - 1
@@ -444,6 +434,7 @@ class DataPreprocessor:
                 'company_x': company_x,
                 'state_x': state_x,
                 'job_start_year_x': job_start_year_x,
+                'job_end_year_x': job_end_year_x,
                 'num_job_changes': num_job_changes
             })
         
