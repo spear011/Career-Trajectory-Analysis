@@ -17,7 +17,10 @@ def main():
     """Execute complete integrated pipeline"""
     benchmark = PipelineBenchmark()
     config = get_config()
-    
+
+    start_year = config.analysis_start_year - 1
+    end_year = config.analysis_end_year
+
     print("="*80)
     print("INTEGRATED CAREER TRAJECTORY ANALYSIS PIPELINE")
     print("="*80)
@@ -55,8 +58,8 @@ def main():
         job_path=job_path,
         edu_path=edu_path,
         occ_path=occ_path,
-        start_year=1999,
-        end_year=2022,
+        start_year=start_year,
+        end_year=end_year,
         trajectory_years=5
     )
     
