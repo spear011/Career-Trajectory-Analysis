@@ -214,9 +214,6 @@ class DataPreprocessor:
         Filter users by post-graduation gap
         - Compute gap between BA graduation and first job
         - Drop users exceeding maximum allowable gap
-        
-        Args:
-            max_gap_years: Maximum gap in years (default: 3)
         """
         self._log("\n" + "="*80)
         self._log(f"STEP 4: Post-Graduation Gap Filtering")
@@ -274,7 +271,7 @@ class DataPreprocessor:
         """
         Filter users by timeframe
         - First job year >= start_year
-        - Last job year <= end_year
+        - Last job year <= end_year (NaN treated as current, always included)
         
         Args:
             start_year: Minimum first job year (default: 1999)
@@ -286,16 +283,18 @@ class DataPreprocessor:
         
         # Compute first and last job years per user
         user_years = self.job_df.groupby('ID').agg({
-            'JOB_START_DATE': ['min', 'max']
+            'JOB_START_DATE': 'min',
+            'JOB_END_DATE': 'max'
         }).reset_index()
         user_years.columns = ['ID', 'first_job_date', 'last_job_date']
         user_years['first_job_year'] = user_years['first_job_date'].dt.year
         user_years['last_job_year'] = user_years['last_job_date'].dt.year
         
         # Filter valid users
+        # NaN in last_job_year means currently employed, so we include them
         valid_ids_time = user_years[
             (user_years['first_job_year'] >= start_year) &
-            (user_years['last_job_year'] <= end_year)
+            ((user_years['last_job_year'] <= end_year) | (user_years['last_job_year'].isna()))
         ]['ID'].unique()
         
         initial_users = self.job_df['ID'].nunique()
@@ -310,18 +309,14 @@ class DataPreprocessor:
     # STEP 6: Construct Linear Career Trajectories
     # ========================================
     
-    def construct_linear_trajectories(self, trajectory_years: int = 5):
+    def construct_linear_trajectories(self):
         """
         Construct linear career trajectories per user
         - Remove overlapping jobs
         - Sort by (start_date asc, end_date desc)
-        - Truncate to specified years after BA graduation
-        
-        Args:
-            trajectory_years: Years to keep in trajectory
         """
         self._log("\n" + "="*80)
-        self._log(f"STEP 6: Constructing Linear Trajectories ({trajectory_years} years)")
+        self._log("STEP 6: Constructing Linear Trajectories")
         self._log("="*80)
         
         df = self.job_df.copy()
@@ -344,26 +339,22 @@ class DataPreprocessor:
                 last_job = trajectory[-1]
                 current_job = group.iloc[i]
                 
-                if pd.notna(current_job['JOB_START_DATE']) and pd.notna(last_job['JOB_END_DATE']):
-                    if current_job['JOB_START_DATE'] >= last_job['JOB_END_DATE']:
-                        trajectory.append(current_job)
+                # Check if current job starts after last job ends
+                last_end = last_job['JOB_END_DATE']
+                curr_start = current_job['JOB_START_DATE']
+                
+                # If last job has no end date (current position), skip remaining jobs
+                if pd.isna(last_end):
+                    continue
+                
+                if pd.notna(curr_start) and curr_start >= last_end:
+                    trajectory.append(current_job)
             
             if len(trajectory) == 0:
                 continue
             
             traj_df = pd.DataFrame(trajectory)
             traj_df['TRAJECTORY_ORDER'] = range(1, len(traj_df) + 1)
-            
-            # Compute trajectory duration
-            traj_start = traj_df['JOB_START_DATE'].min()
-            traj_end = traj_df['JOB_END_DATE'].max()
-            if pd.isna(traj_end):
-                traj_end = traj_df['JOB_START_DATE'].max()
-            duration_years = (traj_end - traj_start).days / 365.25
-            
-            # Truncate to first N years from trajectory start
-            cutoff_date = traj_start + pd.DateOffset(years=trajectory_years)
-            traj_df = traj_df[traj_df['JOB_START_DATE'] <= cutoff_date]
             
             linear_jobs.append(traj_df)
         
@@ -490,7 +481,6 @@ class DataPreprocessor:
         occ_path: Optional[str] = None,
         start_year: int = 1999,
         end_year: int = 2022,
-        trajectory_years: int = 5
     ) -> pd.DataFrame:
         """
         Execute complete preprocessing pipeline
@@ -528,7 +518,7 @@ class DataPreprocessor:
         self.filter_timeframe(start_year, end_year)
         
         # Step 6: Construct linear trajectories
-        self.construct_linear_trajectories(trajectory_years)
+        self.construct_linear_trajectories()
         
         # Step 7: Flatten to trajectory df
         self.flatten_to_trajectory_df()
