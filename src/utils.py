@@ -1,5 +1,6 @@
 """
 Utility functions for data processing and configuration management
+UPDATED: Added windowed analysis configuration support
 """
 import os
 import yaml
@@ -18,7 +19,6 @@ class Config:
     """Configuration class with attribute access"""
     
     # Paths
-    dataset_base_dir: str = ""
     onet_dir: str = ""
     data_dir: str = "data"
     enrich_dir: str = "data/enrich"
@@ -36,6 +36,11 @@ class Config:
     occupation_column: str = "ONET_2019"
     occupation_name_column: str = "ONET_2019_NAME"
     temporal_granularity: str = "annual"
+    
+    # Windowed analysis
+    window_size: int = 1
+    hop_size: int = 1
+    windowed_occupation_column: str = "onet_major"
     
     # Analysis parameters
     analysis_occupation_column: str = "ONET_2019_NAME"
@@ -88,6 +93,11 @@ class Config:
         config.occupation_name_column = raw_config['network_analysis']['occupation_name_column']
         config.temporal_granularity = raw_config['network_analysis']['temporal_granularity']
         
+        # Load windowed analysis config
+        config.window_size = raw_config['windowed_analysis']['window_size']
+        config.hop_size = raw_config['windowed_analysis']['hop_size']
+        config.windowed_occupation_column = raw_config['windowed_analysis']['occupation_column']
+        
         config.analysis_occupation_column = raw_config['analysis_parameters']['occupation_column']
         config.top_n_occupations = raw_config['analysis_parameters']['top_n_occupations']
         config.covid_year = raw_config['analysis_parameters']['covid_year']
@@ -126,6 +136,10 @@ class Config:
             config.study_start_year = args.study_start_year
         if args.study_end_year:
             config.study_end_year = args.study_end_year
+        if hasattr(args, 'window_size') and args.window_size:
+            config.window_size = args.window_size
+        if hasattr(args, 'hop_size') and args.hop_size:
+            config.hop_size = args.hop_size
         
         return config
     
@@ -211,6 +225,18 @@ def parse_args() -> argparse.Namespace:
     )
     
     parser.add_argument(
+        '--window-size',
+        type=int,
+        help='Window size in years for windowed analysis'
+    )
+    
+    parser.add_argument(
+        '--hop-size',
+        type=int,
+        help='Hop size in years for sliding window'
+    )
+    
+    parser.add_argument(
         '--no-cache',
         action='store_true',
         help='Disable caching'
@@ -252,87 +278,7 @@ def set_config(config: Config):
 
 
 # ========================================
-# Window Generation
-# ========================================
-
-def get_windows(start_year: Optional[int] = None, 
-                end_year: Optional[int] = None) -> List[Tuple[str, datetime, datetime, str]]:
-    """
-    Generate yearly time windows for analysis
-    
-    Args:
-        start_year: Starting year (uses config if None)
-        end_year: Ending year (uses config if None)
-    
-    Returns:
-        List of tuples: (window_name, start_date, end_date, label)
-    """
-    config = get_config()
-    
-    if start_year is None:
-        start_year = config.analysis_start_year
-    if end_year is None:
-        end_year = config.analysis_end_year
-    
-    windows = []
-    for year in range(start_year, end_year + 1):
-        start = datetime(year, 1, 1)
-        end = datetime(year, 12, 31)
-        windows.append((f'{year}', start, end, str(year)))
-    
-    return windows
-
-
-def get_study_period_windows() -> List[Tuple[str, datetime, datetime, str]]:
-    """
-    Generate windows for study period
-    
-    Returns:
-        List of tuples: (window_name, start_date, end_date, label)
-    """
-    config = get_config()
-    return get_windows(config.study_start_year, config.study_end_year)
-
-
-# ========================================
-# Data Processing Utilities
-# ========================================
-
-def get_active_jobs(df, period_start, period_end):
-    """
-    Get jobs that were active during the specified period
-    
-    Args:
-        df: Job dataframe
-        period_start: Start date of period
-        period_end: End date of period
-    
-    Returns:
-        Filtered dataframe with active jobs
-    """
-    active = df[
-        (df['JOB_START_DATE'] <= period_end) &
-        ((df['JOB_END_DATE'] >= period_start) | (df['JOB_END_DATE'].isna()))
-    ].copy()
-    return active
-
-
-def get_latest_job_per_user(df):
-    """
-    For each user, get their most recent job (by start date)
-    
-    Args:
-        df: Job dataframe
-    
-    Returns:
-        Dataframe with one row per user (their latest job)
-    """
-    df_sorted = df.sort_values('JOB_START_DATE', ascending=False)
-    return df_sorted.groupby('ID').first().reset_index()
-
-
-# ========================================
-# File System Utilities
+# File Path Utilities
 # ========================================
 
 def ensure_dir(directory: str):
@@ -345,38 +291,6 @@ def ensure_dir(directory: str):
     os.makedirs(directory, exist_ok=True)
 
 
-def get_data_path(filename: str) -> str:
-    """
-    Get full path to data file
-    
-    Args:
-        filename: Name of data file
-    
-    Returns:
-        Full path to data file
-    """
-    config = get_config()
-    return os.path.join(config.data_dir, filename)
-
-
-def get_results_path(filename: str) -> str:
-    """
-    Get full path to results file
-    
-    Args:
-        filename: Name of results file
-    
-    Returns:
-        Full path to results file
-    """
-    config = get_config()
-    return os.path.join(config.results_dir, filename)
-
-
-# ========================================
-# Dataset Path Utilities
-# ========================================
-
 def get_dataset_file_path(folder: str, group_num: int) -> str:
     """
     Get path to specific dataset file
@@ -387,10 +301,6 @@ def get_dataset_file_path(folder: str, group_num: int) -> str:
     
     Returns:
         Full path to dataset file
-    
-    Example:
-        >>> get_dataset_file_path('job', 0)
-        '/common/home/users/c/chhan/Work/lightcast/Data/job/job_group_0.csv'
     """
     config = get_config()
     data_dir = config.data_dir
@@ -398,19 +308,41 @@ def get_dataset_file_path(folder: str, group_num: int) -> str:
     
     return os.path.join(data_dir, folder, filename)
 
+
 def get_occupation_file_path(group_num: int) -> str:
+    """
+    Get path to occupation prediction file
+    
+    Args:
+        group_num: Group number
+    
+    Returns:
+        Full path to occupation file
+    """
     config = get_config()
     onet_dir = config.onet_dir
     filename = f"lc{group_num}_pred.csv"
     return os.path.join(onet_dir, filename)
 
-def get_enrich_file_path(filename) -> str:
+
+def get_enrich_file_path(filename: str) -> str:
+    """
+    Get path to enrichment data file
+    
+    Args:
+        filename: 'gdp' or 'wage'
+    
+    Returns:
+        Full path to enrichment file
+    """
     config = get_config()
     enrich_dir = config.enrich_dir
+    
     if filename == 'gdp':
         return os.path.join(enrich_dir, '1998_2022_real_gdp_by_state.csv')
     elif filename == 'wage':
         return os.path.join(enrich_dir, 'wage_interpolated_1999_2022_soc_2019.csv')
+
 
 def list_available_groups(folder: str) -> List[int]:
     """
@@ -421,9 +353,6 @@ def list_available_groups(folder: str) -> List[int]:
     
     Returns:
         List of available group numbers
-    
-    Note:
-        Group numbers are not continuous (e.g., 19, 52, 195)
     """
     config = get_config()
     data_dir = config.data_dir
@@ -461,12 +390,6 @@ def get_period_for_year(year: int) -> Optional[str]:
     
     Returns:
         Period name or None if year is outside study periods
-    
-    Example:
-        >>> get_period_for_year(2019)
-        'Pre-Pandemic'
-        >>> get_period_for_year(2020)
-        'COVID Shock'
     """
     config = get_config()
     periods = config.get_study_periods()
