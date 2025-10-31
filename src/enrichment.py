@@ -1,6 +1,7 @@
 """
 Data Enrichment Module
 Add demographic attributes, wages, and derived features to trajectory data
+MODIFIED: Updated to work with new preprocessing output (one row per job)
 """
 import re
 import pandas as pd
@@ -24,7 +25,7 @@ class TrajectoryEnricher:
         Initialize enricher
         
         Args:
-            trajectory_df: Flattened trajectory dataframe
+            trajectory_df: Flattened trajectory dataframe (one row per job)
             linear_job_df: Linear job history dataframe
         """
         self.trajectory_df = trajectory_df.copy()
@@ -135,95 +136,102 @@ class TrajectoryEnricher:
     def normalize_state_name(self, name):
         if pd.isna(name):
             return None
-        # Lowercase, strip whitespace
         name = name.lower().strip()
-        # Replace multiple spaces with single space
         name = re.sub(r'\s+', ' ', name)
-        # Remove punctuation
         name = re.sub(r'[^\w\s]', '', name)
         return name
     
     def add_state_gdp(self, gdp_df: pd.DataFrame):
+        """
+        Add state GDP at job start year and compute GDP decile
         
-        trajectory_df = self.trajectory_df
+        Args:
+            gdp_df: GDP dataframe with columns GeoName and year columns
+        """
+        print("Adding state GDP and decile...")
+        
+        trajectory_df = self.trajectory_df.copy()
+        
+        # Extract year from job_start_date
+        trajectory_df['job_start_year'] = trajectory_df['job_start_date'].dt.year
 
-        # Melt to long format
+        # Melt GDP to long format
         gdp_long = gdp_df.melt(id_vars=['GeoName'], var_name='Year', value_name='GDP')
         gdp_long = gdp_long[gdp_long['Year'].str.isdigit()]
         gdp_long['Year'] = gdp_long['Year'].astype(int)
 
         # Normalize state names
         gdp_long['GeoName_norm'] = gdp_long['GeoName'].apply(self.normalize_state_name)
-        trajectory_df['state_x_norm'] = trajectory_df['state_x'].apply(self.normalize_state_name)
+        trajectory_df['state_norm'] = trajectory_df['state'].apply(self.normalize_state_name)
 
-        # Build lookup dict {(state_norm, year): GDP}
+        # Build lookup dict
         state_year_to_gdp = {
             (row['GeoName_norm'], row['Year']): row['GDP']
             for _, row in gdp_long.iterrows()
         }
 
-        # Map GDP to each row in trajectory_df
+        # Map GDP to each row
         def lookup_gdp(row):
-            return state_year_to_gdp.get((row['state_x_norm'], row['job_start_year_x']), None)
+            return state_year_to_gdp.get((row['state_norm'], row['job_start_year']), None)
 
         trajectory_df['state_gdp'] = trajectory_df.apply(lookup_gdp, axis=1)
 
         # Compute deciles
-        trajectory_df['state_gdp_decile_x'] = pd.qcut(
+        trajectory_df['state_gdp_decile'] = pd.qcut(
             trajectory_df['state_gdp'], 10, labels=False, duplicates='drop'
         ) + 1
 
-        # Drop temporary normalized columns
-        trajectory_df.drop(columns=['state_x_norm', 'state_gdp'], inplace=True)
+        # Drop temporary columns (keep job_start_year for final output)
+        trajectory_df.drop(columns=['state_norm', 'state_gdp'], inplace=True)
         self.trajectory_df = trajectory_df
+        
+        print(f"  State GDP decile added. Missing: {self.trajectory_df['state_gdp_decile'].isna().sum()}")
    
-    
     # ========================================
     # OCCUPATIONAL WAGES
     # ========================================
     
-    def add_occupational_wage(self, wage_csv: str):
-        # -----------------------------
-        # 1. Load wage table
-        # -----------------------------
-        wage_df = wage_csv.copy()
+    def add_occupational_wage(self, wage_df: pd.DataFrame):
+        """
+        Add occupational wage at job start year
+        
+        Args:
+            wage_df: Wage dataframe with AREA_TITLE, year, OCC_CODE, A_MEAN
+        """
+        print("Adding occupational wages...")
+        
         trajectory_df = self.trajectory_df.copy()
+        wage_df = wage_df.copy()
+        
+        # Use existing job_start_year or create it
+        if 'job_start_year' not in trajectory_df.columns:
+            trajectory_df['job_start_year'] = trajectory_df['job_start_date'].dt.year
         
         # Normalize strings
-        wage_df['OCC_CODE'] = wage_df['OCC_CODE'].astype(str).str[:7]  # truncate to 6-digit + dash
+        wage_df['OCC_CODE'] = wage_df['OCC_CODE'].astype(str).str[:7]
         wage_df['AREA_TITLE'] = wage_df['AREA_TITLE'].str.strip().str.lower()
 
-        # -----------------------------
-        # 2. Prepare MultiIndex Series
-        # -----------------------------
+        # Prepare MultiIndex Series
         wage_series = wage_df.set_index(['AREA_TITLE', 'year', 'OCC_CODE'])['A_MEAN']
 
-        # -----------------------------
-        # 3. Normalize trajectory_df keys
-        # -----------------------------
-        trajectory_df['state_norm'] = trajectory_df['state_x'].str.strip().str.lower()
-        trajectory_df['onet_norm'] = trajectory_df['onet_detailed_x'].astype(str).str[:7]  # truncate to match wage table
+        # Normalize trajectory keys
+        trajectory_df['state_norm'] = trajectory_df['state'].str.strip().str.lower()
+        trajectory_df['onet_norm'] = trajectory_df['onet_detailed'].astype(str).str[:7]
 
-        # -----------------------------
-        # 4. Build MultiIndex for lookup
-        # -----------------------------
+        # Build MultiIndex for lookup
         trajectory_index = pd.MultiIndex.from_arrays([
             trajectory_df['state_norm'],
-            trajectory_df['job_start_year_x'],
+            trajectory_df['job_start_year'],
             trajectory_df['onet_norm']
         ])
 
-        # -----------------------------
-        # 5. Vectorized lookup
-        # -----------------------------
-        trajectory_df['annual_state_wage_x'] = wage_series.reindex(trajectory_index).to_numpy()
+        # Vectorized lookup
+        trajectory_df['annual_state_wage'] = wage_series.reindex(trajectory_index).to_numpy()
 
-        # -----------------------------
-        # 6. Cleanup
-        # -----------------------------
+        # Cleanup (keep job_start_year for final output)
         trajectory_df.drop(columns=['state_norm', 'onet_norm'], inplace=True)
         self.trajectory_df = trajectory_df
-        print(f"Added 'annual_state_wage_x', missing values: {trajectory_df['annual_state_wage_x'].isna().sum()}")
+        print(f"  Annual wage added. Missing: {self.trajectory_df['annual_state_wage'].isna().sum()}")
     
     # ========================================
     # JOB CHANGE TYPES
@@ -231,7 +239,7 @@ class TrajectoryEnricher:
     
     def add_job_change_types(self):
         """
-        Add job movement type indicators:
+        Add job movement type indicators per user:
         - move_1_1: Different company, different occupation
         - move_1_2: Different company, same occupation  
         - move_2_1: Same company, different occupation
@@ -276,41 +284,50 @@ class TrajectoryEnricher:
                 self.trajectory_df.loc[mask, 'move_2_2'] = 1
         
         print("  Job change types added")
-        print(f"    move_1_1 (Type 1): {self.trajectory_df['move_1_1'].sum():,}")
-        print(f"    move_1_2 (Type 2): {self.trajectory_df['move_1_2'].sum():,}")
-        print(f"    move_2_1 (Type 3): {self.trajectory_df['move_2_1'].sum():,}")
-        print(f"    move_2_2 (Type 4): {self.trajectory_df['move_2_2'].sum():,}")
+        print(f"    move_1_1: {self.trajectory_df['move_1_1'].sum():,}")
+        print(f"    move_1_2: {self.trajectory_df['move_1_2'].sum():,}")
+        print(f"    move_2_1: {self.trajectory_df['move_2_1'].sum():,}")
+        print(f"    move_2_2: {self.trajectory_df['move_2_2'].sum():,}")
     
     # ========================================
     # UPWARD MOBILITY
     # ========================================
     
-    def add_upward_mobility(self, wage_csv: str, threshold: float = 0.05):
+    def add_upward_mobility(self, wage_df: pd.DataFrame, threshold: float = 0.05):
         """
         Add upward mobility indicator
-        Compares last job wage to first job wage
+        Compares last job wage to first job wage per user
         
         Args:
-            wage_csv: Path to wage CSV
+            wage_df: Wage dataframe
             threshold: Wage increase threshold (default 5%)
         """
         print(f"Adding upward mobility indicator (threshold={threshold})...")
         
-        # Load wage data
-        wage_df = wage_csv
+        wage_df = wage_df.copy()
         wage_df['OCC_CODE'] = wage_df['OCC_CODE'].astype(str)
         wage_df['AREA_TITLE'] = wage_df['AREA_TITLE'].str.strip().str.lower()
         wage_df = wage_df[['AREA_TITLE', 'year', 'OCC_CODE', 'A_MEAN']]
         
-        # Prepare last job info
+        # Get first and last job per user
         self.trajectory_df['ID'] = self.trajectory_df['ID'].astype(str).str.strip()
         self.linear_job_df['ID'] = self.linear_job_df['ID'].astype(str).str.strip()
         
-        # Get last job per user
+        first_jobs = self.linear_job_df.sort_values(
+            ['ID', 'TRAJECTORY_ORDER']
+        ).groupby('ID').first().reset_index()
+        
         last_jobs = self.linear_job_df.sort_values(
             ['ID', 'TRAJECTORY_ORDER']
         ).groupby('ID').last().reset_index()
         
+        # Get wages for first jobs (already in trajectory_df as 'annual_state_wage')
+        first_wage = self.trajectory_df.sort_values(
+            ['ID', 'trajectory_order']
+        ).groupby('ID').first()[['annual_state_wage']].reset_index()
+        first_wage.rename(columns={'annual_state_wage': 'first_job_wage'}, inplace=True)
+        
+        # Get wages for last jobs
         last_jobs['state_norm'] = last_jobs['STATE_RAW'].astype(str).str.strip().str.lower()
         last_jobs['onet_norm'] = last_jobs['ONET_2019'].astype(str).str[:7]
         last_jobs['year'] = last_jobs['JOB_START_DATE'].dt.year
@@ -320,26 +337,30 @@ class TrajectoryEnricher:
             wage_df.rename(columns={
                 'AREA_TITLE': 'state_norm',
                 'OCC_CODE': 'onet_norm',
-                'A_MEAN': 'annual_state_wage_y'
+                'A_MEAN': 'last_job_wage'
             }),
             on=['state_norm', 'year', 'onet_norm'],
             how='left'
         )
-        last_jobs = last_jobs[['ID', 'annual_state_wage_y']]
+        last_jobs = last_jobs[['ID', 'last_job_wage']]
         
-        # Merge into trajectory df
-        self.trajectory_df = self.trajectory_df.merge(last_jobs, on='ID', how='left')
+        # Merge first and last wages
+        mobility = first_wage.merge(last_jobs, on='ID', how='left')
         
         # Compute up_move indicator
-        self.trajectory_df['up_move'] = (
-            (self.trajectory_df['annual_state_wage_y'] - self.trajectory_df['annual_state_wage_x'])
-            / self.trajectory_df['annual_state_wage_x'] > threshold
+        mobility['up_move'] = (
+            (mobility['last_job_wage'] - mobility['first_job_wage'])
+            / mobility['first_job_wage'] > threshold
         ).astype(int)
         
-        # Cleanup
-        self.trajectory_df.drop(columns=['annual_state_wage_y'], inplace=True)
+        # Merge into trajectory df
+        self.trajectory_df = self.trajectory_df.merge(
+            mobility[['ID', 'up_move']], 
+            on='ID', 
+            how='left'
+        )
         
-        matched = last_jobs['annual_state_wage_y'].notna().sum()
+        matched = last_jobs['last_job_wage'].notna().sum()
         total = len(last_jobs)
         print(f"  Last job wage matched: {matched}/{total} ({matched/total*100:.1f}%)")
         print(f"  Upward mobility cases: {self.trajectory_df['up_move'].sum():,}")
@@ -351,21 +372,14 @@ class TrajectoryEnricher:
     def final_cleanup(self, top_code_percentile: int = 95):
         """
         Final data cleaning steps
-        - Drop unnecessary columns
         - Drop rows with null values
         - Log transform wages
-        - Top-code num_job_changes
+        - Drop unnecessary columns
         
         Args:
-            top_code_percentile: Percentile for top-coding job changes
+            top_code_percentile: Percentile for top-coding (not used in per-job format)
         """
-        print("\nFinal cleanup...")
-        
-        # Drop unnecessary columns
-        drop_cols = ['onet_detailed_x']
-        self.trajectory_df = self.trajectory_df.drop(
-            columns=[c for c in drop_cols if c in self.trajectory_df.columns]
-        )
+        print("Final cleanup...")
         
         initial_rows = len(self.trajectory_df)
         
@@ -376,22 +390,11 @@ class TrajectoryEnricher:
         print(f"  Dropped {initial_rows - len(self.trajectory_df):,} rows with missing values")
         
         # Log transform wage
-        if 'annual_state_wage_x' in self.trajectory_df.columns:
-            self.trajectory_df['log_wage_x'] = np.log(
-                self.trajectory_df['annual_state_wage_x']
+        if 'annual_state_wage' in self.trajectory_df.columns:
+            self.trajectory_df['log_wage'] = np.log(
+                self.trajectory_df['annual_state_wage']
             )
-        
-        # Top-code num_job_changes
-        if 'num_job_changes' in self.trajectory_df.columns:
-            threshold = int(np.percentile(
-                self.trajectory_df['num_job_changes'], 
-                top_code_percentile
-            ))
-            self.trajectory_df.loc[
-                self.trajectory_df['num_job_changes'] > threshold, 
-                'num_job_changes'
-            ] = threshold
-            print(f"  Top-coded num_job_changes at {threshold} ({top_code_percentile}th percentile)")
+            print(f"  Log wage computed")
     
     # ========================================
     # EXPORT

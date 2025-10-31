@@ -1,6 +1,7 @@
 """
 Data Preprocessing Pipeline
 Integrates Dataset Construction notebook pipeline from the original research
+MODIFIED: flatten_to_trajectory_df now creates one row per job instead of one row per user
 """
 import pandas as pd
 import numpy as np
@@ -76,10 +77,10 @@ class DataPreprocessor:
     
     def filter_job_records(self):
         """
-        Filter job records for valid entries
-        - Keep jobs with valid titles, company, city, state, country
+        Filter job records
+        - Keep jobs with valid titles, company, city, state, and country
         - Filter for valid start/end dates
-        - Sort jobs chronologically
+        - Sort jobs chronologically within each individual
         """
         self._log("\n" + "="*80)
         self._log("STEP 1: Job Records Filtering")
@@ -95,28 +96,13 @@ class DataPreprocessor:
             (~self.job_df['CITY_RAW'].isna()) &
             (~self.job_df['STATE_RAW'].isna()) &
             (~self.job_df['COUNTRY_RAW'].isna()) &
-            (
-                # Non-current jobs must have start & end
-                ((~self.job_df['IS_CURRENT']) & 
-                 (~self.job_df['JOB_START_DATE'].isna()) & 
-                 (~self.job_df['JOB_END_DATE'].isna())) |
-                # Current jobs must have start date
-                ((self.job_df['IS_CURRENT']) & 
-                 (~self.job_df['JOB_START_DATE'].isna()))
-            )
+            (~self.job_df['JOB_START_DATE'].isna())
         ].copy()
         
-        # Exclude records where end date is before start date
-        mask_valid_dates = (
-            (self.job_df['IS_CURRENT']) | 
-            (self.job_df['JOB_END_DATE'] >= self.job_df['JOB_START_DATE'])
-        )
-        self.job_df = self.job_df[mask_valid_dates]
-        
-        # Sort jobs by individual and chronological order
+        # Sort jobs
         self.job_df.sort_values(
             ['ID', 'JOB_START_DATE', 'JOB_END_DATE'], 
-            ascending=[True, True, True], 
+            ascending=[True, True, False], 
             inplace=True
         )
         
@@ -124,12 +110,12 @@ class DataPreprocessor:
         self._log(f"Users: {initial_users:,} → {self.job_df['ID'].nunique():,}")
     
     # ========================================
-    # STEP 2: Job Titles Filtering (SOC/ONET)
+    # STEP 2: Merge Occupation Codes
     # ========================================
     
     def merge_occupation_codes(self, occ_path: Optional[str] = None):
         """
-        Merge predicted SOC/ONET codes with job records
+        Merge occupation codes from predictions file
         
         Args:
             occ_path: Path to occupation predictions CSV (optional)
@@ -146,9 +132,17 @@ class DataPreprocessor:
         
         occ_df = pd.read_csv(occ_path, encoding="utf-8")
         
-        # Merge based on title and company
-        # Note: Implementation depends on occ_df structure
-        self._log(f"Occupation predictions loaded: {len(occ_df):,}")
+        # Merge occupation predictions into job_df
+        if 'ONET_2019' in occ_df.columns and 'ONET_2019_NAME' in occ_df.columns:
+            # Merge on ID and job title
+            self.job_df = self.job_df.merge(
+                occ_df[['ID', 'TITLE_RAW', 'ONET_2019', 'ONET_2019_NAME', 'NAICS6', 'COMPANY_NAME']],
+                on=['ID', 'TITLE_RAW'],
+                how='left'
+            )
+            self._log(f"Occupation codes merged. Records with ONET: {self.job_df['ONET_2019'].notna().sum():,}")
+        else:
+            self._log("Warning: Expected columns not found in occupation file")
     
     # ========================================
     # STEP 3: Education Records Filtering
@@ -197,19 +191,19 @@ class DataPreprocessor:
     def filter_user_intersection(self):
         """Keep only users that appear in both job and education datasets"""
         self._log("\n" + "="*80)
-        self._log("STEP 3b: User Intersection")
+        self._log("STEP 3b: User Intersection Filtering")
         self._log("="*80)
         
         job_users = set(self.job_df['ID'].unique())
         edu_users = set(self.edu_df['ID'].unique())
-        common_users = job_users & edu_users
+        valid_users = job_users & edu_users
         
-        self._log(f"Job-only users: {len(job_users - edu_users):,}")
-        self._log(f"Education-only users: {len(edu_users - job_users):,}")
-        self._log(f"Common users: {len(common_users):,}")
+        self._log(f"Job users: {len(job_users):,}")
+        self._log(f"Education users: {len(edu_users):,}")
+        self._log(f"Intersection: {len(valid_users):,}")
         
-        self.job_df = self.job_df[self.job_df['ID'].isin(common_users)].copy()
-        self.edu_df = self.edu_df[self.edu_df['ID'].isin(common_users)].copy()
+        self.job_df = self.job_df[self.job_df['ID'].isin(valid_users)]
+        self.edu_df = self.edu_df[self.edu_df['ID'].isin(valid_users)]
     
     # ========================================
     # STEP 4: Post-Graduation Gap Filtering
@@ -217,15 +211,23 @@ class DataPreprocessor:
     
     def filter_post_graduation_gap(self):
         """
-        Filter users based on post-graduation gap
-        Drop users exceeding maximum allowable gap (varies by degree level)
+        Filter users by post-graduation gap
+        - Compute gap between BA graduation and first job
+        - Drop users exceeding maximum allowable gap
+        
+        Args:
+            max_gap_years: Maximum gap in years (default: 3)
         """
         self._log("\n" + "="*80)
-        self._log("STEP 4: Post-Graduation Gap Filtering")
+        self._log(f"STEP 4: Post-Graduation Gap Filtering")
         self._log("="*80)
 
+        job_df = self.job_df.copy()
+        edu_df = self.edu_df.copy()
+        initial_users = job_df['ID'].nunique()
+        
         # Sort education table deterministically
-        edu_df = self.edu_df.sort_values(['ID', 'EDULEVEL_NAME', 'END_DATE'], 
+        edu_df = edu_df.sort_values(['ID', 'EDULEVEL_NAME', 'END_DATE'], 
                                     key=lambda col: col.map({"Bachelor's Degree":1, "Master's Degree":2, "Doctorate":3}) 
                                                     if col.name=='EDULEVEL_NAME' else col)
 
@@ -234,7 +236,7 @@ class DataPreprocessor:
         ba_grad_dates = ba_df.groupby('ID')['END_DATE'].min().rename('BA_GRAD_DATE')
 
         # First job start date
-        first_job_dates = self.job_df.groupby('ID')['JOB_START_DATE'].min().rename('FIRST_JOB_DATE')
+        first_job_dates = job_df.groupby('ID')['JOB_START_DATE'].min().rename('FIRST_JOB_DATE')
 
         # Highest degree per user
         degree_order = {"Bachelor's Degree": 1, "Master's Degree": 2, "Doctorate": 3}
@@ -255,15 +257,14 @@ class DataPreprocessor:
         # pply maximum allowed gap thresholds according to highest degree
         gap_thresholds = {"Bachelor's Degree": 3.75, "Master's Degree": 5.59, "Doctorate": 8.25}
         valid_ids_gap = gap_df[gap_df['POST_GRAD_GAP_YEARS'] <= gap_df['HIGHEST_DEGREE'].map(gap_thresholds)].index
+
+        # Apply filter to main tables
+        self.job_df = job_df[job_df['ID'].isin(valid_ids_gap)].copy()
+        self.edu_df = edu_df[edu_df['ID'].isin(valid_ids_gap)].copy()
+        valid_ids = set(self.job_df['ID'].unique())
         
-        initial_users = len(gap_df)
-        self._log(f"Users before gap filter: {initial_users:,}")
-        self._log(f"Users after gap filter: {len(valid_ids_gap):,}")
-        self._log(f"Users dropped: {initial_users - len(valid_ids_gap):,}")
-        
-        # Apply filter
-        self.job_df = self.job_df[self.job_df['ID'].isin(valid_ids_gap)].copy()
-        self.edu_df = self.edu_df[self.edu_df['ID'].isin(valid_ids_gap)].copy()
+        self._log(f"Users: {initial_users:,} → {len(valid_ids):,}")
+        self._log(f"Dropped: {initial_users - len(valid_ids):,} users")
     
     # ========================================
     # STEP 5: Timeframe Filtering
@@ -271,33 +272,39 @@ class DataPreprocessor:
     
     def filter_timeframe(self, start_year: int = 1999, end_year: int = 2022):
         """
-        Restrict sample to users within timeframe
+        Filter users by timeframe
+        - First job year >= start_year
+        - Last job year <= end_year
         
         Args:
-            start_year: Minimum first job year
-            end_year: Maximum last job year
+            start_year: Minimum first job year (default: 1999)
+            end_year: Maximum last job year (default: 2022)
         """
         self._log("\n" + "="*80)
-        self._log(f"STEP 5: Timeframe Filtering ({start_year}-{end_year})")
+        self._log(f"STEP 5: Timeframe Filtering ({start_year} - {end_year})")
         self._log("="*80)
         
-        # Compute first and last job start dates per user
-        job_start_minmax = self.job_df.groupby('ID')['JOB_START_DATE'].agg(['min', 'max'])
+        # Compute first and last job years per user
+        user_years = self.job_df.groupby('ID').agg({
+            'JOB_START_DATE': ['min', 'max']
+        }).reset_index()
+        user_years.columns = ['ID', 'first_job_date', 'last_job_date']
+        user_years['first_job_year'] = user_years['first_job_date'].dt.year
+        user_years['last_job_year'] = user_years['last_job_date'].dt.year
         
-        # Keep only users whose earliest job >= start_year and latest job <= end_year
-        valid_ids_time = job_start_minmax[
-            (job_start_minmax['min'].dt.year >= start_year) &
-            (job_start_minmax['max'].dt.year <= end_year)
-        ].index
+        # Filter valid users
+        valid_ids_time = user_years[
+            (user_years['first_job_year'] >= start_year) &
+            (user_years['last_job_year'] <= end_year)
+        ]['ID'].unique()
         
-        initial_users = len(job_start_minmax)
-        self._log(f"Users before timeframe filter: {initial_users:,}")
-        self._log(f"Users after timeframe filter: {len(valid_ids_time):,}")
-        self._log(f"Users dropped: {initial_users - len(valid_ids_time):,}")
+        initial_users = self.job_df['ID'].nunique()
         
-        # Filter all tables
+        # Apply filter to all tables
         self.job_df = self.job_df[self.job_df['ID'].isin(valid_ids_time)].copy()
         self.edu_df = self.edu_df[self.edu_df['ID'].isin(valid_ids_time)].copy()
+        
+        self._log(f"Users: {initial_users:,} → {len(valid_ids_time):,}")
     
     # ========================================
     # STEP 6: Construct Linear Career Trajectories
@@ -354,10 +361,6 @@ class DataPreprocessor:
                 traj_end = traj_df['JOB_START_DATE'].max()
             duration_years = (traj_end - traj_start).days / 365.25
             
-            # Filter out trajectories shorter than required years
-            # if duration_years < trajectory_years:
-            #     continue
-            
             # Truncate to first N years from trajectory start
             cutoff_date = traj_start + pd.DateOffset(years=trajectory_years)
             traj_df = traj_df[traj_df['JOB_START_DATE'] <= cutoff_date]
@@ -376,11 +379,11 @@ class DataPreprocessor:
     
     def flatten_to_trajectory_df(self):
         """
-        Flatten linear job history to one row per user
-        Each row represents a single individual's career trajectory
+        Flatten linear job history to one row per job
+        Each row represents a single job with enrichment information
         """
         self._log("\n" + "="*80)
-        self._log("STEP 7: Flattening to Trajectory DataFrame")
+        self._log("STEP 7: Flattening to Trajectory DataFrame (One Row Per Job)")
         self._log("="*80)
         
         trajectory_records = []
@@ -391,7 +394,7 @@ class DataPreprocessor:
             if len(group) == 0:
                 continue
             
-            first_job = group.iloc[0]
+            # Calculate trajectory-level information
             last_job_end = group['JOB_END_DATE'].max()
             if pd.isna(last_job_end):
                 last_job_end = group['JOB_START_DATE'].max()
@@ -413,35 +416,38 @@ class DataPreprocessor:
             else:
                 max_edu_name = None
             
-            # Extract first job attributes
-            onet_major_x = str(first_job['ONET_2019'])[:2] if pd.notna(first_job.get('ONET_2019')) else None
-            naics6_major_x = str(first_job['NAICS6'])[:2] if pd.notna(first_job.get('NAICS6')) else None
-            onet_detailed_x = str(first_job['ONET_2019'])[:7] if pd.notna(first_job.get('ONET_2019')) else None
-            company_x = first_job.get('COMPANY_NAME', None)
-            state_x = first_job.get('STATE_RAW', None)
-            job_start_year_x = first_job['JOB_START_DATE'].year if pd.notna(first_job['JOB_START_DATE']) else None
-            job_end_year_x = last_job_end.year if pd.notna(last_job_end) else None
-            
-            # Number of job changes
-            num_job_changes = len(group) - 1
-            
-            trajectory_records.append({
-                'ID': uid,
-                'max_edu_name': max_edu_name,
-                'onet_major_x': onet_major_x,
-                'onet_detailed_x': onet_detailed_x,
-                'naics6_major_x': naics6_major_x,
-                'company_x': company_x,
-                'state_x': state_x,
-                'job_start_year_x': job_start_year_x,
-                'job_end_year_x': job_end_year_x,
-                'num_job_changes': num_job_changes
-            })
+            # Create one row per job
+            for idx, job_row in group.iterrows():
+                onet_major = str(job_row['ONET_2019'])[:2] if pd.notna(job_row.get('ONET_2019')) else None
+                naics6_major = str(job_row['NAICS6'])[:2] if pd.notna(job_row.get('NAICS6')) else None
+                onet_detailed = str(job_row['ONET_2019'])[:7] if pd.notna(job_row.get('ONET_2019')) else None
+                company = job_row.get('COMPANY_NAME', None)
+                state = job_row.get('STATE_RAW', None)
+                job_start_date = job_row['JOB_START_DATE']
+                job_end_date = job_row['JOB_END_DATE']
+                job_start_year = job_start_date.year if pd.notna(job_start_date) else None
+                job_end_year = job_end_date.year if pd.notna(job_end_date) else None
+                
+                trajectory_records.append({
+                    'ID': uid,
+                    'max_edu_name': max_edu_name,
+                    'onet_major': onet_major,
+                    'onet_detailed': onet_detailed,
+                    'naics6_major': naics6_major,
+                    'company': company,
+                    'state': state,
+                    'job_start_date': job_start_date,
+                    'job_end_date': job_end_date if pd.notna(job_end_date) else None,
+                    'job_start_year': job_start_year,
+                    'job_end_year': job_end_year,
+                    'trajectory_order': job_row.get('TRAJECTORY_ORDER', None)
+                })
         
         self.trajectory_df = pd.DataFrame(trajectory_records)
         
         self._log(f"Trajectory records created: {len(self.trajectory_df):,}")
         self._log(f"Users: {self.trajectory_df['ID'].nunique():,}")
+        self._log(f"Jobs per user (mean): {len(self.trajectory_df) / self.trajectory_df['ID'].nunique():.2f}")
     
     # ========================================
     # VALIDATION & DIAGNOSTICS

@@ -59,7 +59,7 @@ def main():
             print(f"STAGE 1: DATA PREPROCESSING - GROUP {group_num}")
             print("-"*80)
             
-            preprocessor = DataPreprocessor(verbose=False)
+            preprocessor = DataPreprocessor(verbose=True)
             
             job_path = get_dataset_file_path('job', group_num)
             edu_path = get_dataset_file_path('education', group_num)

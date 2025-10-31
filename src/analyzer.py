@@ -14,13 +14,13 @@ class MobilityAnalyzer:
     Analyzes enriched trajectory dataframe from preprocess.py
     """
     
-    def __init__(self, results_dir='results', occupation_col='onet_major_x'):
+    def __init__(self, results_dir='results', occupation_col='onet_major'):
         """
         Initialize analyzer
         
         Args:
             results_dir: Directory for caching and results
-            occupation_col: Occupation column name to use (default: onet_major_x from trajectory_df)
+            occupation_col: Occupation column name to use (default: onet_major from trajectory_df)
         """
         self.results_dir = results_dir
         self.occupation_col = occupation_col
@@ -90,21 +90,21 @@ class MobilityAnalyzer:
         print("\nComputing trajectory summary by year...")
         
         # Debug: Check year column
-        print(f"DEBUG: job_start_year_x dtype: {trajectory_df['job_start_year_x'].dtype}")
-        print(f"DEBUG: job_start_year_x unique values (first 20): {sorted(trajectory_df['job_start_year_x'].dropna().unique())[:20]}")
-        print(f"DEBUG: job_start_year_x range: {trajectory_df['job_start_year_x'].min():.0f} - {trajectory_df['job_start_year_x'].max():.0f}")
+        print(f"DEBUG: job_start_year dtype: {trajectory_df['job_start_year'].dtype}")
+        print(f"DEBUG: job_start_year unique values (first 20): {sorted(trajectory_df['job_start_year'].dropna().unique())[:20]}")
+        print(f"DEBUG: job_start_year range: {trajectory_df['job_start_year'].min():.0f} - {trajectory_df['job_start_year'].max():.0f}")
         
         summary_stats = []
         
         # Convert year to int if needed
         trajectory_df = trajectory_df.copy()
-        if trajectory_df['job_start_year_x'].dtype in ['float64', 'float32']:
-            trajectory_df['job_start_year_x'] = trajectory_df['job_start_year_x'].astype('Int64')
+        if trajectory_df['job_start_year'].dtype in ['float64', 'float32']:
+            trajectory_df['job_start_year'] = trajectory_df['job_start_year'].astype('Int64')
         
         # Filter by study period
         study_trajectories = trajectory_df[
-            (trajectory_df['job_start_year_x'] >= config.study_start_year) &
-            (trajectory_df['job_start_year_x'] <= config.study_end_year)
+            (trajectory_df['job_start_year'] >= config.study_start_year) &
+            (trajectory_df['job_start_year'] <= config.study_end_year)
         ].copy()
         
         print(f"Analyzing {len(study_trajectories):,} trajectories in study period "
@@ -112,12 +112,12 @@ class MobilityAnalyzer:
         
         # Debug: Show year distribution in filtered data
         if len(study_trajectories) > 0:
-            year_counts = study_trajectories['job_start_year_x'].value_counts().sort_index()
+            year_counts = study_trajectories['job_start_year'].value_counts().sort_index()
             print(f"DEBUG: Years in filtered data: {year_counts.to_dict()}")
         
         # Group by year and compute statistics
         for year in range(config.study_start_year, config.study_end_year + 1):
-            year_data = study_trajectories[study_trajectories['job_start_year_x'] == year]
+            year_data = study_trajectories[study_trajectories['job_start_year'] == year]
             
             if len(year_data) == 0:
                 continue
@@ -139,11 +139,11 @@ class MobilityAnalyzer:
                 stats['upward_mobility_rate'] = year_data['up_move'].mean() * 100
             
             # Wage statistics
-            if 'annual_state_wage_x' in year_data.columns:
-                stats['avg_wage'] = year_data['annual_state_wage_x'].mean()
-                stats['median_wage'] = year_data['annual_state_wage_x'].median()
-                stats['wage_25th_pct'] = year_data['annual_state_wage_x'].quantile(0.25)
-                stats['wage_75th_pct'] = year_data['annual_state_wage_x'].quantile(0.75)
+            if 'annual_state_wage' in year_data.columns:
+                stats['avg_wage'] = year_data['annual_state_wage'].mean()
+                stats['median_wage'] = year_data['annual_state_wage'].median()
+                stats['wage_25th_pct'] = year_data['annual_state_wage'].quantile(0.25)
+                stats['wage_75th_pct'] = year_data['annual_state_wage'].quantile(0.75)
             
             # Demographics
             if 'gender' in year_data.columns:
@@ -188,12 +188,12 @@ class MobilityAnalyzer:
         
         # Convert year to int if needed
         trajectory_df = trajectory_df.copy()
-        if trajectory_df['job_start_year_x'].dtype in ['float64', 'float32']:
-            trajectory_df['job_start_year_x'] = trajectory_df['job_start_year_x'].astype('Int64')
+        if trajectory_df['job_start_year'].dtype in ['float64', 'float32']:
+            trajectory_df['job_start_year'] = trajectory_df['job_start_year'].astype('Int64')
         
         study_trajectories = trajectory_df[
-            (trajectory_df['job_start_year_x'] >= config.study_start_year) &
-            (trajectory_df['job_start_year_x'] <= config.study_end_year)
+            (trajectory_df['job_start_year'] >= config.study_start_year) &
+            (trajectory_df['job_start_year'] <= config.study_end_year)
         ].copy()
         
         results = {}
@@ -209,7 +209,7 @@ class MobilityAnalyzer:
                     'n': len(gender_data),
                     'avg_job_changes': gender_data['num_job_changes'].mean() if 'num_job_changes' in gender_data.columns else None,
                     'upward_mobility_rate': gender_data['up_move'].mean() * 100 if 'up_move' in gender_data.columns else None,
-                    'avg_wage': gender_data['annual_state_wage_x'].mean() if 'annual_state_wage_x' in gender_data.columns else None,
+                    'avg_wage': gender_data['annual_state_wage'].mean() if 'annual_state_wage' in gender_data.columns else None,
                 }
                 gender_analysis.append(stats)
             
@@ -227,7 +227,7 @@ class MobilityAnalyzer:
                     'n': len(race_data),
                     'avg_job_changes': race_data['num_job_changes'].mean() if 'num_job_changes' in race_data.columns else None,
                     'upward_mobility_rate': race_data['up_move'].mean() * 100 if 'up_move' in race_data.columns else None,
-                    'avg_wage': race_data['annual_state_wage_x'].mean() if 'annual_state_wage_x' in race_data.columns else None,
+                    'avg_wage': race_data['annual_state_wage'].mean() if 'annual_state_wage' in race_data.columns else None,
                 }
                 race_analysis.append(stats)
             
@@ -245,7 +245,7 @@ class MobilityAnalyzer:
                     'n': len(gen_data),
                     'avg_job_changes': gen_data['num_job_changes'].mean() if 'num_job_changes' in gen_data.columns else None,
                     'upward_mobility_rate': gen_data['up_move'].mean() * 100 if 'up_move' in gen_data.columns else None,
-                    'avg_wage': gen_data['annual_state_wage_x'].mean() if 'annual_state_wage_x' in gen_data.columns else None,
+                    'avg_wage': gen_data['annual_state_wage'].mean() if 'annual_state_wage' in gen_data.columns else None,
                 }
                 gen_analysis.append(stats)
             
@@ -263,7 +263,7 @@ class MobilityAnalyzer:
                     'n': len(edu_data),
                     'avg_job_changes': edu_data['num_job_changes'].mean() if 'num_job_changes' in edu_data.columns else None,
                     'upward_mobility_rate': edu_data['up_move'].mean() * 100 if 'up_move' in edu_data.columns else None,
-                    'avg_wage': edu_data['annual_state_wage_x'].mean() if 'annual_state_wage_x' in edu_data.columns else None,
+                    'avg_wage': edu_data['annual_state_wage'].mean() if 'annual_state_wage' in edu_data.columns else None,
                 }
                 edu_analysis.append(stats)
             
@@ -291,12 +291,12 @@ class MobilityAnalyzer:
         
         # Convert year to int if needed
         trajectory_df = trajectory_df.copy()
-        if trajectory_df['job_start_year_x'].dtype in ['float64', 'float32']:
-            trajectory_df['job_start_year_x'] = trajectory_df['job_start_year_x'].astype('Int64')
+        if trajectory_df['job_start_year'].dtype in ['float64', 'float32']:
+            trajectory_df['job_start_year'] = trajectory_df['job_start_year'].astype('Int64')
         
         study_trajectories = trajectory_df[
-            (trajectory_df['job_start_year_x'] >= config.study_start_year) &
-            (trajectory_df['job_start_year_x'] <= config.study_end_year)
+            (trajectory_df['job_start_year'] >= config.study_start_year) &
+            (trajectory_df['job_start_year'] <= config.study_end_year)
         ].copy()
         
         results = {}
@@ -316,7 +316,7 @@ class MobilityAnalyzer:
         if all(col in study_trajectories.columns for col in move_cols):
             move_by_year = []
             for year in range(config.study_start_year, config.study_end_year + 1):
-                year_data = study_trajectories[study_trajectories['job_start_year_x'] == year]
+                year_data = study_trajectories[study_trajectories['job_start_year'] == year]
                 if len(year_data) == 0:
                     continue
                 
@@ -347,7 +347,7 @@ class MobilityAnalyzer:
                     'num_changes': n_changes,
                     'n': len(subset),
                     'upward_mobility_rate': subset['up_move'].mean() * 100,
-                    'avg_wage': subset['annual_state_wage_x'].mean() if 'annual_state_wage_x' in subset.columns else None
+                    'avg_wage': subset['annual_state_wage'].mean() if 'annual_state_wage' in subset.columns else None
                 })
             
             results['mobility_by_num_changes'] = pd.DataFrame(mobility_by_changes)
@@ -374,12 +374,12 @@ class MobilityAnalyzer:
         
         # Convert year to int if needed
         trajectory_df = trajectory_df.copy()
-        if trajectory_df['job_start_year_x'].dtype in ['float64', 'float32']:
-            trajectory_df['job_start_year_x'] = trajectory_df['job_start_year_x'].astype('Int64')
+        if trajectory_df['job_start_year'].dtype in ['float64', 'float32']:
+            trajectory_df['job_start_year'] = trajectory_df['job_start_year'].astype('Int64')
         
         study_trajectories = trajectory_df[
-            (trajectory_df['job_start_year_x'] >= config.study_start_year) &
-            (trajectory_df['job_start_year_x'] <= config.study_end_year)
+            (trajectory_df['job_start_year'] >= config.study_start_year) &
+            (trajectory_df['job_start_year'] <= config.study_end_year)
         ].copy()
         
         results = {}
@@ -388,7 +388,7 @@ class MobilityAnalyzer:
         if 'up_move' in study_trajectories.columns:
             up_move_by_year = []
             for year in range(config.study_start_year, config.study_end_year + 1):
-                year_data = study_trajectories[study_trajectories['job_start_year_x'] == year]
+                year_data = study_trajectories[study_trajectories['job_start_year'] == year]
                 if len(year_data) == 0:
                     continue
                 
@@ -403,22 +403,22 @@ class MobilityAnalyzer:
             print(f"  ✓ Upward mobility by year computed")
         
         # Wage distribution by year
-        if 'annual_state_wage_x' in study_trajectories.columns:
+        if 'annual_state_wage' in study_trajectories.columns:
             wage_by_year = []
             for year in range(config.study_start_year, config.study_end_year + 1):
-                year_data = study_trajectories[study_trajectories['job_start_year_x'] == year]
+                year_data = study_trajectories[study_trajectories['job_start_year'] == year]
                 if len(year_data) == 0:
                     continue
                 
                 wage_by_year.append({
                     'year': year,
                     'n': len(year_data),
-                    'mean_wage': year_data['annual_state_wage_x'].mean(),
-                    'median_wage': year_data['annual_state_wage_x'].median(),
-                    'p10_wage': year_data['annual_state_wage_x'].quantile(0.10),
-                    'p25_wage': year_data['annual_state_wage_x'].quantile(0.25),
-                    'p75_wage': year_data['annual_state_wage_x'].quantile(0.75),
-                    'p90_wage': year_data['annual_state_wage_x'].quantile(0.90),
+                    'mean_wage': year_data['annual_state_wage'].mean(),
+                    'median_wage': year_data['annual_state_wage'].median(),
+                    'p10_wage': year_data['annual_state_wage'].quantile(0.10),
+                    'p25_wage': year_data['annual_state_wage'].quantile(0.25),
+                    'p75_wage': year_data['annual_state_wage'].quantile(0.75),
+                    'p90_wage': year_data['annual_state_wage'].quantile(0.90),
                 })
             
             results['wage_distribution_by_year'] = pd.DataFrame(wage_by_year)
@@ -437,7 +437,7 @@ class MobilityAnalyzer:
                     'occupation': occ,
                     'n': len(occ_data),
                     'upward_mobility_rate': occ_data['up_move'].mean() * 100,
-                    'avg_wage': occ_data['annual_state_wage_x'].mean() if 'annual_state_wage_x' in occ_data.columns else None
+                    'avg_wage': occ_data['annual_state_wage'].mean() if 'annual_state_wage' in occ_data.columns else None
                 })
             
             if len(up_move_by_occ) > 0:

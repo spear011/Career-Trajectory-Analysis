@@ -225,12 +225,12 @@ def generate_summary_report(results, trajectory_df, results_dir, config):
             f.write(f"  Type 2-2 (Same company, same occupation): {trajectory_df['move_2_2'].sum():,}\n")
         
         # Wages
-        if 'annual_state_wage_x' in trajectory_df.columns:
+        if 'annual_state_wage' in trajectory_df.columns:
             f.write("\nWage Statistics (First Job):\n")
-            f.write(f"  Mean: ${trajectory_df['annual_state_wage_x'].mean():,.0f}\n")
-            f.write(f"  Median: ${trajectory_df['annual_state_wage_x'].median():,.0f}\n")
-            f.write(f"  25th percentile: ${trajectory_df['annual_state_wage_x'].quantile(0.25):,.0f}\n")
-            f.write(f"  75th percentile: ${trajectory_df['annual_state_wage_x'].quantile(0.75):,.0f}\n")
+            f.write(f"  Mean: ${trajectory_df['annual_state_wage'].mean():,.0f}\n")
+            f.write(f"  Median: ${trajectory_df['annual_state_wage'].median():,.0f}\n")
+            f.write(f"  25th percentile: ${trajectory_df['annual_state_wage'].quantile(0.25):,.0f}\n")
+            f.write(f"  75th percentile: ${trajectory_df['annual_state_wage'].quantile(0.75):,.0f}\n")
         
         f.write("\n" + "="*80 + "\n")
         f.write("For detailed visualizations, see PNG files in results directory\n")
@@ -256,13 +256,13 @@ def compute_trajectory_summary(trajectory_df, config):
     
     # Filter by study period
     study_trajectories = trajectory_df[
-        (trajectory_df['job_start_year_x'] >= config.study_start_year) &
-        (trajectory_df['job_start_year_x'] <= config.study_end_year)
+        (trajectory_df['job_start_year'] >= config.study_start_year) &
+        (trajectory_df['job_start_year'] <= config.study_end_year)
     ]
     
     # Group by year and compute statistics
     for year in range(config.study_start_year, config.study_end_year + 1):
-        year_data = study_trajectories[study_trajectories['job_start_year_x'] == year]
+        year_data = study_trajectories[study_trajectories['job_start_year'] == year]
         
         if len(year_data) == 0:
             continue
@@ -272,8 +272,8 @@ def compute_trajectory_summary(trajectory_df, config):
             'n_trajectories': len(year_data),
             'avg_job_changes': year_data['num_job_changes'].mean() if 'num_job_changes' in year_data.columns else None,
             'upward_mobility_rate': year_data['up_move'].mean() * 100 if 'up_move' in year_data.columns else None,
-            'avg_wage': year_data['annual_state_wage_x'].mean() if 'annual_state_wage_x' in year_data.columns else None,
-            'median_wage': year_data['annual_state_wage_x'].median() if 'annual_state_wage_x' in year_data.columns else None,
+            'avg_wage': year_data['annual_state_wage'].mean() if 'annual_state_wage' in year_data.columns else None,
+            'median_wage': year_data['annual_state_wage'].median() if 'annual_state_wage' in year_data.columns else None,
         }
         
         # Add demographic breakdowns if available
@@ -353,7 +353,7 @@ def main():
     
     analyzer = MobilityAnalyzer(
         results_dir=config.results_dir,
-        occupation_col='onet_major_x'  # Use trajectory_df occupation column
+        occupation_col='onet_major'  # Use trajectory_df occupation column
     )
     
     analysis_results = analyzer.analyze_all(trajectory_df, config)
