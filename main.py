@@ -1,6 +1,6 @@
 """
 Labor Market Trend Analysis - Main Pipeline with Windowed Analysis
-MODIFIED: Integrated WindowedAnalyzer for temporal workforce tracking
+MODIFIED: Integrated WindowedAnalyzer with 3-Cohort Framework
 """
 import os
 import pandas as pd
@@ -68,13 +68,18 @@ def generate_windowed_summary_report(results: dict,
     
     with open(report_path, 'w') as f:
         f.write("="*80 + "\n")
-        f.write("WINDOWED WORKFORCE ANALYSIS SUMMARY\n")
+        f.write("WINDOWED WORKFORCE ANALYSIS SUMMARY (3-COHORT FRAMEWORK)\n")
         f.write("="*80 + "\n\n")
         
         f.write(f"Analysis Period: {config.study_start_year}-{config.study_end_year}\n")
         f.write(f"Window Size: {config.window_size} year(s)\n")
         f.write(f"Hop Size: {config.hop_size} year(s)\n")
         f.write(f"Occupation Column: {config.windowed_occupation_column}\n\n")
+        
+        f.write("Cohort Definitions:\n")
+        f.write("  - Any Employment: Worked at any point in window\n")
+        f.write("  - Attached Cohort: ≥27 weeks per year (main analysis group)\n")
+        f.write("  - Full-time Cohort: ≥50 weeks per year (stable employment)\n\n")
         
         f.write("-"*80 + "\n")
         f.write("DATASET OVERVIEW\n")
@@ -88,36 +93,92 @@ def generate_windowed_summary_report(results: dict,
             f.write("-"*80 + "\n")
             f.write("WINDOW STATISTICS SUMMARY\n")
             f.write("-"*80 + "\n")
-            f.write(f"Total windows analyzed: {len(window_stats)}\n")
-            f.write(f"Average active users per window: {window_stats['total_active_users'].mean():,.0f}\n")
+            f.write(f"Total windows analyzed: {len(window_stats)}\n\n")
+            
+            # Cohort sizes
+            f.write("Average Cohort Sizes:\n")
+            f.write(f"  Any Employment: {window_stats['any_employment'].mean():,.0f}\n")
+            f.write(f"  Attached (≥27wk/yr): {window_stats['attached_cohort'].mean():,.0f} "
+                   f"({window_stats['attached_pct'].mean():.1f}% of Any Employment)\n")
+            f.write(f"  Full-time (≥50wk/yr): {window_stats['fulltime_cohort'].mean():,.0f} "
+                   f"({window_stats['fulltime_pct'].mean():.1f}% of Any Employment)\n\n")
+            
+            # Entry/Exit
+            f.write("Average Entry/Exit:\n")
+            f.write(f"  New labor entrants: {window_stats['new_labor_entrants'].mean():,.0f}\n")
+            f.write(f"  Permanent exits: {window_stats['permanent_exits'].mean():,.0f}\n\n")
+            
+            # Attached cohort transitions
+            attached_windows = window_stats[window_stats['attached_retention_rate'].notna()]
+            if len(attached_windows) > 0:
+                f.write("Attached Cohort Transitions (average):\n")
+                f.write(f"  New attached: {attached_windows['new_attached'].mean():,.0f}\n")
+                f.write(f"  Exits from attached: {attached_windows['exits_from_attached'].mean():,.0f}\n")
+                f.write(f"  Retention rate: {attached_windows['attached_retention_rate'].mean():.1f}%\n")
+                f.write(f"  Exit rate: {attached_windows['attached_exit_rate'].mean():.1f}%\n")
+                f.write(f"  Entry rate: {attached_windows['attached_entry_rate'].mean():.1f}%\n\n")
+            
+            # Full-time cohort transitions
+            fulltime_windows = window_stats[window_stats['fulltime_retention_rate'].notna()]
+            if len(fulltime_windows) > 0:
+                f.write("Full-time Cohort Transitions (average):\n")
+                f.write(f"  New full-time: {fulltime_windows['new_fulltime'].mean():,.0f}\n")
+                f.write(f"  Exits from full-time: {fulltime_windows['exits_from_fulltime'].mean():,.0f}\n")
+                f.write(f"  Retention rate: {fulltime_windows['fulltime_retention_rate'].mean():.1f}%\n")
+                f.write(f"  Exit rate: {fulltime_windows['fulltime_exit_rate'].mean():.1f}%\n")
+                f.write(f"  Entry rate: {fulltime_windows['fulltime_entry_rate'].mean():.1f}%\n\n")
+            
+            # Occupations
             f.write(f"Average occupations per window: {window_stats['num_occupations'].mean():.1f}\n")
-            f.write(f"Average new entrants per window: {window_stats['new_entrants'].mean():,.0f}\n")
-            f.write(f"Average exits per window: {window_stats['exits'].mean():,.0f}\n\n")
+            f.write(f"Average active jobs per window: {window_stats['total_active_jobs'].mean():,.0f}\n\n")
             
             # Peak and trough windows
-            peak_users_idx = window_stats['total_active_users'].idxmax()
-            trough_users_idx = window_stats['total_active_users'].idxmin()
+            peak_idx = window_stats['any_employment'].idxmax()
+            trough_idx = window_stats['any_employment'].idxmin()
             
-            f.write(f"Peak workforce window: {window_stats.loc[peak_users_idx, 'window_label']} "
-                   f"({window_stats.loc[peak_users_idx, 'total_active_users']:,} users)\n")
-            f.write(f"Trough workforce window: {window_stats.loc[trough_users_idx, 'window_label']} "
-                   f"({window_stats.loc[trough_users_idx, 'total_active_users']:,} users)\n\n")
+            f.write(f"Peak workforce window: {window_stats.loc[peak_idx, 'window_label']} "
+                   f"({window_stats.loc[peak_idx, 'any_employment']:,} any employment)\n")
+            f.write(f"Trough workforce window: {window_stats.loc[trough_idx, 'window_label']} "
+                   f"({window_stats.loc[trough_idx, 'any_employment']:,} any employment)\n\n")
         
         if 'period_comparisons' in results:
             comp = results['period_comparisons']
             f.write("-"*80 + "\n")
             f.write("PERIOD COMPARISON\n")
             f.write("-"*80 + "\n")
-            f.write(f"{comp['period1_name']} ({comp['period1_years']}): {comp['period1_users']:,} users\n")
-            f.write(f"{comp['period2_name']} ({comp['period2_years']}): {comp['period2_users']:,} users\n")
-            f.write(f"Users in both periods: {comp['users_in_both']:,} ({comp['retention_rate']:.1f}% retention)\n")
-            f.write(f"New entrants in {comp['period2_name']}: {comp['users_only_period2']:,}\n")
-            f.write(f"Exits after {comp['period1_name']}: {comp['users_only_period1']:,}\n\n")
             
-            f.write(f"Occupations in {comp['period1_name']}: {comp['period1_occupations']}\n")
-            f.write(f"Occupations in {comp['period2_name']}: {comp['period2_occupations']}\n")
-            f.write(f"New occupations: {comp['new_occupations']}\n")
-            f.write(f"Disappeared occupations: {comp['disappeared_occupations']}\n\n")
+            # Any Employment comparison
+            f.write(f"\nAny Employment:\n")
+            f.write(f"  {comp['period1_name']} ({comp['period1_years']}): {comp['period1_any_employment']:,}\n")
+            f.write(f"  {comp['period2_name']} ({comp['period2_years']}): {comp['period2_any_employment']:,}\n")
+            f.write(f"  In both periods: {comp['any_in_both']:,}\n")
+            f.write(f"  Only in {comp['period1_name']}: {comp['any_only_period1']:,}\n")
+            f.write(f"  Only in {comp['period2_name']}: {comp['any_only_period2']:,}\n\n")
+            
+            # Attached cohort comparison
+            f.write(f"Attached Cohort (≥27wk/yr):\n")
+            f.write(f"  {comp['period1_name']}: {comp['period1_attached']:,}\n")
+            f.write(f"  {comp['period2_name']}: {comp['period2_attached']:,}\n")
+            f.write(f"  Retention rate: {comp['attached_retention_rate']:.1f}%\n")
+            f.write(f"  In both periods: {comp['attached_in_both']:,}\n")
+            f.write(f"  Only in {comp['period1_name']}: {comp['attached_only_period1']:,}\n")
+            f.write(f"  Only in {comp['period2_name']}: {comp['attached_only_period2']:,}\n\n")
+            
+            # Full-time cohort comparison
+            f.write(f"Full-time Cohort (≥50wk/yr):\n")
+            f.write(f"  {comp['period1_name']}: {comp['period1_fulltime']:,}\n")
+            f.write(f"  {comp['period2_name']}: {comp['period2_fulltime']:,}\n")
+            f.write(f"  Retention rate: {comp['fulltime_retention_rate']:.1f}%\n")
+            f.write(f"  In both periods: {comp['fulltime_in_both']:,}\n")
+            f.write(f"  Only in {comp['period1_name']}: {comp['fulltime_only_period1']:,}\n")
+            f.write(f"  Only in {comp['period2_name']}: {comp['fulltime_only_period2']:,}\n\n")
+            
+            # Occupations
+            f.write(f"Occupations:\n")
+            f.write(f"  {comp['period1_name']}: {comp['period1_occupations']}\n")
+            f.write(f"  {comp['period2_name']}: {comp['period2_occupations']}\n")
+            f.write(f"  New occupations: {comp['new_occupations']}\n")
+            f.write(f"  Disappeared occupations: {comp['disappeared_occupations']}\n\n")
         
         f.write("="*80 + "\n")
         f.write("END OF REPORT\n")
@@ -154,7 +215,7 @@ def main():
     benchmark = PipelineBenchmark()
     
     print("="*80)
-    print("WINDOWED WORKFORCE ANALYSIS PIPELINE")
+    print("WINDOWED WORKFORCE ANALYSIS PIPELINE (3-COHORT FRAMEWORK)")
     print("="*80)
     print(f"\nData Source: Preprocessed trajectory data")
     print(f"Analysis Period: {config.study_start_year}-{config.study_end_year}")
@@ -162,6 +223,10 @@ def main():
     print(f"  - Window size: {config.window_size} year(s)")
     print(f"  - Hop size: {config.hop_size} year(s)")
     print(f"  - Occupation column: {config.windowed_occupation_column}")
+    print(f"\nCohort Definitions:")
+    print(f"  - Any Employment: Worked at any point in window")
+    print(f"  - Attached (≥27wk/yr): Main analysis cohort")
+    print(f"  - Full-time (≥50wk/yr): Stable employment cohort")
     
     # Display study periods
     periods = config.get_study_periods()
@@ -186,7 +251,7 @@ def main():
     # Stage 3: Windowed Analysis
     benchmark.start_stage("Windowed Analysis")
     print("\n" + "="*80)
-    print("RUNNING WINDOWED WORKFORCE ANALYSIS")
+    print("RUNNING WINDOWED WORKFORCE ANALYSIS (3-COHORT)")
     print("="*80)
     
     analyzer = WindowedAnalyzer(
@@ -256,8 +321,11 @@ def main():
     print("ANALYSIS COMPLETE")
     print("="*80)
     print(f"\nFiles created in '{config.results_dir}/' directory:")
-    print("\n📊 WINDOWED ANALYSIS:")
-    print("  - window_statistics.csv (main time series)")
+    print("\n📊 WINDOWED ANALYSIS (3-COHORT):")
+    print("  - window_statistics.csv (main time series with 3 cohorts)")
+    print("    * any_employment: Total workforce")
+    print("    * attached_cohort: ≥27 weeks/year (main analysis)")
+    print("    * fulltime_cohort: ≥50 weeks/year (stable employment)")
     print("  - occupation_dynamics_*.csv (per period)")
     print("  - period_comparisons.csv (Pre vs Post pandemic)")
     print("\n📋 REPORTS:")
