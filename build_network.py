@@ -1,6 +1,7 @@
 """
 Build Occupation Transition Networks
 Complete pipeline: construction + visualization
+Updated to use career_trajectories.parquet
 """
 
 import os
@@ -8,23 +9,20 @@ import pandas as pd
 from pathlib import Path
 
 from src.network import NetworkBuilder, NetworkVisualizer
-
 from src.utils import get_config
-config = get_config()
-DATA_DIR = config.paths.dataset_base_dir
-NETWORK_OUTPUT_DIR = config.paths.network_output_dir
-STUDY_START_YEAR = config.date_ranges.study_start_year
-STUDY_END_YEAR = config.date_ranges.study_end_year
-NETWORK_OCCUPATION_COLUMN = config.network_analysis.occupation_column
-NETWORK_OCCUPATION_NAME_COLUMN = config.network_analysis.occupation_name_column
-
-
 from src.benchmark_utils import PipelineBenchmark
 
 
 def main():
     """Main execution function"""
     benchmark = PipelineBenchmark()
+    config = get_config()
+    
+    DATA_DIR = config.results_dir
+    NETWORK_OUTPUT_DIR = config.network_output_dir
+    STUDY_START_YEAR = config.study_start_year
+    STUDY_END_YEAR = config.study_end_year
+    OCCUPATION_COL = config.occupation_column
     
     print("="*80)
     print("OCCUPATION TRANSITION NETWORK PIPELINE")
@@ -32,7 +30,7 @@ def main():
     print(f"Study Period: {STUDY_START_YEAR}-{STUDY_END_YEAR}")
     print("Phases:")
     print("  - Pre-Pandemic: 2017-2019 (Baseline mobility patterns)")
-    print("  - COVID Shock: Mar 2020-2021 (Labor market volatility)")
+    print("  - COVID Shock: 2020-2021 (Labor market volatility)")
     print("  - Post-Pandemic Recovery: 2022-2024 (Persistence of changes)")
     print("="*80)
     
@@ -40,12 +38,10 @@ def main():
     benchmark.start_stage("Setup")
     os.makedirs(NETWORK_OUTPUT_DIR, exist_ok=True)
     
-    # Initialize builder and visualizer
     builder = NetworkBuilder(
         study_start_year=STUDY_START_YEAR,
         study_end_year=STUDY_END_YEAR,
-        occupation_col=NETWORK_OCCUPATION_COLUMN,
-        occupation_name_col=NETWORK_OCCUPATION_NAME_COLUMN
+        occupation_col=OCCUPATION_COL
     )
     visualizer = NetworkVisualizer()
     benchmark.end_stage("Setup")
@@ -53,63 +49,45 @@ def main():
     # Stage 2: Load data
     benchmark.start_stage("Data Loading")
     print("\nLoading data...")
-    job_df = pd.read_csv(os.path.join(DATA_DIR, 'job_group_0.csv'))
-    wage_df = pd.read_csv(os.path.join(DATA_DIR, 'wage_interpolated_1999_2022_soc2019_unique.csv'))
     
-    print(f"  Job records: {len(job_df):,}")
-    print(f"  Wage records: {len(wage_df):,}")
+    # Load career trajectories
+    trajectory_path = os.path.join(DATA_DIR, 'career_trajectories.parquet')
+    trajectory_df = pd.read_parquet(trajectory_path)
+    print(f"  Trajectory records: {len(trajectory_df):,}")
+    print(f"  Unique users: {trajectory_df['ID'].nunique():,}")
+    
+    # Load wage data (optional)
+    wage_path = os.path.join(DATA_DIR, 'wage_interpolated_1999_2022_soc2019_unique.csv')
+    wage_df = None
+    if os.path.exists(wage_path):
+        wage_df = pd.read_csv(wage_path)
+        print(f"  Wage records: {len(wage_df):,}")
+    else:
+        print("  Wage data not found (optional)")
+    
     benchmark.end_stage("Data Loading")
     
     # Stage 3: Build networks
     benchmark.start_stage("Network Construction")
-    networks, stats_df, network_output_path = builder.build_all(job_df, wage_df, NETWORK_OUTPUT_DIR)
+    networks, stats_df, network_output_path, transitions_df = builder.build_all(
+        trajectory_df, wage_df, NETWORK_OUTPUT_DIR
+    )
     benchmark.end_stage("Network Construction")
     
-    # Stage 4: Prepare transition data for visualization
-    benchmark.start_stage("Transition Data Preparation")
-    print("\nPreparing transition data for visualization...")
+    # Stage 4: Save transitions
+    benchmark.start_stage("Save Transitions")
+    print("\nSaving transition data...")
     
-    # We need to reload transitions with additional fields for visualization
-    job_df_prep = builder.prepare_job_data(job_df)
-    user_paths = builder.build_user_career_paths(job_df_prep)
-    transitions_df = builder.extract_transitions(user_paths)
-    
-    # Enrich with additional fields needed for visualization
-    # Add From/To occupation names, industries, states
-    job_df_prep_indexed = job_df_prep.set_index('ID')
-    
-    transitions_enriched = []
-    for _, row in transitions_df.iterrows():
-        user_id = row['user_id']
-        
-        transitions_enriched.append({
-            'ID': user_id,
-            'Year_From': row['from_year'],
-            'Year_To': row['to_year'],
-            'From_Occupation': row['from_occupation_name'],
-            'To_Occupation': row['to_occupation_name'],
-            'From_Industry': 'Unknown',  # We don't have this in current structure
-            'To_Industry': 'Unknown',
-            'From_State': 'Unknown',
-            'To_State': 'Unknown',
-            'Occupation_Changed': row['from_occupation'] != row['to_occupation'],
-            'Industry_Changed': False,
-            'State_Changed': False
-        })
-    
-    transitions_viz_df = pd.DataFrame(transitions_enriched)
-    
-    # Save transitions for future use
     transitions_path = os.path.join(NETWORK_OUTPUT_DIR, 'all_transitions.csv')
-    transitions_viz_df.to_csv(transitions_path, index=False)
+    transitions_df.to_csv(transitions_path, index=False)
     print(f"  ✓ Saved transitions: {transitions_path}")
     
-    benchmark.end_stage("Transition Data Preparation")
+    benchmark.end_stage("Save Transitions")
     
     # Stage 5: Create visualizations
     benchmark.start_stage("Visualizations")
     viz_output_dir = os.path.join(NETWORK_OUTPUT_DIR, 'viz')
-    visualizer.visualize_all(transitions_viz_df, viz_output_dir)
+    visualizer.visualize_all(transitions_df, viz_output_dir)
     benchmark.end_stage("Visualizations")
     
     # Print summary
@@ -137,7 +115,6 @@ def main():
     print("  - sankey_covid.png")
     print("  - sankey_post_covid.png")
     print("  - transition_matrix_*.png (heatmaps)")
-    print("  - transition_matrices_comparison.png")
     print("  - transition_difference_*.png")
     print("="*80)
     
@@ -145,8 +122,8 @@ def main():
     benchmark.print_report()
     benchmark.save_report(os.path.join(NETWORK_OUTPUT_DIR, 'benchmark_report.json'))
     
-    return networks, stats_df
+    return networks, stats_df, transitions_df
 
 
 if __name__ == '__main__':
-    networks, stats = main()
+    networks, stats, transitions = main()
