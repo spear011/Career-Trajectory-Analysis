@@ -217,29 +217,47 @@ class NetworkBuilder:
         
         return transitions_df
     
-    def build_temporal_networks(self, transitions_df, wage_df=None):
+    def build_temporal_networks(self, transitions_df, wage_df=None, window_size=2):
         """
-        Build temporal occupation transition networks
+        Build temporal occupation transition networks with sliding windows
         
         Args:
             transitions_df: Transitions dataframe
             wage_df: Optional wage summary dataframe
+            window_size: Window size in years (default: 2)
             
         Returns:
-            Dictionary of year -> NetworkX graph
+            Dictionary of window_label -> NetworkX graph
         """
-        print("\nBuilding temporal networks...")
+        print("\nBuilding temporal networks with sliding windows...")
+        print(f"  Window size: {window_size} years")
+        print(f"  Hop size: 1 year")
         
         networks = {}
         
-        for year in sorted(transitions_df['to_year'].unique()):
-            year_transitions = transitions_df[transitions_df['to_year'] == year].copy()
+        # Get year range
+        min_year = int(transitions_df['to_year'].min())
+        max_year = int(transitions_df['to_year'].max())
+        
+        # Generate sliding windows
+        for start_year in range(min_year, max_year - window_size + 2):
+            end_year = start_year + window_size - 1
+            window_label = f"{start_year}-{end_year}"
+            
+            # Filter transitions within window
+            window_transitions = transitions_df[
+                (transitions_df['to_year'] >= start_year) &
+                (transitions_df['to_year'] <= end_year)
+            ].copy()
+            
+            if len(window_transitions) == 0:
+                continue
             
             # Create directed graph
             G = nx.DiGraph()
             
             # Count transitions between occupations
-            transition_counts = year_transitions.groupby(
+            transition_counts = window_transitions.groupby(
                 ['from_occupation', 'to_occupation']
             ).size().reset_index(name='count')
             
@@ -253,47 +271,60 @@ class NetworkBuilder:
             
             # Add node attributes
             for node in G.nodes():
-                node_transitions = year_transitions[
-                    (year_transitions['from_occupation'] == node) |
-                    (year_transitions['to_occupation'] == node)
+                # Get transitions involving this node
+                node_from = window_transitions[window_transitions['from_occupation'] == node]
+                node_to = window_transitions[window_transitions['to_occupation'] == node]
+                node_all = window_transitions[
+                    (window_transitions['from_occupation'] == node) |
+                    (window_transitions['to_occupation'] == node)
                 ]
                 
-                # Calculate node metrics
-                if len(node_transitions) > 0:
-                    avg_wage = node_transitions[
-                        node_transitions['from_occupation'] == node
-                    ]['from_wage'].mean()
-                    
-                    up_move_rate = node_transitions[
-                        node_transitions['from_occupation'] == node
-                    ]['up_move'].mean()
-                    
-                    G.nodes[node]['avg_wage'] = avg_wage if not pd.isna(avg_wage) else None
-                    G.nodes[node]['up_move_rate'] = up_move_rate if not pd.isna(up_move_rate) else None
-            
-            # Add wage data if provided
-            if wage_df is not None:
-                year_wages = wage_df[wage_df['year'] == year]
-                wage_dict = dict(zip(year_wages['occupation'], year_wages['mean_wage']))
+                # Employment count: unique users who had this occupation
+                employment_count = len(node_all['user_id'].unique())
+                G.nodes[node]['employment_count'] = employment_count
                 
-                for node in G.nodes():
-                    if node in wage_dict:
-                        G.nodes[node]['mean_wage'] = wage_dict[node]
-                        G.nodes[node]['employment'] = year_wages[
-                            year_wages['occupation'] == node
-                        ]['employment'].iloc[0]
+                # Calculate wage metrics from outgoing transitions
+                if len(node_from) > 0:
+                    avg_wage = node_from['from_wage'].mean()
+                    G.nodes[node]['avg_wage'] = avg_wage if not pd.isna(avg_wage) else None
+                    
+                    # Up-move rate
+                    up_move_rate = node_from['up_move'].mean()
+                    G.nodes[node]['up_move_rate'] = up_move_rate if not pd.isna(up_move_rate) else None
+                else:
+                    G.nodes[node]['avg_wage'] = None
+                    G.nodes[node]['up_move_rate'] = None
             
-            networks[year] = G
-            print(f"  Year {year}: {G.number_of_nodes()} nodes, {G.number_of_edges()} edges")
+            # Add wage data if provided (optional external data)
+            if wage_df is not None:
+                # Average wage data over the window
+                window_wages = wage_df[
+                    (wage_df['year'] >= start_year) & 
+                    (wage_df['year'] <= end_year)
+                ]
+                
+                if len(window_wages) > 0:
+                    wage_summary = window_wages.groupby('occupation').agg({
+                        'mean_wage': 'mean',
+                        'employment': 'mean'
+                    }).to_dict('index')
+                    
+                    for node in G.nodes():
+                        if node in wage_summary:
+                            G.nodes[node]['bls_mean_wage'] = wage_summary[node]['mean_wage']
+                            G.nodes[node]['bls_employment'] = wage_summary[node]['employment']
+            
+            networks[window_label] = G
+            print(f"  {window_label}: {G.number_of_nodes()} nodes, {G.number_of_edges()} edges")
         
         return networks
     
     def calculate_statistics(self, networks):
         """
-        Calculate network statistics for each year
+        Calculate network statistics for each window
         
         Args:
-            networks: Dictionary of year -> NetworkX graph
+            networks: Dictionary of window_label -> NetworkX graph
             
         Returns:
             DataFrame of statistics
@@ -302,10 +333,7 @@ class NetworkBuilder:
         
         stats = []
         
-        for year, G in networks.items():
-            if pd.isna(year):
-                continue
-            
+        for window_label, G in networks.items():
             # Basic network metrics
             n_nodes = G.number_of_nodes()
             n_edges = G.number_of_edges()
@@ -330,20 +358,29 @@ class NetworkBuilder:
                 avg_in_degree = 0
                 avg_out_degree = 0
             
+            # Employment statistics (from node attributes)
+            employment_counts = [
+                G.nodes[node].get('employment_count', 0) 
+                for node in G.nodes()
+            ]
+            total_employment = sum(employment_counts)
+            avg_employment_per_occupation = np.mean(employment_counts) if employment_counts else 0
+            
             stats.append({
-                'year': int(year),
+                'window': window_label,
                 'nodes': n_nodes,
                 'edges': n_edges,
                 'density': density,
                 'avg_in_degree': avg_in_degree,
                 'avg_out_degree': avg_out_degree,
                 'largest_wcc_size': largest_wcc_size,
-                'largest_wcc_pct': largest_wcc_pct
+                'largest_wcc_pct': largest_wcc_pct,
+                'total_employment': total_employment,
+                'avg_employment_per_occupation': avg_employment_per_occupation
             })
         
-        stats_df = pd.DataFrame(stats).sort_values('year')
+        stats_df = pd.DataFrame(stats)
         return stats_df
-    
     def save_networks(self, networks, stats_df, output_dir):
         """
         Save networks and statistics to disk
