@@ -365,11 +365,29 @@ class NetworkBuilder:
         for year, G in networks.items():
             if pd.isna(year):
                 continue
+            
+            # Create a copy to clean for GraphML export
+            G_clean = G.copy()
+            
+            # Remove None values from node attributes (GraphML doesn't support None)
+            for node in G_clean.nodes():
+                attrs = G_clean.nodes[node]
+                clean_attrs = {k: v for k, v in attrs.items() if v is not None and not pd.isna(v)}
+                G_clean.nodes[node].clear()
+                G_clean.nodes[node].update(clean_attrs)
+            
+            # Remove None values from edge attributes
+            for u, v in G_clean.edges():
+                attrs = G_clean.edges[u, v]
+                clean_attrs = {k: v for k, v in attrs.items() if v is not None and not pd.isna(v)}
+                G_clean.edges[u, v].clear()
+                G_clean.edges[u, v].update(clean_attrs)
+            
             filename = output_path / f"network_{int(year)}.graphml"
-            nx.write_graphml(G, filename)
+            nx.write_graphml(G_clean, filename)
             print(f"  Saved: {filename}")
         
-        # Save all networks as pickle
+        # Save all networks as pickle (can handle None values)
         with open(output_path / 'networks_all.pkl', 'wb') as f:
             pickle.dump(networks, f)
         print(f"  Saved: {output_path / 'networks_all.pkl'}")

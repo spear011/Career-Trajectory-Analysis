@@ -1,7 +1,7 @@
 """
 Build Occupation Transition Networks
 Complete pipeline: construction + visualization
-Updated to use career_trajectories.parquet
+Updated to use career_trajectories.parquet with embedded wage data
 """
 
 import os
@@ -50,27 +50,24 @@ def main():
     benchmark.start_stage("Data Loading")
     print("\nLoading data...")
     
-    # Load career trajectories
+    # Load career trajectories (contains wage data)
     trajectory_path = os.path.join(DATA_DIR, 'career_trajectories.parquet')
     trajectory_df = pd.read_parquet(trajectory_path)
     print(f"  Trajectory records: {len(trajectory_df):,}")
     print(f"  Unique users: {trajectory_df['ID'].nunique():,}")
     
-    # Load wage data (optional)
-    wage_path = os.path.join(DATA_DIR, 'wage_interpolated_1999_2022_soc2019_unique.csv')
-    wage_df = None
-    if os.path.exists(wage_path):
-        wage_df = pd.read_csv(wage_path)
-        print(f"  Wage records: {len(wage_df):,}")
+    # Check if wage data exists in trajectory
+    if 'annual_state_wage' in trajectory_df.columns:
+        print(f"  Wage data: Available in trajectory (annual_state_wage column)")
     else:
-        print("  Wage data not found (optional)")
+        print(f"  Wage data: Not available")
     
     benchmark.end_stage("Data Loading")
     
     # Stage 3: Build networks
     benchmark.start_stage("Network Construction")
     networks, stats_df, network_output_path, transitions_df = builder.build_all(
-        trajectory_df, wage_df, NETWORK_OUTPUT_DIR
+        trajectory_df, None, NETWORK_OUTPUT_DIR
     )
     benchmark.end_stage("Network Construction")
     
