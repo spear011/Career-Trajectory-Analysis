@@ -381,6 +381,7 @@ class NetworkBuilder:
         
         stats_df = pd.DataFrame(stats)
         return stats_df
+    
     def save_networks(self, networks, stats_df, output_dir):
         """
         Save networks and statistics to disk
