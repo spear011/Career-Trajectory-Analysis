@@ -95,7 +95,7 @@ def main():
     print(f"Number of temporal networks: {len([y for y in networks.keys() if not pd.isna(y)])}")
     valid_years = [y for y in networks.keys() if not pd.isna(y)]
     if valid_years:
-        print(f"Year range: {int(min(valid_years))}-{int(max(valid_years))}")
+        print(f"Year range: {str(min(valid_years))}-{str(max(valid_years))}")
     
     print(f"\nVisualization Output: {viz_output_dir}")
     print("\n📊 GENERATED FILES:")

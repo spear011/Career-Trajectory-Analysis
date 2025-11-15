@@ -421,7 +421,7 @@ class NetworkBuilder:
                 G_clean.edges[u, v].clear()
                 G_clean.edges[u, v].update(clean_attrs)
             
-            filename = output_path / f"network_{int(year)}.graphml"
+            filename = output_path / f"network_{str(year)}.graphml"
             nx.write_graphml(G_clean, filename)
             print(f"  Saved: {filename}")
         
