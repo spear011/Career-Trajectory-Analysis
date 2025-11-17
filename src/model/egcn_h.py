@@ -2,7 +2,7 @@
 EvolveGCN-H model implementation
 Adapted from original EvolveGCN repository for Career Trajectory link prediction
 """
-import utils as u
+import src.utils as u
 import torch
 from torch.nn.parameter import Parameter
 import torch.nn as nn

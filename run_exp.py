@@ -5,10 +5,10 @@ import argparse
 import torch
 import yaml
 from pathlib import Path
-import utils as u
-from egcn_h import EGCN_H
-from career_dataset import CareerTrajectoryDataset
-from trainer import LinkPredictionTrainer
+import src.utils as u
+from src.model.egcn_h import EGCN_H
+from src.data.dataset import CareerTrajectoryDataset
+from src.trainer import LinkPredictionTrainer
 
 
 def parse_args():

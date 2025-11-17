@@ -4,10 +4,14 @@ UPDATED: Added windowed analysis configuration support
 """
 import os
 import yaml
+import torch
+import numpy as np
 import argparse
+import random
 from datetime import datetime
 from typing import Dict, List, Tuple, Any, Optional
 from dataclasses import dataclass, field
+from pathlib import Path
 
 
 # ========================================
@@ -181,6 +185,22 @@ class Config:
 # Argument Parser
 # ========================================
 
+class Namespace:
+    """Simple object for holding attributes"""
+    def __init__(self, d=None):
+        if d is not None:
+            for key, value in d.items():
+                setattr(self, key, value)
+
+def set_random_seed(seed):
+    """Set random seed for reproducibility"""
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    np.random.seed(seed)
+    random.seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
 def parse_args() -> argparse.Namespace:
     """
     Parse command line arguments
@@ -280,6 +300,11 @@ def set_config(config: Config):
 # ========================================
 # File Path Utilities
 # ========================================
+
+def create_dirs_if_not_exists(paths):
+    """Create directories if they don't exist"""
+    for path in paths:
+        Path(path).mkdir(parents=True, exist_ok=True)
 
 def ensure_dir(directory: str):
     """
@@ -410,3 +435,15 @@ def get_all_period_info() -> Dict[str, Dict]:
     """
     config = get_config()
     return config.get_study_periods()
+
+def normalize_adj(adj):
+    """
+    Normalize adjacency matrix for GCN
+    A_norm = D^{-1/2} * A * D^{-1/2}
+    """
+    adj = adj + torch.eye(adj.shape[0]).to(adj.device)
+    rowsum = adj.sum(1)
+    d_inv_sqrt = torch.pow(rowsum, -0.5).flatten()
+    d_inv_sqrt[torch.isinf(d_inv_sqrt)] = 0.
+    d_mat_inv_sqrt = torch.diag(d_inv_sqrt)
+    return d_mat_inv_sqrt @ adj @ d_mat_inv_sqrt
