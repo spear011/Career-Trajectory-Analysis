@@ -10,7 +10,39 @@ import json
 import networkx as nx
 from pathlib import Path
 from collections import defaultdict
-import src.utils as u
+
+def make_sparse_eye(size):
+    eye_idx = torch.arange(size)
+    eye_idx = torch.stack([eye_idx,eye_idx],dim=1).t()
+    vals = torch.ones(size)
+    eye = torch.sparse.FloatTensor(eye_idx,vals,torch.Size([size,size]))
+    return eye
+
+def normalize_adj(adj, num_nodes):
+    '''
+    takes an adj matrix as a dict with idx and vals and normalize it by: 
+        - adding an identity matrix, 
+        - computing the degree vector
+        - multiplying each element of the adj matrix (aij) by (di*dj)^-1/2
+    '''
+    idx = adj['idx']
+    vals = adj['vals']
+    
+    sp_tensor = torch.sparse.FloatTensor(idx.t(),vals.type(torch.float),torch.Size([num_nodes,num_nodes]))
+    
+    sparse_eye = make_sparse_eye(num_nodes)
+    sp_tensor = sparse_eye + sp_tensor
+
+    idx = sp_tensor._indices()
+    vals = sp_tensor._values()
+
+    degree = torch.sparse.sum(sp_tensor,dim=1).to_dense()
+    di = degree[idx[0]]
+    dj = degree[idx[1]]
+
+    vals = vals * ((di * dj) ** -0.5)
+    
+    return {'idx': idx.t(), 'vals': vals}
 
 
 class CareerTrajectoryDataset:
@@ -145,7 +177,7 @@ class CareerTrajectoryDataset:
                 adj[u_idx, v_idx] = weight
         
         # Normalize adjacency matrix
-        adj_normalized = u.normalize_adj(adj)
+        adj_normalized = normalize_adj(adj, self.num_nodes)
         
         return adj_normalized
     

@@ -4,7 +4,82 @@ Link Prediction Trainer for EvolveGCN-H on Career Trajectory Data
 import torch
 import torch.nn as nn
 import numpy as np
+from pathlib import Path
 from sklearn.metrics import roc_auc_score, average_precision_score
+
+
+class EarlyStopping:
+    """Early stopping utility to stop training when validation metric stops improving"""
+    
+    def __init__(self, patience=7, min_delta=0):
+        """
+        Args:
+            patience: How many epochs to wait after last improvement
+            min_delta: Minimum change to qualify as an improvement
+        """
+        self.patience = patience
+        self.min_delta = min_delta
+        self.counter = 0
+        self.best_score = None
+        self.early_stop = False
+        
+    def __call__(self, val_loss):
+        """
+        Call this method after each epoch with validation loss
+        
+        Args:
+            val_loss: Current validation loss (lower is better)
+        """
+        score = -val_loss
+        
+        if self.best_score is None:
+            self.best_score = score
+        elif score < self.best_score + self.min_delta:
+            self.counter += 1
+            if self.counter >= self.patience:
+                self.early_stop = True
+        else:
+            self.best_score = score
+            self.counter = 0
+
+
+def save_checkpoint(model, optimizer, epoch, filepath):
+    """
+    Save model checkpoint
+    
+    Args:
+        model: PyTorch model
+        optimizer: PyTorch optimizer
+        epoch: Current epoch number
+        filepath: Path to save checkpoint
+    """
+    Path(filepath).parent.mkdir(parents=True, exist_ok=True)
+    
+    checkpoint = {
+        'epoch': epoch,
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict()
+    }
+    torch.save(checkpoint, filepath)
+
+
+def load_checkpoint(model, optimizer, filepath):
+    """
+    Load model checkpoint
+    
+    Args:
+        model: PyTorch model
+        optimizer: PyTorch optimizer
+        filepath: Path to checkpoint file
+    
+    Returns:
+        Epoch number from checkpoint
+    """
+    checkpoint = torch.load(filepath)
+    model.load_state_dict(checkpoint['model_state_dict'])
+    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    return checkpoint['epoch']
+
 
 class LinkPredictionTrainer:
     """Trainer for link prediction task"""
