@@ -40,15 +40,15 @@ class EGCN_H(torch.nn.Module):
     """EvolveGCN-H model for temporal graph learning"""
     def __init__(self, args, activation, device='cpu', skipfeats=False):
         super().__init__()
-        GRCU_args = Namespace({})
-
+        
         feats = [args.feats_per_node,
                  args.layer_1_feats,
                  args.layer_2_feats]
         self.device = device
         self.skipfeats = skipfeats
-        self.GRCU_layers = []
-        self._parameters = nn.ParameterList()
+        
+        # Use ModuleList instead of plain list
+        self.GRCU_layers = nn.ModuleList()
         
         for i in range(1, len(feats)):
             GRCU_args = Namespace({'in_feats': feats[i-1],
@@ -56,11 +56,7 @@ class EGCN_H(torch.nn.Module):
                                      'activation': activation})
 
             grcu_i = GRCU(GRCU_args)
-            self.GRCU_layers.append(grcu_i.to(self.device))
-            self._parameters.extend(list(self.GRCU_layers[-1].parameters()))
-
-    def parameters(self):
-        return self._parameters
+            self.GRCU_layers.append(grcu_i)
 
     def forward(self, A_list, Nodes_list, nodes_mask_list):
         """
@@ -90,7 +86,7 @@ class GRCU(torch.nn.Module):
     def __init__(self, args):
         super().__init__()
         self.args = args
-        cell_args = u.Namespace({})
+        cell_args = Namespace({})
         cell_args.rows = args.in_feats
         cell_args.cols = args.out_feats
 
@@ -110,7 +106,7 @@ class GRCU(torch.nn.Module):
         Forward pass through GRCU
         
         Args:
-            A_list: List of adjacency matrices
+            A_list: List of adjacency matrices (sparse format dicts)
             node_embs_list: List of node embeddings
             mask_list: List of node masks
         
@@ -127,8 +123,20 @@ class GRCU(torch.nn.Module):
             # Evolve weights using GRU
             GCN_weights = self.evolve_weights(GCN_weights, node_embs, node_mask)
             
+            # Convert sparse adjacency dict to sparse tensor for matmul
+            idx = Ahat['idx']
+            vals = Ahat['vals']
+            num_nodes = node_embs.shape[0]
+            
+            # Create sparse tensor
+            sparse_adj = torch.sparse_coo_tensor(
+                idx, 
+                vals, 
+                torch.Size([num_nodes, num_nodes])
+            )
+            
             # Apply GCN with evolved weights
-            node_embs = self.activation(Ahat.matmul(node_embs.matmul(GCN_weights)))
+            node_embs = self.activation(torch.sparse.mm(sparse_adj, node_embs.matmul(GCN_weights)))
 
             out_seq.append(node_embs)
 

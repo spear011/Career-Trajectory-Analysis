@@ -110,6 +110,21 @@ class LinkPredictionTrainer:
             patience=args.early_stop_patience,
             min_delta=0
         )
+    
+    def _move_adj_to_device(self, adj_dict):
+        """
+        Move sparse adjacency matrix dictionary to device
+        
+        Args:
+            adj_dict: Dictionary with 'idx' and 'vals' keys
+        
+        Returns:
+            Dictionary with tensors moved to device
+        """
+        return {
+            'idx': adj_dict['idx'].to(self.device),
+            'vals': adj_dict['vals'].to(self.device)
+        }
         
     def _build_optimizer(self):
         """Build optimizer"""
@@ -203,8 +218,8 @@ class LinkPredictionTrainer:
         for t in range(self.args.num_hist_steps, train_end):
             sample = self.dataset.get_sample(t, None)
             
-            # Move to device
-            hist_adj_list = [adj.to(self.device) for adj in sample['hist_adj_list']]
+            # Move to device - handle sparse adjacency matrices
+            hist_adj_list = [self._move_adj_to_device(adj) for adj in sample['hist_adj_list']]
             hist_ndFeats_list = [feats.to(self.device) for feats in sample['hist_ndFeats_list']]
             hist_mask_list = [mask.to(self.device) for mask in sample['hist_mask_list']]
             
@@ -213,8 +228,16 @@ class LinkPredictionTrainer:
             node_embs = self.model(hist_adj_list, hist_ndFeats_list, hist_mask_list)
             
             # Get positive edges from label adjacency
-            label_adj = sample['label_adj'].to(self.device)
-            pos_edges = (label_adj > 0).nonzero(as_tuple=False).t()
+            label_adj = self._move_adj_to_device(sample['label_adj'])
+            
+            # Reconstruct dense adjacency for edge extraction
+            label_idx = label_adj['idx']
+            label_vals = label_adj['vals']
+            if label_idx.shape[1] == 0:
+                continue
+            
+            # Use indices as positive edges
+            pos_edges = label_idx
             
             if pos_edges.shape[1] == 0:
                 continue
@@ -276,17 +299,17 @@ class LinkPredictionTrainer:
             for t in range(eval_start, eval_end):
                 sample = self.dataset.get_sample(t, None)
                 
-                # Move to device
-                hist_adj_list = [adj.to(self.device) for adj in sample['hist_adj_list']]
+                # Move to device - handle sparse adjacency matrices
+                hist_adj_list = [self._move_adj_to_device(adj) for adj in sample['hist_adj_list']]
                 hist_ndFeats_list = [feats.to(self.device) for feats in sample['hist_ndFeats_list']]
                 hist_mask_list = [mask.to(self.device) for mask in sample['hist_mask_list']]
                 
                 # Forward pass
                 node_embs = self.model(hist_adj_list, hist_ndFeats_list, hist_mask_list)
                 
-                # Get positive edges
-                label_adj = sample['label_adj'].to(self.device)
-                pos_edges = (label_adj > 0).nonzero(as_tuple=False).t()
+                # Get positive edges from label adjacency
+                label_adj = self._move_adj_to_device(sample['label_adj'])
+                pos_edges = label_adj['idx']
                 
                 if pos_edges.shape[1] == 0:
                     continue

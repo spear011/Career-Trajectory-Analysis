@@ -28,7 +28,12 @@ def normalize_adj(adj, num_nodes):
     idx = adj['idx']
     vals = adj['vals']
     
-    sp_tensor = torch.sparse.FloatTensor(idx.t(),vals.type(torch.float),torch.Size([num_nodes,num_nodes]))
+    # idx should be shape (2, num_edges) where idx[0] is source, idx[1] is target
+    if idx.dim() == 2 and idx.shape[0] == 2:
+        # Already in correct format
+        sp_tensor = torch.sparse_coo_tensor(idx, vals.type(torch.float), torch.Size([num_nodes, num_nodes]))
+    else:
+        raise ValueError(f"Expected idx shape (2, num_edges), got {idx.shape}")
     
     sparse_eye = make_sparse_eye(num_nodes)
     sp_tensor = sparse_eye + sp_tensor
@@ -36,13 +41,13 @@ def normalize_adj(adj, num_nodes):
     idx = sp_tensor._indices()
     vals = sp_tensor._values()
 
-    degree = torch.sparse.sum(sp_tensor,dim=1).to_dense()
+    degree = torch.sparse.sum(sp_tensor, dim=1).to_dense()
     di = degree[idx[0]]
     dj = degree[idx[1]]
 
     vals = vals * ((di * dj) ** -0.5)
     
-    return {'idx': idx.t(), 'vals': vals}
+    return {'idx': idx, 'vals': vals}
 
 
 class CareerTrajectoryDataset:
@@ -151,7 +156,7 @@ class CareerTrajectoryDataset:
             self.masks.append(mask)
             
             # Extract edges
-            edges = self._extract_edges(adj_matrix)
+            edges = self._extract_edges_from_sparse(adj_matrix)
             self.edges.append(edges)
             
             print(f"  {window}: {G.number_of_nodes()} nodes, {G.number_of_edges()} edges")
@@ -164,7 +169,7 @@ class CareerTrajectoryDataset:
             G: NetworkX graph
         
         Returns:
-            Normalized adjacency matrix tensor
+            Normalized adjacency matrix in sparse format
         """
         adj = torch.zeros((self.num_nodes, self.num_nodes))
         
@@ -176,8 +181,23 @@ class CareerTrajectoryDataset:
                 weight = data.get('weight', 1.0)
                 adj[u_idx, v_idx] = weight
         
+        # Convert dense tensor to sparse format for normalize_adj
+        edge_indices = adj.nonzero(as_tuple=False)
+        if len(edge_indices) == 0:
+            # Empty graph case
+            adj_sparse = {
+                'idx': torch.zeros((2, 0), dtype=torch.long),
+                'vals': torch.zeros(0)
+            }
+        else:
+            edge_values = adj[edge_indices[:, 0], edge_indices[:, 1]]
+            adj_sparse = {
+                'idx': edge_indices.t(),
+                'vals': edge_values
+            }
+        
         # Normalize adjacency matrix
-        adj_normalized = normalize_adj(adj, self.num_nodes)
+        adj_normalized = normalize_adj(adj_sparse, self.num_nodes)
         
         return adj_normalized
     
@@ -212,20 +232,20 @@ class CareerTrajectoryDataset:
         
         return features
     
-    def _extract_edges(self, adj_matrix):
+    def _extract_edges_from_sparse(self, adj_sparse):
         """
-        Extract edges from adjacency matrix
+        Extract edges from sparse adjacency matrix
         
         Args:
-            adj_matrix: Adjacency matrix
+            adj_sparse: Sparse adjacency matrix dict
         
         Returns:
             Edge list as tensor of shape (2, num_edges)
         """
-        edge_indices = (adj_matrix > 0).nonzero(as_tuple=False)
-        if len(edge_indices) == 0:
+        idx = adj_sparse['idx']
+        if idx.shape[1] == 0:
             return torch.zeros((2, 0), dtype=torch.long)
-        return edge_indices.t()
+        return idx
     
     def get_sample(self, idx, test_idx):
         """
@@ -261,3 +281,13 @@ class CareerTrajectoryDataset:
     def get_num_classes(self):
         """Get number of classes (for compatibility)"""
         return 2  # Binary link prediction
+    
+    @property
+    def min_year(self):
+        """Get minimum year in dataset"""
+        return min(self.windows) if self.windows else None
+    
+    @property
+    def max_year(self):
+        """Get maximum year in dataset"""
+        return max(self.windows) if self.windows else None
