@@ -435,15 +435,3 @@ def get_all_period_info() -> Dict[str, Dict]:
     """
     config = get_config()
     return config.get_study_periods()
-
-def normalize_adj(adj):
-    """
-    Normalize adjacency matrix for GCN
-    A_norm = D^{-1/2} * A * D^{-1/2}
-    """
-    adj = adj + torch.eye(adj.shape[0]).to(adj.device)
-    rowsum = adj.sum(1)
-    d_inv_sqrt = torch.pow(rowsum, -0.5).flatten()
-    d_inv_sqrt[torch.isinf(d_inv_sqrt)] = 0.
-    d_mat_inv_sqrt = torch.diag(d_inv_sqrt)
-    return d_mat_inv_sqrt @ adj @ d_mat_inv_sqrt

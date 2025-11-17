@@ -5,8 +5,6 @@ import torch
 import torch.nn as nn
 import numpy as np
 from sklearn.metrics import roc_auc_score, average_precision_score
-import src.utils as u
-
 
 class LinkPredictionTrainer:
     """Trainer for link prediction task"""
@@ -33,7 +31,7 @@ class LinkPredictionTrainer:
         self.loss_fn = nn.BCEWithLogitsLoss()
         
         # Early stopping
-        self.early_stopping = u.EarlyStopping(
+        self.early_stopping = EarlyStopping(
             patience=args.early_stop_patience,
             min_delta=0
         )
@@ -277,7 +275,7 @@ class LinkPredictionTrainer:
                 
                 # Save best model
                 if self.args.save_model:
-                    u.save_checkpoint(
+                    save_checkpoint(
                         self.model,
                         self.optimizer,
                         epoch,
@@ -295,7 +293,7 @@ class LinkPredictionTrainer:
         
         # Load best model and evaluate on test
         if self.args.save_model:
-            u.load_checkpoint(
+            load_checkpoint(
                 self.model,
                 self.optimizer,
                 f"{self.args.save_dir}/best_model.pt"

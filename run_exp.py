@@ -5,7 +5,7 @@ import argparse
 import torch
 import yaml
 from pathlib import Path
-import src.utils as u
+from src.utils import Namespace, set_random_seed, create_dirs_if_not_exists
 from src.model.egcn_h import EGCN_H
 from src.data.dataset import CareerTrajectoryDataset
 from src.trainer import LinkPredictionTrainer
@@ -23,7 +23,7 @@ def load_config(config_path):
     """Load configuration from yaml file"""
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
-    return u.Namespace(config)
+    return Namespace(config)
 
 
 def main():
@@ -35,14 +35,14 @@ def main():
     config = load_config(args.config_file)
     
     # Set random seed
-    u.set_random_seed(config.seed)
+    set_random_seed(config.seed)
     
     # Set device
     device = torch.device('cuda' if config.use_cuda and torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
     
     # Create output directories
-    u.create_dirs_if_not_exists([config.save_dir, config.log_dir])
+    create_dirs_if_not_exists([config.save_dir, config.log_dir])
     
     # Load dataset
     print("\nLoading dataset...")

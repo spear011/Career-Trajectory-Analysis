@@ -2,18 +2,45 @@
 EvolveGCN-H model implementation
 Adapted from original EvolveGCN repository for Career Trajectory link prediction
 """
-import src.utils as u
 import torch
 from torch.nn.parameter import Parameter
 import torch.nn as nn
 import math
+
+class Namespace:
+    """Simple object for holding attributes"""
+    def __init__(self, d=None):
+        if d is not None:
+            for key, value in d.items():
+                setattr(self, key, value)
+
+
+def pad_with_last_val(tensor, k):
+    """
+    Pad tensor with last value to reach length k
+    
+    Args:
+        tensor: Input tensor
+        k: Target length
+    
+    Returns:
+        Padded tensor of length k
+    """
+    if len(tensor) >= k:
+        return tensor[:k]
+    
+    last_val = tensor[-1]
+    pad_size = k - len(tensor)
+    padding = torch.full((pad_size,), last_val, dtype=tensor.dtype, device=tensor.device)
+    
+    return torch.cat([tensor, padding])
 
 
 class EGCN_H(torch.nn.Module):
     """EvolveGCN-H model for temporal graph learning"""
     def __init__(self, args, activation, device='cpu', skipfeats=False):
         super().__init__()
-        GRCU_args = u.Namespace({})
+        GRCU_args = Namespace({})
 
         feats = [args.feats_per_node,
                  args.layer_1_feats,
@@ -24,7 +51,7 @@ class EGCN_H(torch.nn.Module):
         self._parameters = nn.ParameterList()
         
         for i in range(1, len(feats)):
-            GRCU_args = u.Namespace({'in_feats': feats[i-1],
+            GRCU_args = Namespace({'in_feats': feats[i-1],
                                      'out_feats': feats[i],
                                      'activation': activation})
 
@@ -210,7 +237,7 @@ class TopK(torch.nn.Module):
         topk_indices = topk_indices[vals > -1e8]
         
         if topk_indices.shape[0] < self.k:
-            topk_indices = u.pad_with_last_val(topk_indices, self.k)
+            topk_indices = pad_with_last_val(topk_indices, self.k)
             
         tanh = torch.nn.Tanh()
         
