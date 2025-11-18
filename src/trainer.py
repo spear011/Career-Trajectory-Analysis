@@ -180,6 +180,41 @@ class LinkPredictionTrainer:
         
         return neg_edges
     
+    def _compute_ranking_metrics(self, scores, labels):
+        """
+        Compute ranking metrics: MAP and MRR
+        
+        Args:
+            scores: Predicted scores
+            labels: True labels
+        
+        Returns:
+            Dictionary with MAP and MRR
+        """
+        # Sort by scores (descending)
+        sorted_indices = np.argsort(-scores)
+        sorted_labels = labels[sorted_indices]
+        
+        # Mean Average Precision (MAP)
+        precisions = []
+        num_positive = 0
+        for i, label in enumerate(sorted_labels):
+            if label == 1:
+                num_positive += 1
+                precision_at_i = num_positive / (i + 1)
+                precisions.append(precision_at_i)
+        
+        map_score = np.mean(precisions) if precisions else 0.0
+        
+        # Mean Reciprocal Rank (MRR)
+        first_positive_idx = np.where(sorted_labels == 1)[0]
+        mrr_score = 1.0 / (first_positive_idx[0] + 1) if len(first_positive_idx) > 0 else 0.0
+        
+        return {
+            'map': map_score,
+            'mrr': mrr_score
+        }
+    
     def _get_edge_scores(self, node_embs, edges):
         """
         Compute edge scores using dot product
@@ -211,9 +246,13 @@ class LinkPredictionTrainer:
         self.model.train()
         total_loss = 0
         num_samples = 0
+        batch_losses = []
         
         # Train on all time steps except last few (reserved for validation/test)
         train_end = self.dataset.num_timesteps - self.args.num_val_steps - self.args.num_test_steps
+        
+        print(f"\nEpoch {epoch:03d} Training:")
+        print(f"  Training timesteps: {self.args.num_hist_steps} to {train_end-1}")
         
         for t in range(self.args.num_hist_steps, train_end):
             sample = self.dataset.get_sample(t, None)
@@ -267,9 +306,15 @@ class LinkPredictionTrainer:
             self.optimizer.step()
             
             total_loss += loss.item()
+            batch_losses.append(loss.item())
             num_samples += 1
+            
+            # Log every 10 timesteps
+            if (t - self.args.num_hist_steps) % 10 == 0:
+                print(f"    Timestep {t}: Loss={loss.item():.4f}, Pos edges={pos_edges.shape[1]}, Neg edges={neg_edges.shape[1]}")
         
         avg_loss = total_loss / max(num_samples, 1)
+        print(f"  Epoch {epoch:03d} Summary: Avg Loss={avg_loss:.4f}, Batches={num_samples}")
         return avg_loss
     
     def evaluate(self, split='val'):
@@ -291,6 +336,9 @@ class LinkPredictionTrainer:
         else:  # test
             eval_start = self.dataset.num_timesteps - self.args.num_test_steps
             eval_end = self.dataset.num_timesteps
+        
+        print(f"\n  Evaluating on {split} set:")
+        print(f"    Timesteps: {eval_start} to {eval_end-1}")
         
         all_scores = []
         all_labels = []
@@ -342,9 +390,19 @@ class LinkPredictionTrainer:
         auc = roc_auc_score(all_labels, all_scores)
         ap = average_precision_score(all_labels, all_scores)
         
+        # Compute ranking metrics
+        ranking_metrics = self._compute_ranking_metrics(all_scores, all_labels)
+        map_score = ranking_metrics['map']
+        mrr_score = ranking_metrics['mrr']
+        
+        print(f"    AUC: {auc:.4f}, AP: {ap:.4f}, MAP: {map_score:.4f}, MRR: {mrr_score:.4f}")
+        print(f"    Total samples: {len(all_labels)}, Positives: {all_labels.sum():.0f}")
+        
         return {
             'auc': auc,
-            'ap': ap
+            'ap': ap,
+            'map': map_score,
+            'mrr': mrr_score
         }
     
     def train(self):
@@ -356,6 +414,15 @@ class LinkPredictionTrainer:
         """
         best_val_auc = 0
         best_epoch = 0
+        
+        print("\n" + "="*80)
+        print("TRAINING START")
+        print("="*80)
+        print(f"Total epochs: {self.args.num_epochs}")
+        print(f"Optimizer: {self.args.optimizer}")
+        print(f"Learning rate: {self.args.learning_rate}")
+        print(f"Early stopping patience: {self.args.early_stop_patience}")
+        print("="*80)
         
         for epoch in range(self.args.num_epochs):
             # Train
@@ -379,18 +446,27 @@ class LinkPredictionTrainer:
                         epoch,
                         f"{self.args.save_dir}/best_model.pt"
                     )
+                    print(f"  ✓ Saved best model (AUC: {best_val_auc:.4f})")
             
             # Log progress
-            if epoch % self.args.log_interval == 0:
-                print(f"Epoch {epoch:03d} | Train Loss: {train_loss:.4f} | "
-                      f"Val AUC: {val_metrics['auc']:.4f} | Val AP: {val_metrics['ap']:.4f}")
+            print(f"\nEpoch {epoch:03d} Summary:")
+            print(f"  Train Loss: {train_loss:.4f}")
+            print(f"  Val AUC: {val_metrics['auc']:.4f} | AP: {val_metrics['ap']:.4f} | MAP: {val_metrics['map']:.4f} | MRR: {val_metrics['mrr']:.4f}")
+            print(f"  Best Val AUC: {best_val_auc:.4f} (Epoch {best_epoch})")
+            print(f"  Early Stopping Counter: {self.early_stopping.counter}/{self.early_stopping.patience}")
+            print("-" * 80)
             
             if self.early_stopping.early_stop:
-                print(f"Early stopping at epoch {epoch}")
+                print(f"\n⚠ Early stopping triggered at epoch {epoch}")
                 break
         
         # Load best model and evaluate on test
+        print("\n" + "="*80)
+        print("EVALUATING BEST MODEL ON TEST SET")
+        print("="*80)
+        
         if self.args.save_model:
+            print(f"Loading best model from epoch {best_epoch}...")
             load_checkpoint(
                 self.model,
                 self.optimizer,
@@ -399,12 +475,22 @@ class LinkPredictionTrainer:
         
         test_metrics = self.evaluate('test')
         
-        print(f"\nBest epoch: {best_epoch}")
-        print(f"Test AUC: {test_metrics['auc']:.4f} | Test AP: {test_metrics['ap']:.4f}")
+        print("\n" + "="*80)
+        print("TRAINING COMPLETE")
+        print("="*80)
+        print(f"Best Epoch: {best_epoch}")
+        print(f"Val AUC: {best_val_auc:.4f}")
+        print(f"Test AUC: {test_metrics['auc']:.4f}")
+        print(f"Test AP: {test_metrics['ap']:.4f}")
+        print(f"Test MAP: {test_metrics['map']:.4f}")
+        print(f"Test MRR: {test_metrics['mrr']:.4f}")
+        print("="*80)
         
         return {
             'best_epoch': best_epoch,
             'val_auc': best_val_auc,
             'test_auc': test_metrics['auc'],
-            'test_ap': test_metrics['ap']
+            'test_ap': test_metrics['ap'],
+            'test_map': test_metrics['map'],
+            'test_mrr': test_metrics['mrr']
         }
