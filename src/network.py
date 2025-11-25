@@ -472,8 +472,348 @@ class NetworkBuilder:
         networks = self.build_temporal_networks(transitions_df, wage_df)
         stats_df = self.calculate_statistics(networks)
         output_path = self.save_networks(networks, stats_df, output_dir)
-        
+
         return networks, stats_df, output_path, transitions_df
+    
+    # ============================================
+    # ANALYSIS METHODS
+    # ============================================
+
+    def calculate_occupation_time_series(self, transitions_df, networks):
+        """
+        Calculate per-occupation metrics over time
+        
+        Args:
+            transitions_df: All transitions dataframe
+            networks: Dictionary of window_label -> NetworkX graph
+        
+        Returns:
+            DataFrame with occupation-level time series metrics
+        """
+        print("\nCalculating occupation-level time series...")
+        results = []
+        
+        for window_label, G in networks.items():
+            if pd.isna(window_label):
+                continue
+            
+            # Parse window years
+            if '-' in str(window_label):
+                start_year, end_year = map(int, window_label.split('-'))
+            else:
+                start_year = end_year = int(window_label)
+            
+            # Filter transitions for this window
+            window_transitions = transitions_df[
+                (transitions_df['to_year'] >= start_year) &
+                (transitions_df['to_year'] <= end_year)
+            ].copy()
+            
+            for node in G.nodes():
+                # Inflow: transitions TO this occupation
+                inflow = window_transitions[
+                    window_transitions['to_occupation'] == node
+                ]
+                inflow_count = len(inflow)
+                inflow_unique_users = inflow['user_id'].nunique()
+                
+                # Outflow: transitions FROM this occupation
+                outflow = window_transitions[
+                    window_transitions['from_occupation'] == node
+                ]
+                outflow_count = len(outflow)
+                outflow_unique_users = outflow['user_id'].nunique()
+                
+                # Upward mobility from this occupation
+                if outflow_count > 0:
+                    upward_move_rate = outflow['up_move'].mean() * 100
+                    avg_wage_change = (outflow['to_wage'] - outflow['from_wage']).mean()
+                else:
+                    upward_move_rate = None
+                    avg_wage_change = None
+                
+                # Employment and wages from node attributes
+                employment_count = G.nodes[node].get('employment_count', 0)
+                avg_wage = G.nodes[node].get('avg_wage', None)
+                
+                # Calculate rates
+                if employment_count > 0:
+                    inflow_rate = (inflow_count / employment_count) * 100
+                    outflow_rate = (outflow_count / employment_count) * 100
+                else:
+                    inflow_rate = None
+                    outflow_rate = None
+                
+                # Net flow (positive = more inflow than outflow)
+                net_flow = inflow_count - outflow_count
+                if employment_count > 0:
+                    net_flow_rate = (net_flow / employment_count) * 100
+                else:
+                    net_flow_rate = None
+                
+                results.append({
+                    'window': window_label,
+                    'occupation': node,
+                    'employment_count': employment_count,
+                    'avg_wage': avg_wage,
+                    'inflow_count': inflow_count,
+                    'inflow_unique_users': inflow_unique_users,
+                    'inflow_rate': inflow_rate,
+                    'outflow_count': outflow_count,
+                    'outflow_unique_users': outflow_unique_users,
+                    'outflow_rate': outflow_rate,
+                    'net_flow': net_flow,
+                    'net_flow_rate': net_flow_rate,
+                    'upward_move_rate': upward_move_rate,
+                    'avg_wage_change': avg_wage_change
+                })
+            
+            print(f"  {window_label}: {len(G.nodes())} occupations analyzed")
+        
+        df = pd.DataFrame(results)
+        print(f"  Total records: {len(df):,}")
+        return df
+
+
+    def calculate_node_centrality(self, networks):
+        """
+        Calculate centrality metrics for each node in each window
+        
+        Args:
+            networks: Dictionary of window_label -> NetworkX graph
+        
+        Returns:
+            DataFrame with centrality metrics per node per window
+        """
+        print("\nCalculating node centrality metrics...")
+        results = []
+        
+        for window_label, G in networks.items():
+            if pd.isna(window_label):
+                continue
+            
+            num_nodes = G.number_of_nodes()
+            print(f"  Processing {window_label} ({num_nodes} nodes)...")
+            
+            # Basic degree metrics
+            in_degree = dict(G.in_degree())
+            out_degree = dict(G.out_degree())
+            
+            # Weighted versions (if edges have weights)
+            in_degree_weighted = dict(G.in_degree(weight='weight'))
+            out_degree_weighted = dict(G.out_degree(weight='weight'))
+            
+            # PageRank (works on directed graphs)
+            try:
+                pagerank = nx.pagerank(G, weight='weight')
+            except:
+                pagerank = {node: None for node in G.nodes()}
+            
+            # Betweenness centrality (expensive for large graphs)
+            if num_nodes < 100:
+                try:
+                    betweenness = nx.betweenness_centrality(G, weight='weight')
+                except:
+                    betweenness = {node: None for node in G.nodes()}
+            else:
+                # Sample-based approximation for large graphs
+                betweenness = {node: None for node in G.nodes()}
+            
+            # Closeness centrality (requires weakly connected graph)
+            try:
+                closeness = nx.closeness_centrality(G)
+            except:
+                closeness = {node: None for node in G.nodes()}
+            
+            # Clustering coefficient (convert to undirected)
+            G_undirected = G.to_undirected()
+            clustering = nx.clustering(G_undirected)
+            
+            # Eigenvector centrality (may not converge)
+            try:
+                eigenvector = nx.eigenvector_centrality(G, weight='weight', max_iter=100)
+            except:
+                eigenvector = {node: None for node in G.nodes()}
+            
+            for node in G.nodes():
+                results.append({
+                    'window': window_label,
+                    'occupation': node,
+                    'in_degree': in_degree[node],
+                    'out_degree': out_degree[node],
+                    'in_degree_weighted': in_degree_weighted[node],
+                    'out_degree_weighted': out_degree_weighted[node],
+                    'total_degree': in_degree[node] + out_degree[node],
+                    'pagerank': pagerank.get(node),
+                    'betweenness': betweenness.get(node),
+                    'closeness': closeness.get(node),
+                    'clustering': clustering.get(node),
+                    'eigenvector': eigenvector.get(node)
+                })
+        
+        df = pd.DataFrame(results)
+        print(f"  Total records: {len(df):,}")
+        return df
+
+
+    def analyze_period_comparison(self, time_series_df, periods):
+        """
+        Compare occupation metrics across defined periods
+        
+        Args:
+            time_series_df: Occupation time series dataframe
+            periods: Dict of period_name -> (start_year, end_year)
+        
+        Returns:
+            DataFrame with period comparison
+        """
+        print("\nAnalyzing period comparisons...")
+        results = []
+        
+        for period_name, (start_year, end_year) in periods.items():
+            # Filter data for this period
+            period_data = time_series_df[
+                time_series_df['window'].str.split('-').str[0].astype(int).between(start_year, end_year)
+            ].copy()
+            
+            if len(period_data) == 0:
+                continue
+            
+            # Aggregate by occupation
+            summary = period_data.groupby('occupation').agg({
+                'employment_count': 'mean',
+                'avg_wage': 'mean',
+                'inflow_rate': 'mean',
+                'outflow_rate': 'mean',
+                'net_flow_rate': 'mean',
+                'upward_move_rate': 'mean',
+                'avg_wage_change': 'mean'
+            }).reset_index()
+            
+            summary['period'] = period_name
+            summary['period_start'] = start_year
+            summary['period_end'] = end_year
+            
+            results.append(summary)
+        
+        df = pd.concat(results, ignore_index=True)
+        
+        # Reorder columns
+        cols = ['period', 'period_start', 'period_end', 'occupation'] + [
+            c for c in df.columns if c not in ['period', 'period_start', 'period_end', 'occupation']
+        ]
+        df = df[cols]
+        
+        print(f"  Periods analyzed: {len(periods)}")
+        print(f"  Total records: {len(df):,}")
+        
+        return df
+
+    def rank_occupations(self, centrality_df, time_series_df, metric='pagerank', top_n=10):
+        """
+        Rank occupations by specified metric
+        
+        Args:
+            centrality_df: Centrality dataframe
+            time_series_df: Time series dataframe
+            metric: Metric to rank by
+            top_n: Number of top occupations to return
+        
+        Returns:
+            DataFrame with ranked occupations
+        """
+        print(f"\nRanking occupations by {metric}...")
+        
+        # Get latest window
+        latest_window = centrality_df['window'].max()
+        
+        # Get centrality for latest window
+        latest_centrality = centrality_df[
+            centrality_df['window'] == latest_window
+        ].copy()
+        
+        # Get time series for latest window
+        latest_time_series = time_series_df[
+            time_series_df['window'] == latest_window
+        ].copy()
+        
+        # Merge
+        merged = latest_centrality.merge(
+            latest_time_series[['occupation', 'employment_count', 'avg_wage', 'upward_move_rate']],
+            on='occupation',
+            how='left'
+        )
+        
+        # Check if metric exists
+        if metric not in merged.columns:
+            print(f"  Warning: Metric '{metric}' not found in centrality data")
+            print(f"  Available metrics: {', '.join([c for c in merged.columns if c not in ['window', 'occupation']])}")
+            return pd.DataFrame()
+        
+        # Drop rows where metric is NaN/None
+        valid_data = merged[merged[metric].notna()].copy()
+        
+        if len(valid_data) == 0:
+            print(f"  Warning: No valid data for metric '{metric}' (all values are NaN)")
+            return pd.DataFrame()
+        
+        # Rank by metric
+        ranked = valid_data.nlargest(top_n, metric)
+        
+        # Select relevant columns
+        cols = ['occupation', metric, 'employment_count', 'avg_wage', 'upward_move_rate',
+                'in_degree', 'out_degree', 'pagerank']
+        ranked = ranked[[c for c in cols if c in ranked.columns]].copy()
+        
+        print(f"  Top {len(ranked)} occupations:")
+        
+        # Iterate using itertuples for better performance and avoiding Series issues
+        for row in ranked.itertuples(index=False):
+            occ_name = row.occupation
+            metric_val = getattr(row, metric)
+            
+            # Format output safely
+            if pd.notna(metric_val):
+                print(f"    {occ_name}: {metric}={metric_val:.4f}")
+            else:
+                print(f"    {occ_name}: {metric}=N/A")
+        
+        return ranked
+
+    def save_extended_metrics(self, occ_time_series, node_centrality, period_comparison, 
+                            rankings, output_path):
+        """
+        Save extended metrics to output directory
+        
+        Args:
+            occ_time_series: Occupation time series dataframe
+            node_centrality: Node centrality dataframe
+            period_comparison: Period comparison dataframe
+            rankings: Dictionary of metric_name -> ranked dataframe
+            output_path: Output directory path
+        """
+        print("\nSaving extended metrics...")
+        
+        # Save occupation time series
+        ts_path = output_path / 'occupation_time_series.csv'
+        occ_time_series.to_csv(ts_path, index=False)
+        print(f"  Saved: {ts_path}")
+        
+        # Save node centrality
+        cent_path = output_path / 'node_centrality.csv'
+        node_centrality.to_csv(cent_path, index=False)
+        print(f"  Saved: {cent_path}")
+        
+        # Save period comparison
+        period_path = output_path / 'period_comparison.csv'
+        period_comparison.to_csv(period_path, index=False)
+        print(f"  Saved: {period_path}")
+        
+        # Save rankings
+        for metric, ranked_df in rankings.items():
+            rank_path = output_path / f'ranking_by_{metric}.csv'
+            ranked_df.to_csv(rank_path, index=False)
+            print(f"  Saved: {rank_path}")
 
 
 # ============================================

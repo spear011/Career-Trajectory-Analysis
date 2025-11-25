@@ -1,9 +1,13 @@
-"""Windowed Workforce Analyzer - 3-Cohort Design
+"""
+Windowed Workforce Analyzer 3-Cohort Design
 
-3개 코호트 방식:
-1. Any Employment: 윈도우에 어느 시점이라도 일한 사람 (전체 규모)
-2. Attached (≥27주/년): 각 연도마다 27주 이상 고용 (메인 분석용)
-3. Full-time Year-round: 매 해 50주+ 근무 (안정 상용직)
+Three-cohort structure:
+
+Any Employment: Individuals who worked at any point within the window (overall labor force size)
+
+Attached (≥27 weeks/year): Individuals employed at least 27 weeks in each year (main analytical sample)
+
+Full-time Year-round: Individuals working 50+ weeks every year (stable core workforce)
 """
 
 import pandas as pd
@@ -93,10 +97,10 @@ class WindowedAnalyzer:
                                    window_start: int,
                                    window_end: int) -> set:
         """
-        Any Employment Cohort: 윈도우 내 어느 시점이라도 일한 적 있는 사람
-        
-        정의: 하루라도 일한 적 있으면 포함 (BLS "worked at some point")
-        용도: 전체 노동시장 규모 파악
+        Any Employment Cohort: Worked at Least Once Within the Window
+
+        Definition: Included if the individual worked even a single day during the window (BLS “worked at some point”).
+        Purpose: Used to estimate overall labor market size.
         """
         active_df = self.get_active_users_in_window(trajectory_df, window_start, window_end)
         return set(active_df['ID'].unique())
@@ -106,12 +110,11 @@ class WindowedAnalyzer:
                            window_start: int,
                            window_end: int) -> set:
         """
-        Attached Cohort (≥27주/년): 지속적으로 노동시장에 붙어있던 사람
-        
-        정의: 각 연도마다 최소 27주 이상 고용 (BLS working poor 기준)
-        용도: 메인 분석 집단 (전환율, 산업 이동률)
-        
-        OPTIMIZED: 벡터화 연산으로 속도 개선
+        Attached Cohort (≥27 Weeks/Year): Individuals Continuously Attached to the Labor Market
+
+        Definition: Employed at least 27 weeks in every year (aligned with the BLS "working poor" threshold).
+        Purpose: Main analytical group for transition rates and industry mobility.
+        Optimized: Uses vectorized operations for speed.
         """
         window_start_date = pd.Timestamp(f'{window_start}-01-01')
         window_end_date = pd.Timestamp(f'{window_end}-12-31')
@@ -168,12 +171,12 @@ class WindowedAnalyzer:
                                       window_start: int,
                                       window_end: int) -> set:
         """
-        Full-time Year-round Cohort: 안정적 상용직 핵심인력
+        Full-time Year-round Cohort: Stable Core Workforce
+
+        Definition: Worked 50-52 weeks in every year (Census/BLS definition of full-time year-round).
+        Purpose: Used to analyze structural mobility among stable, long-term employees.
+        Optimized: Uses vectorized operations for speed.
         
-        정의: 매 해 50~52주 근무 (Census/BLS full-time year-round)
-        용도: 안정 상용직의 구조적 이동 분석
-        
-        OPTIMIZED: 벡터화 연산으로 속도 개선
         """
         window_start_date = pd.Timestamp(f'{window_start}-01-01')
         window_end_date = pd.Timestamp(f'{window_end}-12-31')
@@ -231,7 +234,6 @@ class WindowedAnalyzer:
                                     user_lifecycle: pd.DataFrame,
                                     window_start: int,
                                     window_end: int) -> set:
-        """생애 첫 직업이 이 윈도우에 시작된 사람"""
         new_entrants_mask = (
             (user_lifecycle['first_job_year'] >= window_start) &
             (user_lifecycle['first_job_year'] <= window_end)
@@ -244,7 +246,6 @@ class WindowedAnalyzer:
                                       window_start: int,
                                       window_end: int,
                                       dataset_end_year: int) -> set:
-        """마지막 직업이 이 윈도우에 종료 + 이후 재취업 없음"""
         last_job_in_window_mask = (
             (~user_lifecycle['is_currently_employed']) &
             (user_lifecycle['last_job_year'] >= window_start) &
